@@ -1,0 +1,48 @@
+<c-modal
+  [visible]="visiblePopup"
+  (visibleChange)="handleVisibleChange($event)"
+  size="lg"
+>
+  <!-- Header -->
+  <c-modal-header class="bg-warning text-dark">
+    <h5 cModalTitle class="fw-bold mb-0">
+      Employee Salary Approval
+    </h5>
+
+    <button cButtonClose (click)="close()"></button>
+  </c-modal-header>
+
+  <c-modal-body>
+
+    <!-- Confirmation -->
+    <div class="alert alert-warning border-0">
+      <i class="fa fa-circle-info me-2"></i>
+      Are you sure you want to approve this salary transaction?
+    </div>
+
+  </c-modal-body>
+
+  <!-- Footer -->
+  <c-modal-footer>
+
+    <button
+      cButton
+      color="secondary"
+      variant="outline"
+      (click)="close()"
+    >
+      Close
+    </button>
+
+    <button
+      cButton
+      color="success"
+      class="px-4"
+      (click)="confirmApproval()"
+    >
+      Confirm Approval
+    </button>
+
+  </c-modal-footer>
+
+</c-modal>

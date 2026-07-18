@@ -1,0 +1,97 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+          <strong class="h5">Vehicles</strong>
+          
+          <button type="button" class="btn btn-light" (click)="onAddNewVehicle()">
+            <svg cIcon class="me-2" name="cilUserFollow"></svg>
+            Add New
+          </button>
+        </div>
+
+        <div class="card-body">                
+          <p-table 
+            [value]="vehicles"
+            [paginator]="true" 
+            [rows]="20" 
+            [rowsPerPageOptions]="[20,50,100]"
+            showGridlines="true" 
+            [sortMode]="'multiple'"
+            paginatorStyleClass="custom-paginator">
+            <!-- HEADER -->
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="code">
+                  Code <p-sortIcon field="code"></p-sortIcon>
+                </th>                
+                <th pSortableColumn="name">
+                  Name <p-sortIcon field="name"></p-sortIcon>
+                </th>
+                <th pSortableColumn="vehicleNumber">
+                  Vehicle Number <p-sortIcon field="vehicleNumber"></p-sortIcon>
+                </th>
+                <th pSortableColumn="vType">
+                  Vehicle Type <p-sortIcon field="vType"></p-sortIcon>
+                </th>
+                <th pSortableColumn="driverFullName">
+                  Driver Name <p-sortIcon field="driverFullName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="driverMobileNo">
+                  Mobile No <p-sortIcon field="driverMobileNo"></p-sortIcon>
+                </th>
+                <th pSortableColumn="vAvg">
+                  Avg <p-sortIcon field="vAvg"></p-sortIcon>
+                </th>
+                <th pSortableColumn="rate">
+                  Rate <p-sortIcon field="rate"></p-sortIcon>
+                </th>
+                <th pSortableColumn="isActive">
+                  Active <p-sortIcon field="isActive"></p-sortIcon>
+                </th>
+                <th pSortableColumn="createdDate">
+                  Created Date <p-sortIcon field="createdDate"></p-sortIcon>
+                </th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+
+            <!-- BODY -->
+            <ng-template pTemplate="body" let-vehicle>
+              <tr>
+                <td>{{ vehicle.code }}</td>                
+                <td>{{ vehicle.name }}</td>
+                <td>{{ vehicle.vehicleNumber }}</td>                
+                <td>{{ vehicle.vType }}</td>
+                <td>{{ vehicle.driverFullName }}</td>
+                <td>{{ vehicle.driverMobileNo }}</td>
+                <td>{{ vehicle.vAvg }}</td>
+                <td>{{ vehicle.rate }}</td>
+                <td>
+                  <span 
+                    class="badge"
+                    [ngClass]="vehicle.isActive ? 'bg-success' : 'bg-danger'">
+                    {{ vehicle.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>{{ vehicle.createdDate | date:'dd-MM-yyyy' }}</td>
+                <td>
+                  <button 
+                    type="button" 
+                    class="btn btn-link p-0 edit-btn"
+                    (click)="onEdit(vehicle.id)">
+                    <svg cIcon name="cilPencil"></svg>
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

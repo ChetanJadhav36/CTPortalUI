@@ -1,0 +1,319 @@
+<div class="container-fluid p-2">
+  <div class="card">
+    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+      <strong class="h5">Pay Salary</strong>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+
+        <!-- LEFT SIDE -->
+        <div class="col-md-7">
+
+          <table class="table table-bordered table-striped table-sm">
+            <tbody>
+              <tr>
+                <th width="35%">Employee Code</th>
+                <td>{{ salaryData?.employeeCode }}</td>
+              </tr>
+
+              <tr>
+                <th>Employee Name</th>
+                <td>{{ salaryData?.employeeFullName }}</td>
+              </tr>
+
+              <tr>
+                <th>Phone Number</th>
+                <td>{{ salaryData?.phonePrimary }}</td>
+              </tr>
+
+              <tr>
+                <th>Salary Month</th>
+                <td>{{ salaryData?.salaryMonth }}</td>
+              </tr>
+
+              <tr>
+                <th>Salary Year</th>
+                <td>{{ salaryData?.salaryYear }}</td>
+              </tr>
+
+              <tr>
+                <th>Total Working Days</th>
+                <td>{{ salaryData?.totalWorkingDays }}</td>
+              </tr>
+
+              <tr>
+                <th>Salary Amount</th>
+                <td>
+                  <strong>₹ {{ salaryData?.netPayableSalary }}</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        <!-- PAYMENT TYPE -->                    
+      <div class="row mt-3">
+
+        <!-- PAYMENT TYPE -->
+          <div class="col-md-6 mb-2">
+
+            <label class="form-label">
+              Payment Type
+            </label>
+
+            <select class="form-select form-select-sm"
+                    id="paymentType"
+                    name="paymentType"
+                    [(ngModel)]="paymentDetails.paymentType"
+                    (change)="onPaymentTypeChange()">
+
+              <option [value]="PaymentType.Cash">
+                Cash
+              </option>
+
+              <option [value]="PaymentType.Bank">
+                Bank
+              </option>
+
+            </select>
+
+          </div>
+
+        <!-- BANK NAME -->
+        <div class="col-md-6 mb-2"
+            *ngIf="paymentDetails.paymentType == PaymentType.Bank">
+          <label class="form-label">
+            Bank Name
+          </label>
+
+          <input type="text"
+                class="form-control form-control-sm"
+                id="bankName"
+                name="bankName"
+                [value]="salaryData?.bankName"
+                readonly>
+        </div>
+
+        <!-- ACCOUNT NUMBER -->
+        <div class="col-md-6 mb-2"
+            *ngIf="paymentDetails.paymentType == PaymentType.Bank">
+
+          <label class="form-label">
+            Account Number
+          </label>
+
+          <input type="text"
+                class="form-control form-control-sm"
+                id="bankAccountNumber"
+                name="bankAccountNumber"
+                [value]="salaryData?.bankAccountNumber"
+                readonly>
+
+        </div>
+
+        <!-- IFSC CODE -->
+        <div class="col-md-6 mb-2"
+            *ngIf="paymentDetails.paymentType == PaymentType.Bank">
+
+          <label class="form-label">
+            IFSC Code
+          </label>
+
+          <input type="text"
+                class="form-control form-control-sm"
+                id="ifscCode"
+                name="ifscCode"
+                [value]="salaryData?.ifscCode"
+                readonly>
+
+        </div>
+
+        <!-- REFERENCE NUMBER -->
+        <div class="col-md-12 mb-2"
+            *ngIf="paymentDetails.paymentType == PaymentType.Bank">
+
+          <label class="form-label">
+            Reference Number
+          </label>
+
+         <textarea
+            class="form-control form-control-sm"
+            id="referenceNumber"
+            name="referenceNumber"
+            rows="2"
+            placeholder="Enter transaction reference number"
+            [(ngModel)]="paymentDetails.referenceNumber">
+        </textarea>
+        </div>
+
+      </div>     
+          
+        </div>
+
+        <!-- RIGHT SIDE -->
+          <div class="col-md-4">
+            <form [formGroup]="cashNotesForm" (ngSubmit)="onPayAmount()">
+
+              <table class="table table-bordered table-sm text-center">
+                <thead class="table-light">
+                  <tr>
+                    <th>Rs</th>
+                    <th>No. of Notes</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  <tr>
+                    <td>2000</td>
+                    <td>
+                      <input type="number"
+                            #notes2000
+                            id="notes2000"
+                            name="notes2000"
+                            (keydown.enter)="focusNext(notes500); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="notes2000">
+                    </td>
+                    <td>{{(cashNotesForm.value.notes2000 ?? 0) * 2000}}</td>
+                  </tr>                 
+
+                  <tr>
+                    <td>500</td>
+                    <td>
+                      <input type="number"
+                            #notes500
+                            id="notes500"
+                            name="notes500"
+                            (keydown.enter)="focusNext(notes200); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="notes500">
+                    </td>
+                    <td>{{(cashNotesForm.value.notes500 ?? 0) * 500}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>200</td>
+                    <td>
+                      <input type="number"
+                            #notes200
+                            id="notes200"
+                            name="notes200"
+                            (keydown.enter)="focusNext(notes100); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="notes200">
+                    </td>
+                    <td>{{(cashNotesForm.value.notes200 ?? 0) * 200}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>100</td>
+                    <td>
+                      <input type="number"
+                            #notes100
+                            id="notes100"
+                            name="notes100"
+                            (keydown.enter)="focusNext(notes50); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="notes100">
+                    </td>
+                    <td>{{(cashNotesForm.value.notes100 ?? 0) * 100}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>50</td>
+                    <td>
+                      <input type="number"
+                            #notes50
+                            id="notes50"
+                            name="notes50"
+                            (keydown.enter)="focusNext(notes20); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="notes50">
+                    </td>
+                    <td>{{(cashNotesForm.value.notes50 ?? 0) * 50}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>20</td>
+                    <td>
+                      <input type="number"
+                            #notes20
+                            id="notes20"
+                            name="notes20"
+                            (keydown.enter)="focusNext(notes10); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="notes20">
+                    </td>
+                    <td>{{(cashNotesForm.value.notes20 ?? 0) * 20}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>10</td>
+                    <td>
+                      <input type="number"
+                            #notes10
+                            id="notes10"
+                            name="notes10"
+                            (keydown.enter)="focusNext(notes5); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="notes10">
+                    </td>
+                    <td>{{(cashNotesForm.value.notes10 ?? 0) * 10}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>5</td>
+                    <td>
+                      <input type="number"
+                            #notes5
+                            id="notes5"
+                            name="notes5"
+                            (keydown.enter)="focusNext(coins); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="notes5">
+                    </td>
+                    <td>{{(cashNotesForm.value.notes5 ?? 0) * 5}}</td>
+                  </tr>
+
+                  <tr>
+                    <td>Coins</td>
+                    <td>
+                      <input type="number"
+                            #coins   
+                            id="coins"
+                            name="coins"                       
+                            class="form-control form-control-sm"
+                            formControlName="coins">
+                    </td>
+                    <td>{{cashNotesForm.value.coins ?? 0}}</td>
+                  </tr>
+
+                  <!-- TOTAL -->
+                  <tr [ngClass]="{'table-light fw-bold': !isAmountMismatch(),
+                    'table-danger fw-bold': isAmountMismatch()}">
+                    <td>Total</td>
+                    <td>{{getNotesCountTotal()}}</td>
+                    <td>{{getNotesTotal()}}</td>
+                  </tr>
+
+                </tbody>
+              </table>
+
+              <!-- SUBMIT BUTTON -->
+              <div class="d-grid mt-1">
+                <button type="submit"
+                        class="btn btn-danger btn-sm text-white text-bold"
+                        [disabled]="cashNotesForm.invalid || isAmountMismatch() && this.paymentDetails.paymentType == PaymentType.Cash">
+                  Pay Amount
+                </button>
+              </div>           
+
+            </form>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>

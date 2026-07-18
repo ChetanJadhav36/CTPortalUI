@@ -1,0 +1,53 @@
+/* PAGE TITLE */
+.salary-page-title {
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* MAIN DROPDOWN */
+.compact-control {
+  width: 140px;
+  min-width: 140px;
+}
+
+/* MONTH */
+.compact-control-sm {
+  width: 90px;
+  min-width: 90px;
+}
+
+/* YEAR */
+.compact-year {
+  width: 100px;
+  min-width: 100px;
+}
+
+/* BUTTONS */
+.btn-action {
+  min-width: 110px;
+  font-weight: 600;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+
+  .compact-control,
+  .compact-control-sm,
+  .compact-year,
+  .btn-action {
+
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .salary-page-title {
+    white-space: normal;
+  }
+}
+.large-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}

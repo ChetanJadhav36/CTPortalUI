@@ -1,0 +1,169 @@
+<div class="row g-3">
+
+  <!-- Notes Table -->
+  <div class="col-12 col-lg-4">
+    <table class="table table-bordered table-sm text-center align-middle">
+      <thead>
+        <tr>
+          <th class="bg-primary text-white">Rs</th>
+          <th class="bg-primary text-white">No. of Notes</th>
+          <th class="bg-primary text-white">Amount</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td class="fw-bold">2000</td>
+          <td>{{ notesData.notes2000 || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.notes2000 || 0) * 2000 }}</td>
+        </tr>
+
+        <tr>
+          <td class="fw-bold">500</td>
+          <td>{{ notesData.notes500 || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.notes500 || 0) * 500 }}</td>
+        </tr>
+
+        <tr>
+          <td class="fw-bold">200</td>
+          <td>{{ notesData.notes200 || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.notes200 || 0) * 200 }}</td>
+        </tr>
+
+        <tr>
+          <td class="fw-bold">100</td>
+          <td>{{ notesData.notes100 || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.notes100 || 0) * 100 }}</td>
+        </tr>
+
+        <tr>
+          <td class="fw-bold">50</td>
+          <td>{{ notesData.notes50 || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.notes50 || 0) * 50 }}</td>
+        </tr>
+
+        <tr>
+          <td class="fw-bold">20</td>
+          <td>{{ notesData.notes20 || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.notes20 || 0) * 20 }}</td>
+        </tr>
+
+        <tr>
+          <td class="fw-bold">10</td>
+          <td>{{ notesData.notes10 || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.notes10 || 0) * 10 }}</td>
+        </tr>
+
+        <tr>
+          <td class="fw-bold">5</td>
+          <td>{{ notesData.notes5 || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.notes5 || 0) * 5 }}</td>
+        </tr>
+
+        <tr>
+          <td class="fw-bold">Coins</td>
+          <td>{{ notesData.coins || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ (notesData.coins || 0) * 1 }}</td>
+        </tr>
+
+        <tr class="table-success fw-bold">
+          <td>Total</td>
+          <td>
+            {{
+              (notesData.notes2000 || 0) +
+              (notesData.notes1000 || 0) +
+              (notesData.notes500 || 0) +
+              (notesData.notes200 || 0) +
+              (notesData.notes100 || 0) +
+              (notesData.notes50 || 0) +
+              (notesData.notes20 || 0) +
+              (notesData.notes10 || 0) +
+              (notesData.notes5 || 0)
+            }}
+          </td>
+          <td class="fw-bold text-success">₹{{ notesData.totalCashAmount || 0 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Right Side -->
+  <div class="col-12 col-lg-8">
+    <!-- Expenses -->
+  <div class="mb-4">
+    <table class="table table-bordered table-sm w-auto">
+      <thead>
+        <tr>
+          <th class="bg-primary text-white">Expenses</th>
+          <th class="bg-primary text-white">Pending</th>
+          <th class="bg-primary text-white">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fw-bold">Draft</td>
+          <td>{{ dashboard.expenseApprovalPending || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ dashboard.expenseApprovalAmount || 0 }}</td>
+        </tr>
+        <tr>
+          <td class="fw-bold">Payment</td>
+          <td>{{ dashboard.expensePaymentPending || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ dashboard.expensePaymentAmount || 0 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Advances -->
+  <div class="mb-4">
+    <table class="table table-bordered table-sm w-auto">
+      <thead class="table-light">
+        <tr>
+          <th class="bg-primary text-white">Advances</th>
+          <th class="bg-primary text-white">Pending</th>
+          <th class="bg-primary text-white">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fw-bold">Draft</td>
+          <td>{{ dashboard.advanceApprovalPending || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ dashboard.advanceApprovalAmount || 0 }}</td>
+        </tr>
+        <tr>
+          <td class="fw-bold">Payment</td>
+          <td>{{ dashboard.advancePaymentPending || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ dashboard.advancePaymentAmount || 0 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Salaries -->
+  <div class="mb-4">
+    <table class="table table-bordered table-sm w-auto">
+      <thead class="table-light">
+        <tr>
+          <th class="bg-primary text-white">Salaries</th>
+          <th class="bg-primary text-white">Pending</th>
+          <th class="bg-primary text-white">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fw-bold">Approval</td>
+          <td>{{ dashboard.salaryApprovalPending || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ dashboard.salaryApprovalAmount || 0 }}</td>
+        </tr>
+        <tr>
+          <td class="fw-bold">Payment</td>
+          <td>{{ dashboard.salaryPaymentPending || 0 }}</td>
+          <td class="fw-bold text-success">₹{{ dashboard.salaryPaymentAmount || 0 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>  
+
+  </div>
+
+</div>

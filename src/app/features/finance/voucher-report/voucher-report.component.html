@@ -1,0 +1,150 @@
+<div class="card">
+
+    <!-- Header -->
+    <div class="card-header bg-primary text-white">
+        <div class="row g-2 align-items-end">
+
+            <div class="col-12 col-lg-2">
+                <strong class="h5">Voucher Report</strong>
+            </div>
+
+            <!-- From Date -->
+            <div class="col-md-2">
+                <label class="form-label">From</label>
+                <input type="date"
+                       class="form-control form-control-sm"
+                       [(ngModel)]="fromDate">
+            </div>
+
+            <!-- To Date -->
+            <div class="col-md-2">
+                <label class="form-label">To</label>
+                <input type="date"
+                       class="form-control form-control-sm"
+                       [(ngModel)]="toDate">
+            </div>
+
+            <!-- Voucher Type -->
+            <div class="col-md-2">
+                <label class="form-label">Voucher Type</label>
+                <select class="form-select form-select-sm"
+                        [(ngModel)]="voucherType">
+                    <option [ngValue]="null">All</option>
+                    <option *ngFor="let item of voucherTypes"
+                            [ngValue]="item.value">
+                        {{ item.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select class="form-select form-select-sm"
+                        [(ngModel)]="status">
+                    <option [ngValue]="null">All</option>
+                    <option *ngFor="let item of statusList"
+                            [ngValue]="item.value">
+                        {{ item.label }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <button class="btn btn-light w-100"
+                        (click)="searchVoucherReport()">
+                    Search
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card-body">
+
+        <p-table
+            [value]="voucherReports"
+            [paginator]="true" 
+            [rows]="20" 
+            [rowsPerPageOptions]="[20,50,100]"
+            showGridlines="true" 
+            [sortMode]="'multiple'"
+            paginatorStyleClass="custom-paginator">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Date</th>
+                    <th>Module</th>
+                    <th>Voucher No</th>
+                    <th>Voucher Type</th>
+                    <th>Status</th>
+                    <th>Payment Type</th>
+                    <th>Source Account</th>
+                    <th>Destination</th>
+                    <th>Amount</th>                    
+                    <!-- Cash Notes -->
+                    <th>₹2000</th>                    
+                    <th>₹500</th>
+                    <th>₹200</th>
+                    <th>₹100</th>
+                    <th>₹50</th>
+                    <th>₹20</th>
+                    <th>₹10</th>
+                    <th>₹5</th>
+                    <th>Coins</th>
+                    <th>Narration</th>
+                    <th>Bank</th>
+                    <th>Cheque No</th>
+                    <th>Remark</th>
+                    <th>Created By</th>
+                    <th>Created Date</th>
+                    <th>Approved By</th>
+                    <th>Approved Date</th>
+                    <th>Paid By</th>
+                    <th>Paid Date</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td>{{row.voucherDate | date:'dd/MM/yyyy'}}</td>
+                    <td>{{row.module}}</td>                    
+                    <td>{{row.voucherNumber}}</td>
+                    <td>{{row.voucherType}}</td>
+                    <td>{{row.status}}</td>
+                    <td>{{row.paymentType}}</td>
+                    <td>{{row.sourceAccount}}</td>
+                    <td>{{row.destinationAccount}}</td>
+                    <td>{{row.amount}}</td>
+                    <!-- Cash Notes -->
+                    <td>{{row.cashNotes?.notes2000 || 0}}</td>                    
+                    <td>{{row.cashNotes?.notes500 || 0}}</td>
+                    <td>{{row.cashNotes?.notes200 || 0}}</td>
+                    <td>{{row.cashNotes?.notes100 || 0}}</td>
+                    <td>{{row.cashNotes?.notes50 || 0}}</td>
+                    <td>{{row.cashNotes?.notes20 || 0}}</td>
+                    <td>{{row.cashNotes?.notes10 || 0}}</td>
+                    <td>{{row.cashNotes?.notes5 || 0}}</td>
+                    <td>{{row.cashNotes?.coins || 0}}</td>                   
+                    <td>{{row.narration}}</td>
+                    <td>{{row.bankName}}</td>
+                    <td>{{row.chequeNumber}}</td>
+                    <td>{{row.remark}}</td>
+                    <td>{{row.createdBy}}</td>
+                    <td>{{row.createdDate | date:'dd/MM/yyyy HH:mm'}}</td>
+
+                    <td>{{row.approvedBy}}</td>
+                    <td>{{row.approvedDate | date:'dd/MM/yyyy HH:mm'}}</td>
+
+                    <td>{{row.paidBy}}</td>
+                    <td>{{row.paidDate | date:'dd/MM/yyyy HH:mm'}}</td>
+
+                </tr>
+            </ng-template>
+
+        </p-table>
+
+    </div>
+
+</div>

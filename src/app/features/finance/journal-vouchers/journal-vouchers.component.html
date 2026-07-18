@@ -1,0 +1,87 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+          <strong class="h5">Journal Vouchers</strong>
+
+          <button type="button" class="btn btn-light" (click)="onAddNewJournalVoucher()">
+            <svg cIcon class="me-2" name="cilUserFollow"></svg>
+            Add Journal Voucher
+          </button>
+        </div>
+
+        <div class="card-body">
+
+          <p-table 
+            [value]="journalVouchers" 
+            [paginator]="true" 
+            [rows]="20" 
+            [rowsPerPageOptions]="[20,50,100]"
+            showGridlines="true" 
+            [sortMode]="'multiple'"
+            paginatorStyleClass="custom-paginator">
+
+            <!-- HEADER -->
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="voucherDate">
+                    Date <p-sortIcon field="voucherDate"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="voucherNumber">
+                  V No <p-sortIcon field="voucherNumber"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="destinationAccountName">
+                  Paid From <p-sortIcon field="destinationAccountName"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="amount">
+                  ₹Amount <p-sortIcon field="amount"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="creditAccountName">
+                  Paid To <p-sortIcon field="creditAccountName"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="narration">
+                  Narration <p-sortIcon field="narration"></p-sortIcon>
+                </th>                        
+
+                <th>Action</th>
+              </tr>
+            </ng-template>
+
+            <!-- BODY -->
+            <ng-template pTemplate="body" let-voucher>
+              <tr>
+                <td>{{ voucher.voucherDate | date }}</td>
+                <td>{{ voucher.voucherNumber }}</td>                
+                <td>{{ voucher.sourceAccountName }}</td>
+                <td class="fw-bold text-success">₹{{ voucher.amount }}</td>
+                <td>{{ voucher.destinationAccountName }}</td>                
+                <td>{{ voucher.narration }}</td>               
+
+                <td>
+                  <button 
+                    type="button" 
+                    class="btn btn-link p-0 edit-btn"
+                    (click)="onEditJournalVoucher(voucher.id)">
+                    <svg cIcon name="cilPencil"></svg>
+                  </button>                  
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

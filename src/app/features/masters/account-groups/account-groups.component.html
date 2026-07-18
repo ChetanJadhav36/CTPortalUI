@@ -1,0 +1,75 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+          <strong>Account Groups</strong>
+
+          <button type="button" class="btn btn-light">
+            <a cDropdownItem (click)="onAddNewAccountGroup()">
+              <svg cIcon class="me-2" name="cilUserFollow"></svg>
+              Add New
+            </a>
+          </button>
+        </div>
+
+        <div class="card-body">
+
+          <p-table
+            [value]="accountGroups"
+            [paginator]="true"
+            [rows]="20"
+            [rowsPerPageOptions]="[20,50,100]"
+            showGridlines="true"
+            sortMode="multiple"
+            paginatorStyleClass="custom-paginator">
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="accountGroupCode">
+                  Group Code
+                  <p-sortIcon field="accountGroupCode"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="accountGroupName">
+                  Group Name
+                  <p-sortIcon field="accountGroupName"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="ugName">
+                  User Group Name
+                  <p-sortIcon field="ugName"></p-sortIcon>
+                </th>
+
+                <th>Action</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-accGroup>
+              <tr>
+                <td>{{ accGroup.accountGroupCode }}</td>
+                <td>{{ accGroup.accountGroupName }}</td>
+                <td>{{ accGroup.ugName }}</td>
+
+                <td>
+                 <button
+                    type="button"
+                    class="btn btn-link p-0 edit-btn"
+                    (click)="onEdit(accGroup.id)">
+                    <svg cIcon name="cilPencil"></svg>
+                </button>
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,86 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+
+        <!-- HEADER -->
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+          <strong class="h5">User Access Management - {{ userInfo.firstName }} {{ userInfo.lastName }}</strong>
+
+          <button class="btn btn-success" (click)="savePermissions()">
+            Provide Access
+          </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body">        
+
+          <!-- TABLE -->
+          <p-table
+            [value]="userAccessList"
+            dataKey="id"
+            [paginator]="true"
+            [rows]="10"
+            showGridlines="true">
+
+            <!-- HEADER -->
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Page Code</th>
+                <th>Page Name</th>
+
+                <th>View</th>
+                <th>Add</th>
+                <th>Edit</th>               
+              </tr>
+            </ng-template>
+
+            <!-- BODY -->
+            <ng-template pTemplate="body" let-row>
+              <tr>
+
+                <td>
+                  {{ row.pageCode }}
+                </td>
+                <td>
+                  {{ row.pageName }}
+                </td>
+                  <td class="text-center">
+                    <input
+                      type="checkbox"
+                      class="form-check-input access-checkbox"
+                      [(ngModel)]="row.canView"
+                      [ngModelOptions]="{standalone:true}">
+                  </td>
+
+                  <td class="text-center">
+                    <input
+                      type="checkbox"
+                      class="form-check-input access-checkbox"
+                      [(ngModel)]="row.canAdd"
+                      [ngModelOptions]="{standalone:true}">
+                  </td>
+
+                  <td class="text-center">
+                    <input
+                      type="checkbox"
+                      class="form-check-input access-checkbox"
+                      [(ngModel)]="row.canUpdate"
+                      [ngModelOptions]="{standalone:true}">
+                  </td>                                                                     
+
+              </tr>
+            </ng-template>
+
+          </p-table>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,245 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+
+        <!-- HEADER -->
+        <div class="card-header bg-danger">
+
+          <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+
+            <!-- Title -->
+            <div>
+              <h5>
+                Pay Salaries
+              </h5>
+            </div>
+
+            <!-- Filters -->
+            <div class="d-flex flex-column flex-md-row gap-2">
+
+              <!-- Month -->
+              <select
+                class="form-select"
+                [(ngModel)]="salaryMonth"                
+                style="min-width: 140px;">
+
+                <option
+                  *ngFor="let month of months"
+                  [value]="month.id">
+                  {{ month.name }}
+                </option>
+
+              </select>
+
+              <!-- Year -->
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="salaryYear"                
+                placeholder="Year"
+                style="min-width: 140px;" />       
+                
+                 <!-- Load -->
+                <button
+                type="button"
+                class="btn btn-primary text-nowrap text-white"
+                (click)="loadApprovedSalariesByMonthYear()">
+                Load Salaries
+                </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body">
+
+          <p-table
+            [value]="approvedSalaries"
+            [paginator]="true"
+            [rows]="10"
+            responsiveLayout="scroll"
+            showGridlines="true"
+            styleClass="p-datatable-sm p-datatable-gridlines"
+            [sortMode]="'multiple'">
+
+            <!-- TABLE HEADER -->
+            <ng-template pTemplate="header">
+
+              <tr>
+
+                <th style="min-width: 80px;">
+                  SR No
+                </th>
+
+                <th pSortableColumn="employeeCode">
+                  Employee Code
+                  <p-sortIcon field="employeeCode"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="employeeFullName">
+                  Employee Name
+                  <p-sortIcon field="employeeFullName"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="employeeContact">
+                  Contact
+                  <p-sortIcon field="employeeContact"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="salaryMonth">
+                  Month
+                  <p-sortIcon field="salaryMonth"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="salaryYear">
+                  Year
+                  <p-sortIcon field="salaryYear"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="totalWorkingDays">
+                  Working Days
+                  <p-sortIcon field="totalWorkingDays"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="presentDays">
+                  Present Days
+                  <p-sortIcon field="presentDays"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="netPayableSalary">
+                  ₹Net Salary
+                  <p-sortIcon field="netPayableSalary"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="status">
+                  Status
+                  <p-sortIcon field="status"></p-sortIcon>
+                </th>
+
+                <th style="min-width: 120px;">
+                  Action
+                </th>
+
+              </tr>
+
+            </ng-template>
+
+            <!-- TABLE BODY -->
+            <ng-template
+              pTemplate="body"
+              let-salary
+              let-rowIndex="rowIndex">
+
+              <tr>
+
+                <!-- SR Number -->
+                <td>
+                  {{ rowIndex + 1 }}
+                </td>
+
+                <!-- Employee Code -->
+                <td>
+                  {{ salary.employeeCode }}
+                </td>
+
+                <!-- Employee Name -->
+                <td>
+                  {{ salary.employeeFullName }}
+                </td>
+
+                <!-- Employee Contact -->
+                <td>
+                  {{ salary.phonePrimary }}
+                </td>
+
+                <!-- Salary Month -->
+                <td>
+                  {{ getMonthName(salary.salaryMonth) }}
+                </td>
+
+                <!-- Salary Year -->
+                <td>
+                  {{ salary.salaryYear }}
+                </td>
+
+                <!-- Working Days -->
+                <td>
+                  {{ salary.totalWorkingDays }}
+                </td>
+
+                <!-- Present Days -->
+                <td>
+                  {{ salary.presentDays }}
+                </td>
+                
+                <!-- Net Payable Salary -->
+                <td class="fw-bold text-success">
+                  ₹{{ salary.netPayableSalary}}
+                </td>
+                <!-- Status -->
+                <td>
+                  <span
+                    class="badge"
+                    [ngClass]="{                      
+                      'bg-success': salary.status === 'Confirmed'
+                    }">
+                    {{ salary.status }}
+                  </span>
+
+                </td>
+
+                <!-- Action -->
+                <td>
+
+                  <div class="d-flex align-items-center gap-2">
+                    <button *ngIf="salary.status === 'Confirmed'"
+                    type="button" 
+                    class="btn fixed-badge btn-primary rounded-pill mt-1 mb-1"
+                    cTooltip="Pay Salary"
+                    (click)="onPaySalary(salary)">
+                    <svg cIcon name="cil-dollar"></svg>
+                  </button>                
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            </ng-template>
+
+            <!-- EMPTY MESSAGE -->
+            <ng-template pTemplate="emptymessage">
+
+              <tr>
+
+                <td colspan="9" class="text-center py-4">
+
+                  <div class="text-muted fw-bold">
+                    No Approved Salaries Found
+                  </div>
+
+                </td>
+
+              </tr>
+
+            </ng-template>
+
+          </p-table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

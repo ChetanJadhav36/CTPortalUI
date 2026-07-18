@@ -1,0 +1,105 @@
+<div class="container-fluid min-vh-100 d-flex p-0 page-no-top">
+  <c-container>
+    <c-row class="justify-content-center">
+      <c-col lg="7" md="9" xl="6">
+        <c-card>
+          <c-card-body>
+            <form cForm [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+              <h1>Register</h1>
+              <p class="text-body-secondary">Register New User</p>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilUser"></svg>
+                </span>
+                <input
+                  cFormControl
+                  autoComplete="given-name"
+                  placeholder="First Name"
+                  formControlName="firstName"
+                  maxlength="50" />
+              </c-input-group>
+
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilUser"></svg>
+                </span>
+                <input
+                  cFormControl
+                  autoComplete="family-name"
+                  placeholder="Last Name"
+                  formControlName="lastName"
+                  maxlength="50" />
+              </c-input-group>
+
+              <c-input-group class="mb-3">
+                <span cInputGroupText>&#64;</span>
+                <input
+                  cFormControl
+                  autoComplete="email"
+                  placeholder="Email"
+                  formControlName="email"
+                  maxlength="100" />
+              </c-input-group>
+
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilSpeech"></svg>
+                </span>
+                <input
+                  cFormControl
+                  autoComplete="tel"
+                  placeholder="Phone Number"
+                  formControlName="phoneNumber"
+                  maxlength="12" />
+              </c-input-group>
+
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilLockLocked"></svg>
+                </span>
+                <input
+                  cFormControl
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Password"
+                  formControlName="password"
+                  maxlength="15" />
+              </c-input-group>
+
+              <c-input-group class="mb-4">
+                <span cInputGroupText>
+                  <svg cIcon name="cilLockLocked"></svg>
+                </span>
+                <input
+                  cFormControl
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Repeat Password"
+                  formControlName="confirmPassword"
+                  maxlength="15" />
+              </c-input-group>
+              
+              <c-input-group class="mb-3">
+              <span cInputGroupText>
+                <svg cIcon name="cilPeople"></svg>
+              </span>
+
+              <select
+                class="form-select"
+                formControlName="role">
+                <option *ngFor="let role of roles" [value]="role.id">
+                  {{ role.name }}
+                </option>
+              </select>
+            </c-input-group>              
+
+              <div class="d-grid">
+                <button type="submit" cButton color="success" [disabled]="registerForm.invalid">Create Account</button>
+              </div>
+            </form>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>

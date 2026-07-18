@@ -1,0 +1,142 @@
+<div class="container-fluid p-0">
+
+  <div class="card rounded-0">
+
+    <!-- HEADER -->
+    <div class="card-header bg-primary text-white py-3">
+
+      <div class="row align-items-center gy-3">
+
+        <div class="col-12 col-lg-4">
+          <strong>Monthly Attendance</strong>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <input
+            type="month"
+            class="form-control"
+            id="selectedMonth"
+            [(ngModel)]="selectedMonth"
+            (change)="loadAttendance()" />
+        </div>
+
+        <div class="col-12 col-lg-4 text-lg-end">
+          <button
+            class="btn btn-light w-100 w-lg-auto"
+            (click)="saveAttendance()">
+            <strong>Save Attendance</strong>            
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- BODY -->
+    <div class="card-body p-0">
+      
+      <p-table
+          [value]="employees"
+          dataKey="employeeId"
+          [scrollable]="true"
+          scrollDirection="horizontal"
+          styleClass="p-datatable-sm p-datatable-gridlines">
+
+  <!-- HEADER -->
+  <ng-template pTemplate="header">
+    <tr>
+
+      <!-- Employee -->
+      <th style="min-width:220px">
+        Employees
+      </th>
+
+      <!-- Action -->
+      <th style="min-width:120px">
+        Action
+      </th>
+
+      <!-- Days -->
+      <th
+        *ngFor="let day of daysInMonth"
+        class="text-center"
+        style="min-width:120px">
+
+        <div>{{ day }}</div>
+
+        <small class="text-muted">
+          {{ getDayName(day) }}
+        </small>
+
+      </th>
+
+    </tr>
+  </ng-template>
+
+  <!-- BODY -->
+  <ng-template pTemplate="body" let-employee>
+    <tr>
+
+      <!-- Employee Name -->
+      <td class="fw-bold">
+        {{ employee.fullName }}
+      </td>
+
+      <!-- Action Column -->
+      <td>
+        <button
+          type="button"
+          class="btn btn-link p-0 edit-btn"
+          (click)="markToday(employee)">
+          Today
+        </button>
+      </td>
+
+      <!-- Attendance Columns -->
+      <td
+        *ngFor="let day of daysInMonth; let dayIndex = index"
+        class="p-1">
+
+        <select     
+        [attr.id]="'employeeAttendance-' + (employee.employeeId || employee.id || dayIndex) + '-' + day"
+        [attr.name]="'employeeAttendance-' + (employee.employeeId || employee.id || dayIndex) + '-' + day"     
+          class="form-select form-select-sm"
+          [(ngModel)]="employee.attendance[day]"
+          [ngModelOptions]="{ standalone: true }">
+
+          <option [ngValue]="null">--</option>
+
+          <option [ngValue]="AttendanceStatus.Present">
+            Present
+          </option>
+
+          <option [ngValue]="AttendanceStatus.Absent">
+            Absent
+          </option>       
+
+          <option [ngValue]="AttendanceStatus.HalfDay">
+            Half Day
+          </option>
+
+          <option [ngValue]="AttendanceStatus.OnLeave">
+            On Leave
+          </option>
+
+          <option [ngValue]="AttendanceStatus.Holiday">
+            Holiday
+          </option>
+
+        </select>
+
+      </td>
+
+    </tr>
+  </ng-template>
+
+</p-table>
+
+    </div>
+
+  </div>
+
+</div>

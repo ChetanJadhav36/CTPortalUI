@@ -1,0 +1,272 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+      <div class="card h-100 w-100 rounded-0">       
+        
+         <!-- HEADER -->
+        <div class="card-header bg-primary text-white py-3">
+
+          <div class="row align-items-center g-3">
+
+            <!-- LEFT SECTION -->
+            <div class="col-12 col-xl-3">
+
+              <div class="d-flex flex-column">
+
+                <!-- PAGE TITLE -->
+                <strong class="h5">
+                  {{ getPageTitle() }}
+                </strong>
+
+                <!-- PENDING TEMP WARNING -->
+                <small
+                  *ngIf="pendingTempSalary"
+                  class="text-warning fw-semibold mt-1">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                  Pending:
+                  {{ pendingTempSalary }}
+                </small>
+
+              </div>
+
+            </div>
+
+            <!-- RIGHT SECTION -->
+            <div class="col-12 col-xl-9">
+
+              <div class="d-flex flex-wrap align-items-center justify-content-xl-end gap-2">              
+
+                <!-- MONTH -->
+                <select
+                  class="form-select compact-control-sm btn-outline-light"
+                  [(ngModel)]="salaryMonth">
+                  <option [value]="1">Jan</option>
+                  <option [value]="2">Feb</option>
+                  <option [value]="3">Mar</option>
+                  <option [value]="4">Apr</option>
+                  <option [value]="5">May</option>
+                  <option [value]="6">Jun</option>
+                  <option [value]="7">Jul</option>
+                  <option [value]="8">Aug</option>
+                  <option [value]="9">Sep</option>
+                  <option [value]="10">Oct</option>
+                  <option [value]="11">Nov</option>
+                  <option [value]="12">Dec</option>
+                </select>
+
+                <!-- YEAR -->
+                <input
+                  type="number"
+                  class="form-control compact-year"
+                  [(ngModel)]="salaryYear" />
+                  
+                  <!-- Load Button -->
+                  <button
+                  class="btn btn-light text-nowrap"
+                   (click)="loadSalaryReport()">
+                    Load
+                  </button>
+
+                  <!-- Generate Button -->
+                  <button *ngIf="canGenerateSalary()"
+                  class="btn btn-light text-nowrap"
+                   (click)="generateTempSalary()">
+                    Generate
+                  </button>
+
+                  <!-- Approve Button -->
+                  <button *ngIf="canApproveSalary()"
+                  class="btn btn-light text-nowrap"
+                   (click)="approveSelectedEmployees()">
+                    Approve
+                  </button>
+
+                  <!-- Delete Button -->
+                  <button *ngIf="canDeleteSalary()"
+                  class="btn btn-light text-nowrap"
+                   (click)="deleteTempSalary()">
+                    Delete
+                  </button>
+
+                  <!-- Confirm Button -->
+                  <button *ngIf="canConfirmSalary()"
+                  class="btn btn-light text-nowrap"
+                   (click)="confirmSalary()">
+                    Confirm
+                  </button>                  
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>     
+
+        <!-- WARNING -->
+        <div
+          *ngIf="pendingTempSalary"
+          class="alert alert-warning rounded-0 mb-0">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          Pending Temp Salary Exists For
+          <strong>
+            {{ pendingTempSalary }}
+          </strong>
+          Please Re-Confirm Or Delete It First.
+        </div>
+
+        <!-- GENERATED MONTHS -->
+        <div class="p-2 border-bottom bg-light">
+          <div class="d-flex flex-wrap gap-2">
+             <strong class="text-secondary">
+              Generated Salary Months:
+            </strong>
+            <span 
+              *ngFor="let item of generatedSalaryMonths"
+              class="badge rounded-pill bg-success text-white px-3 py-2">
+               {{ getFormattedMonth(item.salaryMonth, item.salaryYear) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body">
+
+          <p-table
+            [value]="salaryReport"
+            [paginator]="true"
+            [rows]="10"
+            showGridlines="true"
+            responsiveLayout="scroll"
+            [sortMode]="'multiple'"
+            styleClass="p-datatable-sm p-datatable-gridlines">
+
+            <!-- HEADER -->
+            <ng-template pTemplate="header">
+
+              <tr>
+                <th>SR No</th>
+                <th pSortableColumn="employeeCode">
+                  Code
+                  <p-sortIcon field="employeeCode"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="employeeFullName">
+                  Employee Name
+                  <p-sortIcon field="employeeFullName"></p-sortIcon>
+                </th>
+
+                <th>Month</th>
+                <th>Year</th>
+                <th>Working</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Gross</th>
+                <th>Per Day</th>
+                <th>Absent Ded</th>
+                <th>Other Ded</th>
+                <th>Add Amt</th>
+                <th>Net Salary</th>
+                <th>Status</th>
+                <th width="50">
+                  <input
+                    type="checkbox"
+                    class="large-checkbox"
+                    [(ngModel)]="allSalaryEmployeesSelected"
+                    (change)="toggleSelectAll($event)"
+                  />
+                </th>
+              </tr>
+
+            </ng-template>
+
+            <!-- BODY -->
+            <ng-template pTemplate="body" let-salary>
+
+              <tr>
+                <td>
+                  {{ salaryReport.indexOf(salary) + 1 }}
+                </td>
+                <td>
+                  {{ salary.employeeCode }}
+                </td>
+                <td>
+                  {{ salary.employeeFullName }}
+                </td>
+                <td>
+                  {{ getMonthName(salary.salaryMonth) }}
+                </td>
+                <td>
+                  {{ salary.salaryYear }}
+                </td>
+                <td>
+                  {{ salary.totalWorkingDays }}
+                </td>
+                <td class="text-success fw-bold">
+                  {{ salary.presentDays }}
+                </td>
+                <td class="text-danger fw-bold">
+                  {{ salary.absentDays }}
+                </td>
+                <td class="fw-bold text-primary">
+                  ₹{{ salary.grossSalary }}
+                </td>
+                <td>
+                  ₹{{ salary.perDaySalary }}
+                </td>
+                <td class="text-danger">
+                  ₹{{ salary.absentDeductionAmount }}
+                </td>
+                <td class="text-danger">
+                  ₹{{ salary.otherDeductionAmount }}
+                </td>
+                <td class="text-success">
+                  ₹{{ salary.otherAdditionalAmount }}
+                </td>
+                <td class="fw-bold text-success">
+                  ₹{{ salary.netPayableSalary }}
+                </td>
+                <td>
+                  <span
+                    class="badge"
+                    [ngClass]="{                      
+                      'bg-warning text-dark': salary.status === 'Generated',                      
+                      'bg-info': salary.status === 'Approved',                      
+                      'bg-primary': salary.status === 'Confirmed',                      
+                      'bg-success': salary.status === 'Paid',                      
+                    }">
+                    {{ salary.status }}
+                  </span>
+                </td>
+                <!-- ACTION -->
+                <td>
+                <input
+                  [disabled]="salary.status !== 'Generated'"
+                  class="large-checkbox mt-1 mb-1"
+                  type="checkbox"
+                  [(ngModel)]="salary.isSelected"
+                />
+              </td>
+
+              </tr>
+
+            </ng-template>
+
+          </p-table>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<app-salary-approval-confirmation-pop-up
+  #salaryApprovalPopup
+  #popup
+  (confirmed)="onApprovalConfirmed($event)"
+  (closed)="onPopupClose()"
+  >
+</app-salary-approval-confirmation-pop-up>

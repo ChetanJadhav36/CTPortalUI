@@ -1,0 +1,96 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+          <strong class="h5">Employee Registration</strong>
+          
+           <button type="button" class="btn btn-light">
+                    <a cDropdownItem (click)="onAddNewEmployee()">
+                    <svg cIcon class="me-2" name="cilUserFollow"></svg>
+                    Add New
+                  </a>
+            </button>
+        </div>
+
+        <div class="card-body">                
+          <p-table [value]="employees" 
+          [paginator]="true" 
+          [rows]="20" 
+          [rowsPerPageOptions]="[20,50,100]"
+          showGridlines="true" 
+          [sortMode]="'multiple'"
+          paginatorStyleClass="custom-paginator">
+          <ng-template pTemplate="header">
+            <tr>             
+              <th pSortableColumn="employeeCode">
+                Employee Code <p-sortIcon field="employeeCode"></p-sortIcon>
+              </th>
+              <th pSortableColumn="fullName">
+                Full Name <p-sortIcon field="fullName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="localAddress">
+                Local Address <p-sortIcon field="localAddress"></p-sortIcon>
+              </th>
+              <th pSortableColumn="phonePrimary">
+                Phone Primary <p-sortIcon field="phonePrimary"></p-sortIcon>
+              </th>
+              <th pSortableColumn="email">
+                Email <p-sortIcon field="email"></p-sortIcon>
+              </th>              
+              <th pSortableColumn="birthDate">
+                Birth Date <p-sortIcon field="birthDate"></p-sortIcon>
+              </th>
+              <th pSortableColumn="joinDate">
+                Join Date <p-sortIcon field="joinDate"></p-sortIcon>
+              </th>             
+              <th>Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-employee>
+            <tr>
+              <td>{{ employee.employeeCode }}</td>
+              <td>{{ employee.fullName }}</td>
+              <td>{{ employee.localAddress }}</td>
+              <td>{{ employee.phonePrimary }}</td>
+              <td>{{ employee.email }}</td>
+              <td>{{ employee.birthDate | date: 'dd MMMM yyyy' }}</td>
+              <td>{{ employee.joinDate | date: 'dd MMMM yyyy' }}</td>
+              <td>    
+              <div>
+                <button type="button"
+                        class="btn btn-link edit-btn"
+                        title="Edit Employee"
+                        (click)="onEditEmployee(employee.id)">
+                  <svg cIcon name="cilPencil"></svg>
+                </button>
+
+                <button *ngIf="!employee.employeeContactId" type="button"
+                        class="btn btn-link edit-btn ml-1"
+                        title="Add Employee Contact"
+                        (click)="onAddEmployeeContact(employee.id)">
+                  <svg cIcon name="cilUserFollow"></svg>
+                </button>
+                
+                <button *ngIf="employee.employeeContactId" type="button"
+                        class="btn btn-link edit-btn ml-1"
+                        title="Edit Employee Contact"
+                        (click)="onEditEmployeeContact(employee.id, employee.employeeContactId)">
+                  <svg cIcon name="cilArrowTop"></svg>
+                </button>                
+            </div>                        
+              </td>
+            </tr>
+          </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+

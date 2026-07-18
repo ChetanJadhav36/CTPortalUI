@@ -1,0 +1,155 @@
+<div class="container-fluid min-vh-100 d-flex p-0 page-no-top">
+  <div class="row g-0 w-100">
+    <div class="col-12">
+      <div class="card h-100 w-100 rounded-0">
+
+        <!-- Header -->
+        <div class="card-header d-flex justify-content-between" *ngIf="!isUpdateMode">
+          <strong>Add Company</strong>
+        </div>
+        <div class="card-header d-flex justify-content-between" *ngIf="isUpdateMode">
+          <strong>Update Company</strong>
+        </div>
+
+        <div class="card-body">
+          <form [formGroup]="myForm" (ngSubmit)="onSubmitCompany()">
+            <div class="row">
+
+              <!-- Company Code -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Company Code</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="companyCode"
+                  placeholder="Enter Company Code"
+                  maxlength="10">
+              </div>
+
+              <!-- Company Name -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Company Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="companyName"
+                  placeholder="Enter Company Name">
+              </div>
+
+              <!-- Registration Number -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Registration Number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="registrationNumber"
+                  placeholder="Enter Registration Number">
+              </div>
+
+              <!-- Industry Type -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Industry Type</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="industryType"
+                  placeholder="Enter Industry Type">
+              </div>
+
+              <!-- Registration Date -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Registration Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  formControlName="registrationDate">
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  formControlName="email"
+                  placeholder="Enter Email">
+              </div>
+
+              <!-- Phone Number -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Phone Number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="phoneNumber"
+                  placeholder="Enter Phone Number">
+              </div>
+
+              <!-- Address Line 1 -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Address Line 1</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="addressLine1"
+                  placeholder="Enter Address Line 1">
+              </div>
+
+              <!-- Address Line 2 -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Address Line 2</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="addressLine2"
+                  placeholder="Enter Address Line 2">
+              </div>
+
+              <!-- City -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">City</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="city"
+                  placeholder="Enter City">
+              </div>
+
+              <!-- Postal Code -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Postal Code</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="postalCode"
+                  placeholder="Enter Postal Code">
+              </div>
+
+              <!-- State -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">State</label>
+                <select
+                  class="form-select"
+                  formControlName="stateId">
+                  <option value="" disabled>Select State</option>
+                  <option *ngFor="let state of states" [value]="state.id">
+                    {{ state.code }} - {{ state.name }} (GST Code - {{ state.gstCode }})
+                  </option>
+                </select>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="col-md-12 text-end">
+                <button type="submit" class="btn btn-primary">
+                  {{ isUpdateMode ? 'Update' : 'Submit' }}
+                </button>
+              </div>
+
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

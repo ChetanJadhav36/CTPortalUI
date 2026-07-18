@@ -1,0 +1,82 @@
+<c-modal
+  [visible]="visiblePopup"
+  (visibleChange)="handleVisibleChange($event)"
+>
+  <c-modal-header class="bg-warning text-dark d-flex justify-content-between">
+    <h5 cModalTitle>Approval Confirmation</h5>
+    <button cButtonClose (click)="close()"></button>
+  </c-modal-header>
+  <c-modal-body>
+
+  <p class="mb-3 fw-bold">
+    Are you sure you want to approve this transaction?
+  </p>
+
+  <div class="row mb-2">
+    <div class="col-5 fw-bold">Voucher Number</div>
+    <div class="col-7">{{ transactionData?.voucherNumber }}</div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-5 fw-bold">Voucher Type</div>
+    <div class="col-7">{{ transactionData?.voucherType }}</div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-5 fw-bold">Voucher Date</div>
+    <div class="col-7">
+      {{ transactionData?.voucherDate | date: 'dd MMMM yyyy' }}
+    </div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-5 fw-bold">Transaction No</div>
+    <div class="col-7">{{ transactionData?.transactionNo }}</div>
+  </div>
+
+  <hr class="my-2">
+
+  <div class="row mb-2">
+    <div class="col-5 fw-bold">Paid From</div>
+    <div class="col-7">{{ transactionData?.sourceAccountName }}</div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-5 fw-bold">Paid To</div>
+    <div class="col-7">{{ transactionData?.destinationAccountName }}</div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-5 fw-bold">Payment Mode</div>
+    <div class="col-7">{{ transactionData?.paymentType }}</div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-5 fw-bold">Status</div>
+    <div class="col-7">
+      {{ transactionData?.status }}
+    </div>
+  </div>
+
+  <hr class="my-1">
+
+  <div class="row mb-1">
+    <div class="col-5 fw-bold fs-4">Amount</div>
+    <div class="col-7">
+      <span class="fw-bold text-success fs-4">
+        ₹{{ transactionData?.amount }}
+      </span>
+    </div>
+  </div>
+
+</c-modal-body>  
+
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="close()">
+      Close
+    </button>
+    <button cButton color="primary" (click)="confirmApproval()">
+      Confirm
+    </button>
+  </c-modal-footer>
+</c-modal>

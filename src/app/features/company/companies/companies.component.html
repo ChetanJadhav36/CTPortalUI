@@ -1,0 +1,91 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header d-flex justify-content-between">
+          <strong>Company Registration</strong>
+          
+           <button type="button" class="btn btn-primary">
+                    <a cDropdownItem (click)="onAddNewCompany()">
+                    <svg cIcon class="me-2" name="cilUserFollow"></svg>
+                    Add New
+                  </a>
+            </button>
+        </div>
+
+        <div class="card-body">                
+          <p-table [value]="companies" [paginator]="true" [rows]="10" 
+          showGridlines="true" [sortMode]="'multiple'">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="id">
+                ID <p-sortIcon field="id"></p-sortIcon>
+              </th>
+              <th pSortableColumn="companyCode">
+                Cmp Code <p-sortIcon field="companyCode"></p-sortIcon>
+              </th>
+              <th pSortableColumn="companyName">
+                Company Name <p-sortIcon field="companyName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="registrationNumber">
+                Reg. No <p-sortIcon field="registrationNumber"></p-sortIcon>
+              </th>
+              <th pSortableColumn="industryType">
+                Industry Type <p-sortIcon field="industryType"></p-sortIcon>
+              </th>
+              <th pSortableColumn="registrationDate">
+                Reg. Date <p-sortIcon field="registrationDate"></p-sortIcon>
+              </th>
+              <th pSortableColumn="email">
+                Email <p-sortIcon field="email"></p-sortIcon>
+              </th>
+              <th pSortableColumn="phoneNumber">
+                Phone Number <p-sortIcon field="phoneNumber"></p-sortIcon>
+              </th>
+              <th pSortableColumn="addressLine1">
+                Address <p-sortIcon field="addressLine1"></p-sortIcon>
+              </th>
+              <th pSortableColumn="city">
+                City <p-sortIcon field="city"></p-sortIcon>
+              </th>
+              <th pSortableColumn="postalCode">
+                Postal Code <p-sortIcon field="postalCode"></p-sortIcon>
+              </th>
+              <th>Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-company>
+            <tr>
+              <td>{{ company.id }}</td>
+              <td>{{ company.companyCode }}</td>
+              <td>{{ company.companyName }}</td>
+              <td>{{ company.registrationNumber }}</td>
+              <td>{{ company.industryType }}</td>
+              <td>{{ company.registrationDate | date }}</td>
+              <td>{{ company.email }}</td>
+              <td>{{ company.phoneNumber }}</td>
+              <td>{{ company.addressLine1 }}</td>
+              <td>{{ company.city }}</td>
+              <td>{{ company.postalCode }}</td>
+              <td>                               
+                <button type="button" class="btn btn-primary rounded-pill mt-1 mb-1" (click)="onEdit(company.id)" cTooltip="Edit Company">
+                  <svg cIcon name="cilPencil"></svg>
+                </button>
+                 <button type="button" class="btn btn-primary rounded-pill mt-1 mb-1" (click)="onCompanyUsers(company.id)" cTooltip="Company Users">
+                  <svg cIcon name="cilPeople"></svg>
+                </button>               
+              </td>
+            </tr>
+          </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+

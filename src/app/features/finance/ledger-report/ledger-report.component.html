@@ -1,0 +1,178 @@
+<div class="card">
+
+    <!-- Header -->
+    <div class="card-header bg-primary text-white">
+
+        <div class="row g-2 align-items-end">
+
+            <!-- Title -->
+            <div class="col-12 col-lg-2">
+                <strong class="h5">Ledger Report</strong>
+            </div>
+
+            <!-- Ledger Type -->
+            <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                <label class="form-label mb-1">Ledger Type</label>
+                <select class="form-select form-select-sm"
+                        [(ngModel)]="selectedLedgerType" 
+                        (change)="onLedgerTypeChange()">
+                    <option [ngValue]="null">Select</option>
+                    <option *ngFor="let item of ledgerTypes"
+                            [value]="item.value">
+                        {{item.label}}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Account -->
+            <div class="col-12 col-sm-6 col-md-3 col-lg-2"
+                 *ngIf="selectedLedgerType=='ACCOUNT'">
+                <label class="form-label mb-1">Account</label>
+                <select class="form-select form-select-sm"
+                        [(ngModel)]="accountId">
+                    <option [ngValue]="null">Select Account</option>
+                    <option *ngFor="let acc of accounts"
+                            [value]="acc.id">
+                        {{acc.accountName}}
+                    </option>
+
+                </select>
+            </div>
+
+            <!-- Employee -->          
+            <div class="col-12 col-sm-6 col-md-3 col-lg-2 position-relative" *ngIf="selectedLedgerType=='EMPLOYEE'">
+
+                <input
+                    type="text"
+                    class="form-control form-control-sm"
+                    [(ngModel)]="employeeFullName"
+                    placeholder="Enter Employee Name"
+                    (input)="searchEmployee($event)"
+                    autocomplete="off">
+
+                <ul *ngIf="employees.length > 0"
+                    class="list-group position-absolute w-100 shadow"
+                    style="z-index:1000; max-height:200px; overflow-y:auto">
+
+                    <li
+                        *ngFor="let employee of employees"
+                        class="list-group-item list-group-item-action"
+                        (click)="selectEmployee(employee)">
+
+                        {{employee.employeeFullName}}
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <!-- From -->
+            <div class="col-6 col-md-2 col-lg-2">
+                <label class="form-label mb-1">From</label>
+                <input type="date"
+                       class="form-control form-control-sm"
+            [(ngModel)]="fromDate">
+            </div>
+
+            <!-- To -->
+            <div class="col-6 col-md-2 col-lg-2">
+                <label class="form-label mb-1">To</label>
+                <input type="date"
+                       class="form-control form-control-sm"
+                       [(ngModel)]="toDate">
+            </div>
+
+            <!-- Search -->
+            <div class="col-12 col-md-2 col-lg-1">
+                <button class="btn btn-light w-100"
+                        (click)="searchLedger()">
+                    Search
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+
+        <!-- Table -->
+		<div class="card mt-3" *ngIf="ledger">
+        <div class="card-header">
+            <div class="row">
+
+                <div class="col">
+                    <b>Opening :</b>
+                    {{ledger.openingBalance}}
+                </div>
+                <div class="col">
+                    <b>Total Debit :</b>
+                    {{ledger.totalDebit}}
+                </div>
+                <div class="col">
+                    <b>Total Credit :</b>
+                    {{ledger.totalCredit}}
+                </div>
+                <div class="col">
+                    <b>Closing :</b>
+                    {{ledger.closingBalance}}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card-body">
+            <p-table
+                [value]="ledger.transactions"
+                [paginator]="true"
+                [rows]="15"
+                showGridlines="true">
+
+                <ng-template pTemplate="header">
+
+                    <tr>
+                        <th>Date</th>
+                        <th>Voucher</th>
+                        <th>Type</th>
+                        <th>Particular</th>
+                        <th>Dr. Amt</th>
+                        <th>Cr. Amt</th>
+                        <th>Net Balance</th>
+                        <th>Narration</th>
+                    </tr>
+
+                </ng-template>
+
+                <ng-template
+                    pTemplate="body"
+                    let-row>
+
+                    <tr>
+                        <td>{{row.date | date}}</td>
+                        <td>{{row.voucherNo}}</td>
+                        <td>{{row.voucherType}}</td>
+                        <td>{{row.particular}}</td>
+                        <td class="text-danger">
+                            {{row.debit}}
+                        </td>
+                        <td class="text-success">
+                            {{row.credit}}
+                        </td>
+                        <td>
+                            {{row.balance}}
+                        </td>
+                        <td>{{row.narration}}</td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+
+    </div>
+
+    </div>
+
+</div>

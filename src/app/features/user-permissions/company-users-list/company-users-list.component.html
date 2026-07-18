@@ -1,0 +1,75 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header bg-primary text-white d-flex align-items-center flex-wrap">
+          <strong class="me-auto h5">Company Users </strong>
+
+        <div class="d-flex gap-2 mt-2 mt-md-0">
+          <button
+            type="button"
+            class="btn btn-light"
+            (click)="onRegisterNewUser()">
+            <svg cIcon class="me-2" name="cilUserFollow"></svg>
+            Register New User
+          </button>          
+        </div>
+        </div>
+
+        <div class="card-body">                
+          <p-table [value]="companyUsers" 
+            [paginator]="true"
+            [rows]="20"
+            [rowsPerPageOptions]="[20,50,100]"
+            showGridlines="true"
+            sortMode="multiple"
+            paginatorStyleClass="custom-paginator">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="id">
+                ID <p-sortIcon field="id"></p-sortIcon>
+              </th>              
+              <th pSortableColumn="userFullName">
+                User Name <p-sortIcon field="userFullName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="email">
+                Email <p-sortIcon field="email"></p-sortIcon>
+              </th>
+              <th pSortableColumn="isActive">
+                Is Active <p-sortIcon field="isActive"></p-sortIcon>
+              </th>      
+              <th pSortableColumn="createdDate">
+                Created Date <p-sortIcon field="createdDate"></p-sortIcon>
+              </th>              
+              <th>Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-user>
+            <tr>
+              <td>{{ user.id }}</td>             
+              <td>{{ user.userFullName }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.isActive }}</td>          
+              <td>{{ user.createdDate | date }}</td>             
+              <td>                               
+                <button type="button" 
+                class="btn btn-link p-0 edit-btn"
+                (click)="onUserAccessList(user)"
+                cTooltip="Access Control">
+                  <svg cIcon name="cilCheck"></svg>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+

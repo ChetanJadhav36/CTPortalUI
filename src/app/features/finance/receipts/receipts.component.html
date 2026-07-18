@@ -1,0 +1,95 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+          <strong class="h5">Receipts</strong>
+          
+          <button type="button" class="btn btn-light">
+            <a cDropdownItem (click)="onAddNewReceipt()">
+              <svg cIcon class="me-2" name="cilUserFollow"></svg>
+              Add New
+            </a>
+          </button>
+        </div>
+
+        <div class="card-body">                
+          <p-table [value]="receipts"
+            [paginator]="true" 
+            [rows]="20" 
+            [rowsPerPageOptions]="[20,50,100]"
+            showGridlines="true" 
+            [sortMode]="'multiple'"
+            paginatorStyleClass="custom-paginator">
+
+          <ng-template pTemplate="header">
+            <tr>     
+              <th pSortableColumn="voucherDate">
+                Voucher Date <p-sortIcon field="voucherDate"></p-sortIcon>
+              </th> 
+              <th pSortableColumn="voucherNumber">
+                Voucher Number <p-sortIcon field="voucherNumber"></p-sortIcon>
+              </th>         
+              <th pSortableColumn="debitAccountName">
+                Debit Account Name <p-sortIcon field="debitAccountName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="accountGroupName">
+                Entry Type <p-sortIcon field="accountGroupName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="creditAccountName">
+                Credit Account Name <p-sortIcon field="creditAccountName"></p-sortIcon>
+              </th>
+               <th pSortableColumn="employeeFullName">
+                Employee Name <p-sortIcon field="employeeFullName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="systemAmount">
+                ₹System Amount <p-sortIcon field="systemAmount"></p-sortIcon>
+              </th>
+              <th pSortableColumn="amount">
+                ₹Amount <p-sortIcon field="amount"></p-sortIcon>
+              </th>
+              <th pSortableColumn="amountDifference">
+                ₹Amount Difference <p-sortIcon field="amountDifference"></p-sortIcon>
+              </th>
+              <th pSortableColumn="transactionNo">
+                Transaction No <p-sortIcon field="transactionNo"></p-sortIcon>
+              </th>               
+              <th pSortableColumn="paymentType">
+                    Payment Type <p-sortIcon field="paymentType"></p-sortIcon>
+              <th>Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-receipt>
+            <tr>
+              <td>{{ receipt.voucherDate | date }}</td>
+              <td>{{ receipt.voucherNumber }}</td>
+              <td>{{ receipt.destinationAccountName }}</td>
+              <td>{{ receipt.accountGroupName }}</td>
+              <td>{{ receipt.sourceAccountName }}</td>
+              <td>{{ receipt.employeeFullName }}</td>
+              <td>{{ receipt.systemAmount }}</td>
+              <td class="fw-bold text-success">₹{{ receipt.amount }}</td>
+              <td>{{ receipt.amountDifference }}</td>
+              <td>{{ receipt.transactionNo }}</td>             
+              <td>{{ receipt.paymentType}}</td>
+              <td>                               
+                <button type="button" 
+                class="btn btn-link p-0 edit-btn"
+                (click)="onEdit(receipt.id)">
+                  <svg cIcon name="cilPencil"></svg>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+
+          </p-table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

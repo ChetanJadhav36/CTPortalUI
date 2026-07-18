@@ -1,0 +1,98 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header bg-success d-flex justify-content-between">
+          <strong class="h5">Bank Deposits</strong>
+
+          <button type="button" class="btn btn-primary" (click)="onAddNewDeposit()">
+            <svg cIcon class="me-2" name="cilUserFollow"></svg>
+            Add Deposit
+          </button>
+        </div>
+
+        <div class="card-body">
+
+          <p-table 
+            [value]="deposits" 
+            [paginator]="true" 
+            [rows]="10"
+            showGridlines="true" 
+            [sortMode]="'multiple'">
+
+            <!-- HEADER -->
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="voucherDate">
+                  Date <p-sortIcon field="voucherDate"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="voucherNumber">
+                  V No <p-sortIcon field="voucherNumber"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="destinationAccountName">
+                  Received In <p-sortIcon field="destinationAccountName"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="amount">
+                  ₹Amount <p-sortIcon field="amount"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="sourceAccountName">
+                  Received From <p-sortIcon field="sourceAccountName"></p-sortIcon>
+                </th>              
+
+                <th pSortableColumn="status">
+                  Status <p-sortIcon field="status"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="narration">
+                  Narration <p-sortIcon field="narration"></p-sortIcon>
+                </th>               
+
+                <th>Action</th>
+              </tr>
+            </ng-template>
+
+            <!-- BODY -->
+            <ng-template pTemplate="body" let-deposit>
+              <tr>
+                <td>{{ deposit.voucherDate | date }}</td>
+                <td>{{ deposit.voucherNumber }}</td>                
+                <td>{{ deposit.destinationAccountName }}</td>
+                <td class="fw-bold text-success">₹{{ deposit.amount }}</td>
+                <td>{{ deposit.sourceAccountName }}</td>                              
+                <td>
+                  <span class="badge fixed-badge"
+                        [ngClass]="{
+                          'bg-warning': deposit.status === 'Draft',
+                          'bg-info': deposit.status === 'Approved',
+                          'bg-success': deposit.status === 'Paid'
+                        }">
+                    {{ deposit.status }}
+                  </span>
+                </td>
+
+                <td>{{ deposit.narration }}</td>               
+
+                <td>
+                  <button 
+                    type="button" 
+                    class="btn btn-primary rounded-pill mt-1 mb-1 me-1"
+                    (click)="onEditDeposit(deposit.id)">
+                    <svg cIcon name="cilPencil"></svg>
+                  </button>                  
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

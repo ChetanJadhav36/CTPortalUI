@@ -1,0 +1,531 @@
+    <div class="container-fluid p-2">
+      <div class="card">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <strong class="h5">
+              Add Expense Information
+              <span *ngIf="isUpdateMode"> - {{ draftForm.get('transactionStatus')?.value }}</span>
+            </strong>
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+
+              <!-- ================= LEFT FORM (DRAFT) ================= -->
+              <div class="col-md-8">
+                <form [formGroup]="draftForm" (ngSubmit)="onSaveDraft()">                 
+                    
+                    <!-- Row 1: Voucher Date and Voucher Number -->
+                    <div class="row mb-2">           
+                        
+                      <!-- Voucher Date -->
+                      <div class="col-md-3">
+                        <label class="fw-bold">
+                          Voucher Date : <span class="text-danger">*</span>
+                        </label>
+                      </div>       
+
+                      <div class="col-md-3">
+                        <input type="date"
+                            #voucherDate
+                            (keydown.enter)="focusNext(destinationAccount); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="voucherDate">
+                      </div>
+
+                      <!-- Voucher Number -->
+                      <div class="col-md-2">
+                        <label class="fw-bold"> Voucher No: </label>
+                      </div>
+                    
+                      <div class="col-md-3">
+                        <input type="text"
+                                  class="form-control form-control-sm"
+                                  formControlName="voucherNumber"
+                                  readonly>
+                      </div>
+
+                    </div>
+
+                    <!-- Paid From -->                   
+                    <div class="col-md-12 mb-2">
+                      <div class="row align-items-center">
+                        
+                        <div class="col-md-3">
+                        <label class="fw-bold">
+                          Paid From : <span class="text-danger">*</span>
+                        </label>
+                        </div>    
+                        
+                        <div class="col-md-3">
+                          <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            formControlName="sourceAccountCode">
+                        </div>    
+
+                        <div class="col-md-5">
+                            <select                              
+                              id="sourceAccount"
+                              name="sourceAccount"                              
+                              class="form-select form-select-sm"
+                              formControlName="sourceAccountId">
+                              <option value="">Select Account</option>
+                              <option
+                                *ngFor="let acc of sourceAccounts"
+                                [value]="acc.id">
+                                {{acc.accountName}}
+                              </option>
+                          </select>                        
+                        </div>                                 
+                      </div>
+                    </div>                 
+
+                    <!-- Entry Type -->
+                    <div class="col-md-12 mb-2">
+                      <div class="row align-items-center">
+                        
+                        <div class="col-md-3">
+                          <label class="fw-bold">
+                            Entry Type :
+                          </label>
+                        </div>
+                        
+                        <div class="col-md-6">
+                          <input
+                              type="text"
+                              id="accountGroupName"
+                              name="accountGroupName"
+                              class="form-control form-control-sm"
+                              formControlName="accountGroupName">
+                        </div>   
+
+                      </div>
+                    </div>                                                    
+                  
+                    <!-- Account Name -->
+                    <div class="col-md-12 mb-2">
+                      <div class="row align-items-center">
+                        
+                        <div class="col-md-3">
+                          <label class="fw-bold">
+                            Account Name : <span class="text-danger">*</span>
+                          </label>
+                        </div>
+                        
+                      <div class="col-md-6">
+                        <select
+                            class="form-select form-select-sm"
+                            #destinationAccount
+                            formControlName="destinationAccountId"
+                            (keydown.enter)="focusNext(amount); $event.preventDefault()"
+                            (change)="onDestinationAccountChange()">
+                          <option value="">
+                            Select Account
+                          </option>
+                          <option
+                            *ngFor="let acc of destinationAccounts"
+                            [value]="acc.id">
+                            {{acc.accountName}}
+                          </option>
+                        </select>					  
+                      </div>   
+
+                      </div>
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="col-md-12 mb-2">
+                    <div class="row align-items-center">
+                      
+                      <div class="col-md-3">
+                        <label class="fw-bold">
+                          Amount : <span class="text-danger">*</span>
+                        </label>
+                      </div>
+                      
+                      <div class="col-md-6">
+                        <input type="number"
+                            #amount
+                            (keydown.enter)="focusNext(narration); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="amount"
+                            placeholder="Enter Amount">
+                      </div>   
+
+                    </div>
+                    </div>
+                  
+                    <!-- Narration -->
+                    <div class="col-md-12 mb-2">
+                      <div class="row align-items-center">
+                        
+                        <div class="col-md-3">
+                          <label class="fw-bold">
+                            Narration :
+                          </label>
+                        </div>
+                        
+                        <div class="col-md-6">
+                          <input type="text"
+                              #narration
+                              (keydown.enter)="focusNext(transactionNo); $event.preventDefault()"
+                              class="form-control form-control-sm"
+                              formControlName="narration"
+                              placeholder="Enter Narration">
+                        </div>   
+
+                      </div>
+                    </div>
+                  
+                    <!-- Transaction No -->
+                    <div class="col-md-12 mb-2">
+                      <div class="row align-items-center">
+                        
+                        <div class="col-md-3">
+                          <label class="fw-bold">
+                            Transaction No :
+                          </label>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <input type="text"
+                              #transactionNo          
+                              (keydown.enter)="focusNext(paymentTypes); $event.preventDefault()"                  
+                              class="form-control form-control-sm"
+                              formControlName="transactionNo"
+                              placeholder="Enter Load No"                     
+                            >					  
+                        </div>   
+
+                      </div>
+                    </div>                                   
+                    
+                    <!-- Pay Mode -->
+                    <div class="col-md-12 mb-2">
+                      <div class="row align-items-center">
+                        
+                        <div class="col-md-3">
+                          <label class="fw-bold">
+                            Pay Mode : <span class="text-danger">*</span>
+                          </label>
+                        </div>
+                        
+                        <div class="col-md-6">
+                        <select class="form-select form-select-sm"
+                                #paymentTypes
+                                (change)="onPaymentTypeChange(paymentTypes.value)"                              
+                                formControlName="paymentType">
+                          <option value="">Select</option>
+                          <option [value]="PaymentType.Cash">Cash</option>
+                          <option [value]="PaymentType.Bank">Bank</option>
+                    </select>
+                        </div>   
+
+                      </div>
+                    </div>    
+
+                    <!-- Row 2: Bank Name and Cheque No -->
+                    <div class="row mb-2" *ngIf="!isCashMode">           
+                          
+                      <!-- Bank Name -->
+                      <div class="col-md-3">
+                        <label class="fw-bold">
+                          Bank Name :
+                        </label>
+                      </div>       
+
+                      <!-- Bank Name -->
+                      <div class="col-md-3">
+                        <input type="text"                                
+                                    class="form-control form-control-sm"
+                                    formControlName="bankName"                                
+                                    >	
+                      </div>
+
+                      <!-- Cheque No -->
+                      <div class="col-md-2">
+                        <label class="fw-bold">
+                            Cheque No : 
+                            </label>
+                      </div>
+                    
+                      <!-- Cheque No -->
+                      <div class="col-md-3">
+                      <input type="text"
+                                    #chequeNumber
+                                    (keydown.enter)="focusNext($event.target); $event.preventDefault()"
+                                    class="form-control form-control-sm"
+                                    formControlName="chequeNumber"
+                                    placeholder="Enter Cheque No / UPI">	                
+                      </div>
+
+                    </div>
+                                        
+                    <!-- Remarks -->                  
+                    <div class="col-md-12 mb-2" *ngIf="!isCashMode">
+                      <div class="row align-items-center">
+                        
+                        <div class="col-md-3">
+                          <label class="fw-bold">
+                            Remarks :
+                          </label>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <input type="text"
+                            #remark
+                            (keydown.enter)="onSaveDraft(); $event.preventDefault()"
+                            class="form-control form-control-sm"
+                            formControlName="remark"
+                            placeholder="Enter Remarks">			  
+                        </div>   
+
+                      </div>
+                    </div>                      
+                    
+                    <!-- Row 3: Created By and Approved By -->
+                    <div class="row mb-2" *ngIf="currentStatus === TransactionStatus.Approved">           
+                          
+                      <!-- Created By -->
+                      <div class="col-md-3">
+                        <label class="fw-bold">
+                          Created By :
+                        </label>
+                      </div>       
+
+                      <!-- Created By -->
+                      <div class="col-md-3">
+                        <input type="text"
+                              class="form-control form-control-sm"
+                              formControlName="createdByName" >	 
+                      </div>
+
+                      <!-- Approved By -->
+                      <div class="col-md-2">
+                        <label class="fw-bold">
+                            Approved By : 
+                            </label>
+                      </div>
+                    
+                      <!-- Cheque No -->
+                      <div class="col-md-3">
+                     <input type="text"
+                                class="form-control form-control-sm"
+                                formControlName="approvedByName"                        
+                                >	                
+                      </div>
+
+                    </div>
+                        
+                    <!-- Amount Paid -->                                          
+                     <!-- Paid By-->
+                  <div class="col-md-12 mb-2" *ngIf="currentStatus === TransactionStatus.Approved">
+                    <div class="row align-items-center">
+                      
+                      <div class="col-md-3">
+                         <label class="fw-bold">
+                          Paid By :
+                        </label>
+                      </div>
+                      
+                      <div class="col-md-6">
+                            <input type="text"
+                            class="form-control form-control-sm"
+                            formControlName="paidByName">
+                      </div>   
+
+                    </div>
+                  </div>                  
+
+                  <!-- SAVE BUTTON -->
+                  <div class="col-md-12 mb-2">
+                    <div class="row align-items-center">
+                      
+                      <div class="col-md-8">
+                         
+                      </div>
+                      
+                      <div class="col-md-3" *ngIf="currentStatus === TransactionStatus.Draft">
+                        <div class="d-grid mt-1">
+                          <button type="submit"
+                            class="btn btn-primary btn-sm"
+                            [disabled]="draftForm.invalid">
+                              Save Draft
+                            </button>
+                        </div>                          
+                      </div>   
+
+                    </div>
+                  </div>  
+
+                </form>
+              </div>
+
+              <!-- ================= RIGHT FORM (APPROVAL) ================= -->
+              <div class="col-md-4" *ngIf="currentStatus === TransactionStatus.Approved || currentStatus === TransactionStatus.Paid">
+                <form [formGroup]="cashNotesForm" (ngSubmit)="onPayAmount()">
+
+                  <table class="table table-bordered table-sm text-center">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Rs</th>
+                        <th>No. of Notes</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+
+                      <tr>
+                        <td>2000</td>
+                        <td>
+                          <input type="number"
+                                #notes2000
+                                id="notes2000"
+                                name="notes2000"
+                                (keydown.enter)="focusNext(notes500); $event.preventDefault()"
+                                class="form-control form-control-sm"
+                                formControlName="notes2000">
+                        </td>
+                        <td>{{(cashNotesForm.value.notes2000 ?? 0) * 2000}}</td>
+                      </tr>                  
+
+                      <tr>
+                        <td>500</td>
+                        <td>
+                          <input type="number"
+                                #notes500
+                                id="notes500"
+                                name="notes500"
+                                (keydown.enter)="focusNext(notes200); $event.preventDefault()"
+                                class="form-control form-control-sm"
+                                formControlName="notes500">
+                        </td>
+                        <td>{{(cashNotesForm.value.notes500 ?? 0) * 500}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>200</td>
+                        <td>
+                          <input type="number"
+                                #notes200
+                                id="notes200"
+                                name="notes200"
+                                (keydown.enter)="focusNext(notes100); $event.preventDefault()"
+                                class="form-control form-control-sm"
+                                formControlName="notes200">
+                        </td>
+                        <td>{{(cashNotesForm.value.notes200 ?? 0) * 200}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>100</td>
+                        <td>
+                          <input type="number"
+                                #notes100
+                                id="notes100"
+                                name="notes100"
+                                (keydown.enter)="focusNext(notes50); $event.preventDefault()"
+                                class="form-control form-control-sm"
+                                formControlName="notes100">
+                        </td>
+                        <td>{{(cashNotesForm.value.notes100 ?? 0) * 100}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>50</td>
+                        <td>
+                          <input type="number"
+                                #notes50
+                                id="notes50"
+                                name="notes50"
+                                (keydown.enter)="focusNext(notes20); $event.preventDefault()"
+                                class="form-control form-control-sm"
+                                formControlName="notes50">
+                        </td>
+                        <td>{{(cashNotesForm.value.notes50 ?? 0) * 50}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>20</td>
+                        <td>
+                          <input type="number"
+                                #notes20                            
+                                id="notes20"
+                                name="notes20"
+                                (keydown.enter)="focusNext(notes10); $event.preventDefault()"
+                                class="form-control form-control-sm"
+                                formControlName="notes20">
+                        </td>
+                        <td>{{(cashNotesForm.value.notes20 ?? 0) * 20}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>10</td>
+                        <td>
+                          <input type="number"
+                                #notes10
+                                id="notes10"
+                                name="notes10"
+                                (keydown.enter)="focusNext(notes5); $event.preventDefault()"
+                                class="form-control form-control-sm"
+                                formControlName="notes10">
+                        </td>
+                        <td>{{(cashNotesForm.value.notes10 ?? 0) * 10}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>5</td>
+                        <td>
+                          <input type="number"
+                                #notes5
+                                id="notes5"
+                                name="notes5"
+                                (keydown.enter)="focusNext(coins); $event.preventDefault()"
+                                class="form-control form-control-sm"
+                                formControlName="notes5">
+                        </td>
+                        <td>{{(cashNotesForm.value.notes5 ?? 0) * 5}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>Coins</td>
+                        <td>
+                          <input type="number"
+                                #coins       
+                                id="coins"
+                                name="coins"                   
+                                class="form-control form-control-sm"
+                                formControlName="coins">
+                        </td>
+                        <td>{{cashNotesForm.value.coins ?? 0}}</td>
+                      </tr>
+
+                      <!-- TOTAL -->
+                      <tr [ngClass]="{'table-light fw-bold': !isAmountMismatch(),
+                        'table-danger fw-bold': isAmountMismatch()}">
+                        <td>Total</td>
+                        <td>{{getNotesCountTotal()}}</td>
+                        <td>{{getNotesTotal()}}</td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+
+                  <!-- SUBMIT BUTTON -->
+                  <div class="d-grid mt-1" *ngIf="currentStatus === TransactionStatus.Approved">
+                    <button type="submit"
+                            class="btn btn-danger btn-sm text-white text-bold"
+                            [disabled]="cashNotesForm.invalid">
+                      Pay Amount
+                    </button>
+                  </div>           
+
+                </form>
+              </div>
+
+            </div>
+          </div>   
+      </div>
+    </div>
+

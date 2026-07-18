@@ -1,0 +1,101 @@
+/* You can add global styles to this file, and also import other style files */
+
+// Import styles with default layout.
+@use "@coreui/coreui/scss/coreui" as * with (
+  $enable-deprecation-messages: false
+);
+
+// Import Chart.js custom tooltips styles
+@use "@coreui/chartjs/scss/coreui-chartjs";
+
+// Custom styles for this theme
+@use "theme";
+
+// Some temp fixes
+//@use "fixes";
+
+// If you want to add custom CSS you can put it here.
+@use "custom";
+
+// Examples
+// We use those styles to show code examples, you should remove them in your application.
+@use "examples";
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+/* Custom styles for PrimeNG DataTable */
+.p-datatable-thead > tr > th {
+  background: #ebedf0 !important;
+  padding: .25em .25em !important;   /* 👈 main control */
+  font-weight: bold !important;  
+}
+.p-datatable-tbody > tr > td {
+  padding: 0 .25em !important;   /* Very small rows */
+}
+.p-datatable-tbody > tr:hover {
+  background: #eef !important;
+}
+.p-datatable-tbody > tr:nth-child(odd) {
+  background-color: #f9f9f9; /* light gray */
+}
+
+.p-datatable-tbody > tr:nth-child(even) {
+  background-color: #ffffff; /* white */
+}
+
+/* Custom styles for PrimeNG DataTable */
+
+/* Paginator container */
+.custom-paginator {
+    justify-content: center;
+    padding: 12px;
+}
+
+/* All paginator buttons */
+.custom-paginator .p-paginator-page,
+.custom-paginator .p-paginator-prev,
+.custom-paginator .p-paginator-next,
+.custom-paginator .p-paginator-first,
+.custom-paginator .p-paginator-last {
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+    margin: 0 4px;
+    border-radius: 50%;
+    transition: all .3s ease;
+}
+
+/* Hover effect */
+.custom-paginator .p-paginator-page:hover {
+    background: #e9ecef;
+}
+
+// Pagination button active state
+/* Active page */
+.custom-paginator .p-paginator-page.p-highlight {
+    background: #0d6efd !important;
+    color: #ffc107 !important;
+    border: 1px solid #0d6efd;
+    font-weight: bold;
+}
+
+/* Previous/Next hover */
+.custom-paginator .p-paginator-prev:hover,
+.custom-paginator .p-paginator-next:hover,
+.custom-paginator .p-paginator-first:hover,
+.custom-paginator .p-paginator-last:hover {
+    background: #e9ecef;
+}
+// Pagination button active state
+
+// Edit Icon Styles
+.edit-btn {
+    color: #0d6efd;
+    text-decoration: none;    
+    margin-left: 4px !important;
+}
+.edit-btn:hover {
+    color: #084298;
+}

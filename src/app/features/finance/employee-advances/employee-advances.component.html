@@ -1,0 +1,103 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header bg-danger text-dark d-flex justify-content-between">
+          <strong class="h5">Employee Advances</strong>
+
+          <button type="button" class="btn btn-primary" (click)="onAddNewExpense()">
+            <svg cIcon class="me-2" name="cilUserFollow"></svg>
+            Add Advance
+          </button>
+        </div>
+
+        <div class="card-body">
+
+          <p-table 
+            [value]="employeeAdvances" 
+            [paginator]="true" 
+            [rows]="10"
+            showGridlines="true" 
+            [sortMode]="'multiple'">
+
+            <!-- HEADER -->
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="voucherDate">
+                    A Date <p-sortIcon field="voucherDate"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="voucherNumber">
+                  V No <p-sortIcon field="voucherNumber"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="debitAccountName">
+                  Paid From <p-sortIcon field="debitAccountName"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="amount">
+                  ₹Amount <p-sortIcon field="amount"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="creditAccountName">
+                  Paid To <p-sortIcon field="creditAccountName"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="paymentType">
+                  P Mode <p-sortIcon field="paymentType"></p-sortIcon>
+                </th>
+               
+                <th pSortableColumn="isAmountApproved">
+                  Status <p-sortIcon field="isAmountApproved"></p-sortIcon>
+                </th>    
+                <th pSortableColumn="narration">
+                  Narration <p-sortIcon field="narration"></p-sortIcon>
+                </th>                        
+
+                <th>Action</th>
+              </tr>
+            </ng-template>
+
+            <!-- BODY -->
+            <ng-template pTemplate="body" let-advance>
+              <tr>
+                <td>{{ advance.voucherDate | date }}</td>
+                <td>{{ advance.voucherNumber }}</td>                
+                <td>{{ advance.sourceAccountName }}</td>
+                <td class="fw-bold text-success">₹{{ advance.advanceAmount }}</td>
+                <td>{{ advance.employeeFullName }}</td>
+                <td>{{ advance.paymentType }}</td>                
+                <td>
+                <span class="badge fixed-badge"
+                      [ngClass]="{
+                        'bg-warning': advance.status === 'Draft',
+                        'bg-info': advance.status === 'Approved',
+                        'bg-success': advance.status === 'Paid'
+                      }">
+                  {{ advance.status }}
+                </span>
+              </td>
+                <td>{{ advance.narration }}</td>               
+
+                <td>
+                  <button 
+                    type="button" 
+                    class="btn btn-primary rounded-pill mt-1 mb-1 me-1"
+                    (click)="onEditExpense(advance.id)">
+                    <svg cIcon name="cilPencil"></svg>
+                  </button>                  
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

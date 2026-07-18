@@ -1,0 +1,79 @@
+<div class="container-fluid min-vh-100 d-flex p-0">
+
+  <div class="row g-0 w-100">
+    <div class="col-12">
+
+      <div class="card h-100 w-100 rounded-0">
+        <div class="card-header d-flex bg-primary text-white justify-content-between" *ngIf="!isUpdateMode">
+          <strong>Add Account Group</strong>
+        </div>
+         <div class="card-header d-flex bg-primary text-white justify-content-between" *ngIf="isUpdateMode">
+          <strong>Update Account Group</strong>
+        </div>        
+
+        <div class="card-body">
+
+          <form [formGroup]="myForm" (ngSubmit)="onSubmitAccountGroup()">
+
+            <!-- First Textbox -->
+             <div class="col-md-6 mb-3">
+              <label for="accountGroupCode" class="form-label">
+                Account Group Code
+              </label>                
+              <input
+                type="text"
+                class="form-control"
+                id="accountGroupCode"
+                formControlName="accountGroupCode"
+                placeholder="Enter Account Group Code"
+                maxlength="20"
+                [ngClass]="{'is-invalid': myForm.get('accountGroupCode')?.invalid && myForm.get('accountGroupCode')?.touched,
+              'readonly-field': isUpdateMode}"
+              [readonly]="isUpdateMode">
+            </div>
+
+            <!-- Second Textbox -->
+             <div class="col-md-6 mb-3">
+              <label for="accountGroupName" class="form-label">
+                Account Group Name
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="accountGroupName"
+                formControlName="accountGroupName"
+                placeholder="Enter Account Group Name"
+                [ngClass]="{'is-invalid': myForm.get('accountGroupName')?.invalid && myForm.get('accountGroupName')?.touched}">
+            </div>
+
+            <!-- Third Textbox -->
+             <div class="col-md-6 mb-3">
+              <label for="ugName" class="form-label">
+                User Group Name
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="ugName"
+                formControlName="ugName"
+                placeholder="Enter User Group Name"
+                [ngClass]="{'is-invalid': myForm.get('ugName')?.invalid && myForm.get('ugName')?.touched}">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-md-6 text-end">              
+                <button type="submit" class="btn btn-primary" [disabled]="myForm.invalid">
+                  Submit
+                </button>              
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+

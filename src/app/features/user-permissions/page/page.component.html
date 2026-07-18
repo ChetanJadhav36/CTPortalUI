@@ -1,0 +1,115 @@
+<div class="container-fluid p-2">
+
+    <!-- Card -->
+      <div class="card shadow-sm border-0 h-100 w-100 rounded-3">
+
+        <!-- Add Header -->
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center" *ngIf="!isUpdateMode">
+          <h5 class="mb-0 fw-bold">
+            <i class="bi bi-file-earmark-plus me-2"></i>
+            Add Page
+          </h5>
+        </div>
+
+        <!-- Update Header -->
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center" *ngIf="isUpdateMode">
+          <h5 class="mb-0 fw-bold">
+            <i class="bi bi-pencil-square me-2"></i>
+            Update Page
+          </h5>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+          <form [formGroup]="myForm" (ngSubmit)="onSubmitPage()">
+
+            <div class="row">
+
+              <!-- Page Code -->
+              <div class="col-md-6 mb-3">
+
+                <label for="pageCode" class="form-label fw-semibold">
+                  Page Code
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  id="pageCode"
+                  formControlName="pageCode"
+                  placeholder="Enter Page Code"
+                  maxlength="10"
+                  [readonly]="isUpdateMode"
+                  [ngClass]="{
+                    'is-invalid':
+                      myForm.get('pageCode')?.invalid &&
+                      myForm.get('pageCode')?.touched,
+                    'readonly-field':
+                      isUpdateMode
+                  }">
+
+                <!-- Validation -->
+                <div
+                  class="invalid-feedback"
+                  *ngIf="myForm.get('pageCode')?.errors?.['required']">
+
+                  Page Code is required
+                </div>
+
+              </div>
+
+              <!-- Page Name -->
+              <div class="col-md-6 mb-3">
+
+                <label for="pageName" class="form-label fw-semibold">
+                  Page Name
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  id="pageName"
+                  formControlName="pageName"
+                  placeholder="Enter Page Name"
+                  [ngClass]="{
+                    'is-invalid':
+                      myForm.get('pageName')?.invalid &&
+                      myForm.get('pageName')?.touched
+                  }">
+
+                <!-- Validation -->
+                <div
+                  class="invalid-feedback"
+                  *ngIf="myForm.get('pageName')?.errors?.['required']">
+
+                  Page Name is required
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="d-flex justify-content-end gap-2 mt-4">
+
+              <!-- Cancel -->
+              <button type="button" class="btn btn-outline-secondary" routerLink="/masters/pages">        
+                <i class="bi bi-x-circle me-1"></i>
+                Cancel
+              </button>
+
+              <!-- Submit -->
+              <button type="submit" class="btn btn-primary" [disabled]="myForm.invalid">
+                <i class="bi" [ngClass]="isUpdateMode ? 'bi-check-circle' : 'bi-plus-circle'"></i>
+                <span class="ms-1"> {{ isUpdateMode ? 'Update' : 'Submit' }}
+                </span>
+              </button>
+
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+
+</div>
