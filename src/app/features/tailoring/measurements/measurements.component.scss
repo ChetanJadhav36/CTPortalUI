@@ -1,0 +1,28 @@
+.card {
+    border-radius: 10px;
+}
+
+.table th {
+    white-space: nowrap;
+    font-size: 1rem;      /* Increase header size */
+    font-weight: 700;     /* Bold */
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.form-control-sm,
+.form-select-sm {
+    height: 34px;
+    font-weight: 600;     /* Bold text inside textbox */
+}
+
+.table-responsive {
+    overflow-x: auto;
+}

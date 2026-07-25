@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MasterService } from '../../../services/master.service';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
 import { TableModule } from 'primeng/table';

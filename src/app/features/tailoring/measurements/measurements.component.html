@@ -1,0 +1,412 @@
+<div class="container-fluid">
+
+    <div class="card shadow border-2">
+
+    <div class="card-header bg-success text-white">
+        <h4 class="mb-0 fw-bold">
+            Tailoring Measurement Entry
+        </h4>
+    </div>
+
+        <div class="card-body">
+            <form [formGroup]="measurementForm">
+                <!-- Customer Details -->
+                <div class="row g-3 mb-4">
+
+                     <div class="col-lg-3 col-md-6">
+                        <label class="form-label">Mobile</label>
+                        <input class="form-control form-control-sm"
+                            formControlName="mobileNo">
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label">Customer Name</label>
+                        <input class="form-control form-control-sm"
+                            formControlName="customerName">
+                    </div>
+
+                    <div class="col-lg-2 col-md-6">
+                        <label class="form-label">Bill No</label>
+                        <input class="form-control form-control-sm"
+                            formControlName="orderNo">
+                    </div>                  
+
+                    <div class="col-lg-2 col-md-6">
+                        <label class="form-label">Delivery Date</label>
+                        <input type="date"
+                            class="form-control form-control-sm"
+                            formControlName="expectedDeliveryDate">
+                    </div>
+
+                </div>   
+                
+                <!-- Measurements -->
+                <div class="row g-3">
+
+                    <!-- Upper Garment -->
+                    <div class="col-lg-6">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm align-middle">
+
+                                <thead class="table-success">
+                                    <tr>
+                                        <th colspan="4">SHIRT / KURTA / JACKET</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Particular</th>
+                                        <th>Body Size</th>
+                                        <th>Losing</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <tr>
+                                        <td class="fw-bold">Length</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugLength"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugLengthLosing"></td>                                        
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Shoulder</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugShoulder"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugShoulderLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Chest</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugChest"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugChestLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Belly</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugBelly"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugBellyLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Hip</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugHip"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugHipLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Sleeve Length</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugSleeveLength"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugSleeveLengthLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Arms</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugArms"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugArmsLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Collar</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugCollar"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugCollarLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Cuff</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugCuff"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugCuffLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">3/4</td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugThreeFourth"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="ugThreeFourthLosing"></td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td class="fw-bold">Style</td>
+                                        <td colspan="2">
+                                            <input class="form-control form-control-sm"
+                                                formControlName="ugStyle">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Fabric</td>
+                                        <td colspan="2">
+                                            <input class="form-control form-control-sm"
+                                                formControlName="ugFabric">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Remark</td>
+                                        <td colspan="2">
+                                            <textarea rows="3"
+                                                    class="form-control form-control-sm"
+                                                    formControlName="ugRemark"></textarea>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Quantity</td>
+                                        <td colspan="2">
+                                            <input class="form-control form-control-sm" formControlName="ugQuantity">
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>                                   
+
+                    <!-- Lower Garment -->
+                    <div class="col-lg-6">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm align-middle">
+
+                                <thead class="table-success">
+                                    <tr>
+                                        <th colspan="3">TROUSER / PANT / PAJAMA</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Particular</th>
+                                        <th>Body Size</th>
+                                        <th>Losing</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <tr>
+                                        <td class="fw-bold">Length</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgLength"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgLengthLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Waist</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgWaist"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgWaistLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Hip</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgHip"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgHipLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Pockland</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgPockland"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgPocklandLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Thigh</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgThigh"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgThighLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Knee</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgKnee"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgKneeLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Potree</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgPotree"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgPotreeLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Bottom</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgBottom"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgBottomLosing"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Height</td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgHeight"></td>
+                                        <td><input class="form-control form-control-sm" formControlName="lgHeightLosing"></td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td class="fw-bold">Style</td>
+                                        <td colspan="2">
+                                            <input class="form-control form-control-sm"
+                                                formControlName="lgStyle">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Fabric</td>
+                                        <td colspan="2">
+                                            <input class="form-control form-control-sm"
+                                                formControlName="lgFabric">
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Remark</td>
+                                        <td colspan="2">
+                                            <textarea rows="3"
+                                                    class="form-control form-control-sm"
+                                                    formControlName="lgRemark"></textarea>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="fw-bold">Quantity</td>
+                                        <td colspan="2">
+                                            <input class="form-control form-control-sm" formControlName="lgQuantity">
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>                 
+                </div>
+
+                <div class="card shadow-sm border-0 mt-3">
+
+    <div class="card-header bg-success text-white fw-bold">
+        <i class="bi bi-receipt"></i> Billing Summary
+    </div>
+
+    <div class="card-body">
+
+        <!-- Row 1 -->
+        <div class="row g-3">
+
+            <!-- Quantity -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Total Quantity</label>
+                <input type="number"
+                       class="form-control form-control-sm"
+                       formControlName="totalQuantity">
+            </div>
+
+
+            <!-- Total -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Total Amount</label>
+                <input class="form-control form-control-sm fw-bold"
+                       formControlName="totalAmount"
+                       readonly>
+            </div>
+
+
+            <!-- Advance -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Advance</label>
+                <input class="form-control form-control-sm"
+                       formControlName="advancePaidAmount">
+            </div>
+
+
+            <!-- Balance -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold text-danger">Balance</label>
+                <input class="form-control form-control-sm fw-bold text-danger"
+                       formControlName="balanceAmount"
+                       readonly>
+            </div>
+
+
+            <!-- Payment -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Payment</label>
+
+                <select class="form-select form-select-sm"
+                        formControlName="paymentType">
+
+                    <option value="">Select</option>
+                    <option>Cash</option>
+                    <option>UPI</option>
+                    <option>Card</option>
+                    <option>Bank Transfer</option>
+
+                </select>
+            </div>
+
+
+            <!-- Date -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Date</label>
+                <input type="date"
+                       class="form-control form-control-sm"
+                       formControlName="paymentDate">
+            </div>
+
+        </div>
+
+
+        <!-- Row 2 -->
+        <div class="row g-3 mt-1">
+
+
+            <!-- Status -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Status</label>
+
+                <select class="form-select form-select-sm"
+                        formControlName="paymentStatus">
+
+                    <option>Pending</option>
+                    <option>Partial</option>
+                    <option>Paid</option>
+
+                </select>
+            </div>
+
+
+            <!-- Discount -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Discount</label>
+                <input class="form-control form-control-sm"
+                       formControlName="discountAmount">
+            </div>
+
+
+            <!-- Final Amount -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Net Amount</label>
+                <input class="form-control form-control-sm fw-bold"
+                       formControlName="netAmount"
+                       readonly>
+            </div>
+
+
+            <!-- Received By -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Received By</label>
+                <input class="form-control form-control-sm"
+                       formControlName="receivedBy">
+            </div>
+
+
+            <!-- Print Button -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">&nbsp;</label>
+                <button type="button"
+                        class="btn btn-success btn-sm w-100">
+                    <i class="bi bi-printer"></i>
+                    Print Bill
+                </button>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+                
+            </form>
+        </div>
+
+    </div>
+
+</div>

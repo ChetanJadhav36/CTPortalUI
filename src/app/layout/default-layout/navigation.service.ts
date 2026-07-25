@@ -66,14 +66,6 @@ export class NavigationService {
       action: PermissionAction.View
     },
     {
-      name: 'Vehicles',
-      url: 'masters/vehicles',
-      iconComponent: { name: 'cil-speedometer' },
-      roles: ['Admin', 'User'],
-      page: 'VEH',
-      action: PermissionAction.View
-    },
-    {
       name: 'FINANCE',
       title: true,
       roles: ['Admin', 'User'],
@@ -84,6 +76,14 @@ export class NavigationService {
       iconComponent: { name: 'cil-description' },
       roles: ['Admin', 'User'],
       page: 'FEA',
+      action: PermissionAction.View
+    },
+    {
+      name: 'Customer Orders',
+      url: 'tailoring/customer-orders',
+      iconComponent: { name: 'cil-description' },
+      roles: ['Admin', 'User'],
+      page: 'CO',
       action: PermissionAction.View
     },
     {
