@@ -30,6 +30,11 @@ export enum TransactionStatus {
     Paid = 3,
     Reversed = 4
 }
+export enum PaymentStatus {
+    Pending = 1,
+    Partial = 2,
+    Paid = 3
+}
 export enum AttendanceStatus
 {
     Present = 1,

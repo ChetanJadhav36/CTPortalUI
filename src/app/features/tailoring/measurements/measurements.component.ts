@@ -1,235 +1,291 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TailoringService } from '../../../services/tailoring.service';
 import { AuthService } from '../../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../services/toast.service';
 import { DateUtcPipe } from '../../../shared/pipes/date-utc.pipe';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
+import { PaymentStatus } from '../../../enums/permission.enum';
+import { CustomerDetailsComponent } from '../customer-details/customer-details.component';
+import { UpperGarmentComponent } from '../upper-garment/upper-garment.component';
+import { LowerGarmentComponent } from '../lower-garment/lower-garment.component';
+import { BillingSummaryComponent } from '../billing-summary/billing-summary.component';
 
 @Component({
   selector: 'app-measurements',
+  standalone:true,
   providers: [DateUtcPipe],
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TableModule],
+  imports: [CommonModule,FormsModule, ReactiveFormsModule,TableModule,CustomerDetailsComponent, UpperGarmentComponent, LowerGarmentComponent, BillingSummaryComponent],
   templateUrl: './measurements.component.html',
   styleUrl: './measurements.component.scss'
 })
 export class MeasurementsComponent implements OnInit {
-
-  companyId: any;
-  measurementId: any;
-  isUpdateMode = false;
-  currentUserName = '';
+  companyId:any;
+  measurementId:any;
+  isUpdateMode=false;
+  currentUserName='';
+  measurementForm!:FormGroup;
 
   constructor(
-    private tailoringService: TailoringService,
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toastService: ToastService,
-    private dateUtcPipe: DateUtcPipe
-  ) {
+    private fb:FormBuilder,
+    private tailoringService:TailoringService,
+    private authService:AuthService,
+    private router:Router,
+    private route:ActivatedRoute,
+    private toastService:ToastService,
+    private dateUtcPipe:DateUtcPipe
+  ){
+    const authData=this.authService.getUserAuthData();
 
-    const authData = this.authService.getUserAuthData();
-
-    if (authData && authData.userId) {
-      this.companyId = authData.client?.clientId;
-      this.currentUserName = authData.client?.userName;
+    if(authData?.userId){
+      this.companyId=authData.client?.clientId;
+      this.currentUserName=authData.client?.userName;
     }
+  }
+
+  ngOnInit():void{
+    this.initializeForm();
+
+    this.measurementId=this.route.snapshot.paramMap.get('id');
+
+    if(this.measurementId){
+      this.isUpdateMode=true;
+      this.getMeasurementById(this.measurementId);
+    }
+
+    this.initializePaymentCalculation();
+  }
+
+  initializeForm(){
+    this.measurementForm=this.fb.group({
+      id:[0],
+      companyId:[this.companyId],
+
+      customer:this.fb.group({
+        mobileNo: new FormControl('', Validators.required),
+        customerName: new FormControl('', Validators.required),
+        orderNo: new FormControl(''),
+        orderDate: [this.dateUtcPipe.transform(new Date(),'input')]        
+      }),
+
+      upperGarment:this.fb.group({
+        ugLength:[''],
+        ugLengthLosing:[''],
+        ugShoulder:[''],
+        ugShoulderLosing:[''],
+        ugChest:[''],
+        ugChestLosing:[''],
+        ugBelly:[''],
+        ugBellyLosing:[''],
+        ugHip:[''],
+        ugHipLosing:[''],
+        ugSleeveLength:[''],
+        ugSleeveLengthLosing:[''],
+        ugArms:[''],
+        ugArmsLosing:[''],
+        ugCollar:[''],
+        ugCollarLosing:[''],
+        ugCuff:[''],
+        ugCuffLosing:[''],
+        ugThreeFourth:[''],
+        ugThreeFourthLosing:[''],
+        ugStyle:[''],
+        ugFabric:[''],
+        ugRemark:[''],
+        ugQuantity:[0]
+      }),
+
+      lowerGarment:this.fb.group({
+        lgLength:[''],
+        lgLengthLosing:[''],
+        lgWaist:[''],
+        lgWaistLosing:[''],
+        lgHip:[''],
+        lgHipLosing:[''],
+        lgPockland:[''],
+        lgPocklandLosing:[''],
+        lgThigh:[''],
+        lgThighLosing:[''],
+        lgKnee:[''],
+        lgKneeLosing:[''],
+        lgPotree:[''],
+        lgPotreeLosing:[''],
+        lgBottom:[''],
+        lgBottomLosing:[''],
+        lgHeight:[''],
+        lgHeightLosing:[''],
+        lgStyle:[''],
+        lgFabric:[''],
+        lgRemark:[''],
+        lgQuantity:[0]
+      }),
+
+      billingSummary:this.fb.group({
+        totalQuantity:[0],
+        totalAmount:[0],
+        advancePaidAmount:[0],
+        balanceAmount:[0],
+        paymentType:['Cash'],
+        paymentDate:[
+          this.dateUtcPipe.transform(new Date(),'input')
+        ],
+        paymentStatus:[PaymentStatus.Pending],
+        discountAmount:[0],
+        netAmount:[0],
+        isActive:[true],
+        receivedBy:[this.currentUserName]
+      })
+
+    });
+  }
+
+  get paymentGroup():FormGroup{
+    return this.measurementForm.get('payment') as FormGroup;
+  }
+
+  get customerGroup(): FormGroup {
+  return this.measurementForm.get('customer') as FormGroup;
+}
+
+  get upperGarmentGroup(): FormGroup {
+    return this.measurementForm.get('upperGarment') as FormGroup;
+  }
+
+  get lowerGarmentGroup(): FormGroup {
+    return this.measurementForm.get('lowerGarment') as FormGroup;
+  }
+
+  get billingSummaryGroup(): FormGroup {
+    return this.measurementForm.get('billingSummary') as FormGroup;
+  }
+
+  initializePaymentCalculation(){
+
+    this.paymentGroup.get('totalAmount')
+      ?.valueChanges
+      .subscribe(()=>this.calculatePayment());
+
+    this.paymentGroup.get('advancePaidAmount')
+      ?.valueChanges
+      .subscribe(()=>this.calculatePayment());
+
+    this.paymentGroup.get('discountAmount')
+      ?.valueChanges
+      .subscribe(()=>this.calculatePayment());
 
   }
 
-  measurementForm = new FormGroup({
-    id: new FormControl(0),
-    companyId: new FormControl(),
+  calculatePayment(){
+    const totalAmount=Number(this.paymentGroup.get('totalAmount')?.value)||0;
+    const advance=Number(this.paymentGroup.get('advancePaidAmount')?.value)||0;
+    const discount=Number(this.paymentGroup.get('discountAmount')?.value)||0;
 
-    customerName: new FormControl('', Validators.required),
-    orderNo: new FormControl('', Validators.required),
-    mobileNo: new FormControl('', [
-      Validators.required,
-      Validators.pattern('[0-9]{10}')
-    ]),
+    const netAmount=totalAmount-discount;
+    const balance=netAmount-advance;
 
-    orderDate: new FormControl('', Validators.required),
-    expectedDeliveryDate: new FormControl('', Validators.required),
+    this.paymentGroup.patchValue({netAmount, balanceAmount:balance},{ emitEvent:false});
+    this.updatePaymentStatus(balance,advance,netAmount);
+  }
 
-    // Upper Garment
+  updatePaymentStatus(balance:number, advance:number, netAmount:number ){
+    let status=PaymentStatus.Pending;
 
-    ugLength: new FormControl(''),
-    ugLengthLosing: new FormControl(''),
+    if(advance>0 && balance>0){
+      status=PaymentStatus.Partial;
+    }
 
-    ugShoulder: new FormControl(''),
-    ugShoulderLosing: new FormControl(''),
+    if(balance<=0 && netAmount>0){
+      status=PaymentStatus.Paid;
+    }
 
-    ugChest: new FormControl(''),
-    ugChestLosing: new FormControl(''),
+    this.paymentGroup.get('paymentStatus')
+      ?.setValue(status,{
+        emitEvent:false
+      });
 
-    ugBelly: new FormControl(''),
-    ugBellyLosing: new FormControl(''),
+  }
 
-    ugHip: new FormControl(''),
-    ugHipLosing: new FormControl(''),
+  getMeasurementById(id:any){
+    this.tailoringService.getMeasurementById(id)
+    .subscribe({
+      next:(data:any)=>{
+        this.measurementForm.patchValue(data);
+        const customer=this.measurementForm.get('customer') as FormGroup;
+        customer.patchValue({
+          orderDate:this.dateUtcPipe.transform(data.customer?.orderDate, 'input'),
+          expectedDeliveryDate:this.dateUtcPipe.transform(data.customer?.expectedDeliveryDate,'input')
+        });
+        this.calculatePayment();
+      },
 
-    ugSleeveLength: new FormControl(''),
-    ugSleeveLengthLosing: new FormControl(''),
+      error:(error:any)=>{
+        this.toastService.error(
+          error.error.message ||
+          'Unable to load measurement.'
+        );
+      }
 
-    ugArms: new FormControl(''),
-    ugArmsLosing: new FormControl(''),
-
-    ugCollar: new FormControl(''),
-    ugCollarLosing: new FormControl(''),
-
-    ugCuff: new FormControl(''),
-    ugCuffLosing: new FormControl(''),
-
-    ugThreeFourth: new FormControl(''),
-    ugThreeFourthLosing: new FormControl(''),
-
-    ugStyle: new FormControl(''),
-    ugFabric: new FormControl(''),
-
-    ugRemark: new FormControl(''),
-    ugQuantity : new FormControl(''),
-
-    // Lower Garment
-
-    lgLength: new FormControl(''),
-    lgLengthLosing: new FormControl(''),
-
-    lgWaist: new FormControl(''),
-    lgWaistLosing: new FormControl(''),
-
-    lgHip: new FormControl(''),
-    lgHipLosing: new FormControl(''),
-
-    lgPockland: new FormControl(''),
-    lgPocklandLosing: new FormControl(''),
-
-    lgThigh: new FormControl(''),
-    lgThighLosing: new FormControl(''),
-
-    lgKnee: new FormControl(''),
-    lgKneeLosing: new FormControl(''),
-
-    lgPotree: new FormControl(''),
-    lgPotreeLosing: new FormControl(''),
-
-    lgBottom: new FormControl(''),
-    lgBottomLosing: new FormControl(''),
-
-    lgHeight: new FormControl(''),
-    lgHeightLosing: new FormControl(''),
-
-    lgStyle: new FormControl(''),
-    lgFabric: new FormControl(''),
-
-    lgRemark: new FormControl(''),
-    lgQuantity : new FormControl(''),
-
-    // Payment
-    totalQuantity: new FormControl(1),
-    totalAmount: new FormControl(0, Validators.required),
-    advancePaidAmount: new FormControl(0),
-    balanceAmount: new FormControl({value: 0, disabled: true}),
-    paymentType: new FormControl('Cash'),
-    isActive: new FormControl(true)
-  });
-
-  ngOnInit(): void {
-
-    this.measurementForm.patchValue({
-      orderDate: this.dateUtcPipe.transform(new Date(), 'input'),
-      paymentType: 'Cash'
     });
 
-    this.measurementId = this.route.snapshot.paramMap.get('id');
-    if (this.measurementId) {
-      this.isUpdateMode = true;
-      this.onGetMeasurementById(this.measurementId);
-    }
-
-    this.measurementForm.get('totalAmount')?.valueChanges
-      .subscribe(() => this.calculateBalance());
-    this.measurementForm.get('advancePaidAmount')
-      ?.valueChanges
-      .subscribe(() => this.calculateBalance());
   }
 
-  calculateBalance() {
-    const total = Number(this.measurementForm.get('totalAmount')?.value) || 0;
-    const advance = Number(this.measurementForm.get('advancePaidAmount')?.value) || 0;
-    this.measurementForm.patchValue({ balanceAmount: total - advance }, { emitEvent: false });
-  }
-
-  onGetMeasurementById(id: any) {
-    this.tailoringService.getMeasurementById(id)
-      .subscribe({
-        next: (data: any) => {
-          this.measurementForm.patchValue({
-            ...data,
-            orderDate: this.dateUtcPipe.transform(data.orderDate, 'input'),           
-            expectedDeliveryDate: this.dateUtcPipe.transform(data.expectedDeliveryDate,'input')
-          });
-          this.calculateBalance();
-        },
-
-        error: (error: any) => {
-          this.toastService.error(error.error.message || 'Unable to load measurement.');
-        }
-      });
-  }
-
-  onSubmitMeasurement() {
-    if (!this.measurementForm.valid) {
-      this.toastService.error('Please fill all required fields.');
+  submitMeasurement(){
+    if(this.measurementForm.invalid){
+      this.toastService.error(
+        'Please fill all required fields.'
+      );
       return;
     }
 
     this.measurementForm.patchValue({
-      companyId: this.companyId,
-      orderDate: this.dateUtcPipe.transform(this.measurementForm.get('orderDate')?.value, 'withCurrentTime'),
-      expectedDeliveryDate: this.dateUtcPipe.transform(this.measurementForm.get('expectedDeliveryDate')?.value, 'withCurrentTime')
+      companyId:this.companyId
     });
 
-    const measurement = this.measurementForm.getRawValue();
-    if (this.measurementId) {
+    const measurement=this.measurementForm.getRawValue();
+
+    if(this.measurementId){
       this.updateMeasurement(measurement);
-    } else {
+    }
+    else{
       this.createMeasurement(measurement);
     }
-  }
-
-  createMeasurement(measurement: any) {
-    this.tailoringService.createMeasurement(measurement)
-      .subscribe({
-        next: (response: any) => {
-          this.toastService.success( response.message || 'Measurement saved successfully.');
-          this.router.navigate(['/tailoring']);
-        },
-        error: (error: any) => {
-          this.toastService.error(error.error.message || 'Unable to save measurement.');
-        }
-      });
 
   }
 
-  updateMeasurement(measurement: any) {
-    this.tailoringService.updateMeasurement(this.measurementId, measurement)
-      .subscribe({
-        next: (response: any) => {
-          this.toastService.success(response.message || 'Measurement updated successfully.');
-          this.router.navigate(['/tailoring']);
-        },
-        error: (error: any) => {
-          this.toastService.error(error.error.message || 'Unable to update measurement.');
-        }
-      });
+  createMeasurement(data:any){
+    this.tailoringService.createMeasurement(data)
+    .subscribe({
+      next:(response:any)=>{
+        this.toastService.success(response.message || 'Measurement saved successfully.');
+        this.router.navigate(['/tailoring']);
+      },
+      error:(error:any)=>{
+        this.toastService.error(
+          error.error.message || 'Unable to save measurement.'
+        );
+      }
+    });
   }
 
-  isInvalid(controlName: string): boolean {
-    const control = this.measurementForm.get(controlName);
-    return !!(control && control.touched && control.invalid && control.errors);
+  updateMeasurement(data:any){
+    this.tailoringService.updateMeasurement(this.measurementId, data)
+    .subscribe({
+      next:(response:any)=>{
+        this.toastService.success(response.message || 'Measurement updated successfully.'
+        );
+        this.router.navigate(['/tailoring']);
+      },
+      error:(error:any)=>{
+        this.toastService.error(error.error.message || 'Unable to update measurement.'
+        );
+      }
+    });
   }
 
+  isInvalid(controlName:string):boolean{
+    const control=this.measurementForm.get(controlName);
+    return !!(control && control.touched && control.invalid);
+  }
 }

@@ -1,0 +1,126 @@
+<div [formGroup]="group">
+    <div class="card shadow-sm border-0 mt-3">
+
+    <div class="card-header bg-success text-white fw-bold">
+        <i class="bi bi-receipt"></i> Billing Summary
+    </div>
+
+    <div class="card-body">
+
+        <!-- Row 1 -->
+        <div class="row g-3">
+
+            <!-- Quantity -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Total Quantity</label>
+                <input type="number"
+                       class="form-control form-control-sm"
+                       formControlName="totalQuantity">
+            </div>
+
+
+            <!-- Total -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Total Amount</label>
+                <input class="form-control form-control-sm fw-bold"
+                       formControlName="totalAmount"
+                       readonly>
+            </div>
+
+
+            <!-- Advance -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Advance</label>
+                <input class="form-control form-control-sm"
+                       formControlName="advancePaidAmount">
+            </div>
+
+
+            <!-- Balance -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold text-danger">Balance</label>
+                <input class="form-control form-control-sm fw-bold text-danger"
+                       formControlName="balanceAmount"
+                       readonly>
+            </div>
+
+
+            <!-- Payment -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Payment</label>
+
+                <select class="form-select form-select-sm"
+                        formControlName="paymentType">
+                    <option [value]="PaymentType.Cash">
+                        Cash
+                    </option>
+                    <option [value]="PaymentType.Bank">
+                        Bank
+                    </option>
+                </select>
+            </div>
+
+
+            <!-- Date -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Date</label>
+                <input type="date"
+                       class="form-control form-control-sm"
+                       formControlName="paymentDate">
+            </div>
+
+        </div>
+
+
+        <!-- Row 2 -->
+        <div class="row g-3 mt-1">
+
+            <!-- Status -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Status</label>
+
+                <select class="form-select form-select-sm"
+                        formControlName="paymentStatus">
+                    <option>Pending</option>
+                    <option>Partial</option>
+                    <option>Paid</option>
+                </select>
+            </div>
+
+            <!-- Discount -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Discount</label>
+                <input class="form-control form-control-sm"
+                       formControlName="discountAmount">
+            </div>
+
+            <!-- Final Amount -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Net Amount</label>
+                <input class="form-control form-control-sm fw-bold"
+                       formControlName="netAmount"
+                       readonly>
+            </div>
+
+            <!-- Received By -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">Received By</label>
+                <input class="form-control form-control-sm"
+                       formControlName="receivedBy">
+            </div>
+
+            <!-- Print Button -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label class="form-label fw-bold">&nbsp;</label>
+                <button type="button"
+                        class="btn btn-success btn-sm w-100">
+                    <i class="bi bi-printer"></i>
+                    Submit
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+    </div>
+</div>

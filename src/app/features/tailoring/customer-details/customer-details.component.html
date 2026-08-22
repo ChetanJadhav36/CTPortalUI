@@ -1,0 +1,39 @@
+<div [formGroup]="group">
+    <div class="row g-3 mb-4">
+
+        <div class="col-lg-3 col-md-6">
+            <label class="form-label">Mobile</label>
+            <input
+                class="form-control form-control-sm"
+                type="number"
+                formControlName="mobileNo"
+                placeholder="Enter Mobile No">
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <label class="form-label">Customer Name</label>
+            <input
+            type="text"
+                class="form-control form-control-sm"
+                formControlName="customerName"
+                placeholder="Enter Customer Name">
+        </div>
+
+        <div class="col-lg-2 col-md-6">
+            <label class="form-label">Bill No</label>
+            <input
+                class="form-control form-control-sm"
+                formControlName="orderNo"
+                placeholder="Enter Bill No">
+        </div>
+
+        <div class="col-lg-2 col-md-6">
+            <label class="form-label">Order Date</label>
+            <input
+                type="date"
+                class="form-control form-control-sm"
+                formControlName="orderDate">
+        </div>
+
+    </div>
+</div>
