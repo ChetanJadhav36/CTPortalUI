@@ -44,88 +44,109 @@
                       </div>
 
                     </div>
-
-                    <!-- Employee Selection (Source Account) -->                               
+                    
+                    <!-- DR ACCOUNT -->
                     <div class="col-md-12 mb-2">
                       <div class="row align-items-center">
-                        
+
                         <div class="col-md-3">
                           <label class="fw-bold">
                             DR ACCOUNT : <span class="text-danger">*</span>
                           </label>
                         </div>
-                        
-                      <div class="col-md-6 position-relative">
-                        <!-- Employee Name Search-->                                                 
+
+                        <div class="col-md-6 position-relative">
                           <input
-                          type="text"
-                          class="form-control"
-                          #sourceAccount
-                          (keydown.enter)="focusNext(destinationAccount); $event.preventDefault()"
-                          formControlName="sourceAccountName"
-                          placeholder="Search Employee"
-                          (input)="searchSourceEmployee($event)"
-                          autocomplete="off">
+                            type="text"
+                            class="form-control"
+                            #sourceAccount
+                            formControlName="sourceEmployeeName"
+                            placeholder="Search Employee"
+                            autocomplete="off"
+                            (input)="searchSourceEmployee($event)"
+                            (keydown)="onSourceEmployeeKeydown($event)"
+                          />
 
-                        <ul *ngIf="sourceEmployees.length"
+                          <ul
+                            *ngIf="sourceEmployees.length > 0"
                             class="list-group position-absolute w-100 shadow"
-                            style="z-index:1000">
-
-                          <li
-                            *ngFor="let emp of sourceEmployees"
-                            class="list-group-item list-group-item-action"
-                            (click)="selectSourceEmployee(emp)">
-                            {{emp.employeeFullName}}
-                          </li>
-
-                        </ul>
-                                		  
-                      </div>   
+                            style="
+                              z-index: 1000;
+                              max-height: 200px;
+                              overflow-y: auto;
+                            "
+                          >
+                            <li
+                              *ngFor="
+                                let employee of sourceEmployees;
+                                let i = index
+                              "
+                              class="list-group-item list-group-item-action"
+                              [class.active]="
+                                i === selectedSourceEmployeeIndex
+                              "
+                              (mousedown)="selectSourceEmployee(employee)"
+                            >
+                              {{ employee.employeeFullName }}
+                            </li>
+                          </ul>
+                        </div>
 
                       </div>
-                    </div>                  
-                          
-                    <!-- Employee Selection (Destination Account) -->
+                    </div>
+
+                    <!-- CR ACCOUNT -->
                     <div class="col-md-12 mb-2">
                       <div class="row align-items-center">
-                        
+
                         <div class="col-md-3">
                           <label class="fw-bold">
-                            CR ACCOUNT <span class="text-danger">*</span>
+                            CR ACCOUNT : <span class="text-danger">*</span>
                           </label>
                         </div>
-                        
-                      <div class="col-md-6 position-relative">
-                        <!-- Employee Name Search-->
-                         <input
-                          type="text"
-                          class="form-control"
-                          #destinationAccount
-                          (keydown.enter)="focusNext(amount); $event.preventDefault()"
-                          formControlName="destinationAccountName"
-                          placeholder="Enter Employee Name"
-                          (input)="searchDestinationEmployee($event)"
-                          autocomplete="off">
 
-                        <ul *ngIf="destinationEmployees.length > 0"
+                        <div class="col-md-6 position-relative">
+                          <input
+                            type="text"
+                            class="form-control"
+                            #destinationAccount
+                            formControlName="destinationEmployeeName"
+                            placeholder="Search Employee"
+                            autocomplete="off"
+                            (input)="searchDestinationEmployee($event)"
+                            (keydown)="onDestinationEmployeeKeydown($event)"
+                          />
+
+                          <ul
+                            *ngIf="destinationEmployees.length > 0"
                             class="list-group position-absolute w-100 shadow"
-                            style="z-index:1000; max-height:200px; overflow-y:auto">
-
-                          <li class="list-group-item list-group-item-action"
-                              *ngFor="let employee of destinationEmployees"
-                              (click)="selectDestinationEmployee(employee)">
+                            style="
+                              z-index: 1000;
+                              max-height: 200px;
+                              overflow-y: auto;
+                            "
+                          >
+                            <li
+                              *ngFor="
+                                let employee of destinationEmployees;
+                                let i = index
+                              "
+                              class="list-group-item list-group-item-action"
+                              [class.active]="
+                                i === selectedDestinationEmployeeIndex
+                              "
+                              (mousedown)="selectDestinationEmployee(employee)"
+                            >
                               {{ employee.employeeFullName }}
-                          </li>
-
-                        </ul>                                            
-                                		  
-                      </div>   
+                            </li>
+                          </ul>
+                        </div>
 
                       </div>
                     </div>
 
                     <!-- Net Salary -->
-                    <div class="col-md-12 mb-2">
+                    <!-- <div class="col-md-12 mb-2">
                     <div class="row align-items-center">
                       
                       <div class="col-md-3">
@@ -141,7 +162,7 @@
                       </div>   
 
                     </div>
-                    </div>
+                    </div> -->
 
                     <!-- Amount -->
                     <div class="col-md-12 mb-2">

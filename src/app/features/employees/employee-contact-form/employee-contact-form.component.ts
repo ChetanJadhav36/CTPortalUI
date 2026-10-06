@@ -7,10 +7,12 @@ import { EmployeesService } from '../../../services/employees.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
+import { RelationshipType } from '../../../enums/permission.enum';
+import { UpperCaseDirective } from '../../../shared/directives/upper-case.directive';
 
 @Component({
   selector: 'app-employee-contact-form',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TableModule],
+  imports: [CommonModule,FormsModule, ReactiveFormsModule,TableModule, UpperCaseDirective],
   templateUrl: './employee-contact-form.component.html',
   styleUrl: './employee-contact-form.component.scss'
 })
@@ -22,10 +24,11 @@ export class EmployeeContactFormComponent {
   employeeDetails: any ={};
   contactId!: any;
   mode!: 'add' | 'edit';
+  RelationshipType = RelationshipType;
   employeeContactForm = new FormGroup({
     id: new FormControl(0), // optional, usually auto-generated
     employeeId: new FormControl(0, Validators.required),
-    relationship: new FormControl('', Validators.required),
+    relationship: new FormControl<number | null>(null, Validators.required),
     fullName: new FormControl('', Validators.required),
     phonePrimary: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]),
     phoneSecondary: new FormControl('', Validators.pattern(/^[0-9]{10}$/)),
@@ -108,7 +111,7 @@ export class EmployeeContactFormComponent {
         this.employeeContactForm.patchValue({
             id: response.id,
             employeeId: response.employeeId,
-            relationship: response.relationship,
+            relationship: RelationshipType[response.relationship as keyof typeof RelationshipType],
             fullName: response.fullName,
             phonePrimary: response.phonePrimary,
             phoneSecondary: response.phoneSecondary,

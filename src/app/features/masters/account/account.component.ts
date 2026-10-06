@@ -5,10 +5,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {AuthService } from '../../../services/auth.service';
 import { MasterService } from '../../../services/master.service';
 import { ToastService } from '../../../services/toast.service';
+import { UpperCaseDirective } from '../../../shared/directives/upper-case.directive';
 
 @Component({
   selector: 'app-account',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule],
+  imports: [CommonModule,FormsModule, ReactiveFormsModule, UpperCaseDirective],
   templateUrl: './account.component.html',
   styleUrl: './account.component.scss'
 })
@@ -17,14 +18,11 @@ export class AccountComponent {
   userId: any;
   myForm = new FormGroup({    
     accountCode: new FormControl('', [Validators.required, Validators.maxLength(10)]),
-    accountName: new FormControl('', Validators.required),
-    accountGroupId: new FormControl('', Validators.required),    
-    isDefaultCash: new FormControl(false),
-    isDefaultBank: new FormControl(false),
-    openingBal: new FormControl('', [Validators.required, Validators.min(0)]),
-    dc: new FormControl('D', Validators.required),
-    netBal: new FormControl('', [Validators.required, Validators.min(0)]),
-    minAppBal: new FormControl('', [Validators.required, Validators.min(0)])
+    accountName: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+    accountGroupId: new FormControl('', Validators.required),        
+    openingBal: new FormControl('', [Validators.required, Validators.min(0)]),    
+    netBal: new FormControl({ value: 0, disabled: true }),
+    isDefault: new FormControl(false)
   });  
   isUpdateMode: boolean = false;
   accountGroups: any[] = [];
@@ -51,19 +49,28 @@ export class AccountComponent {
         this.myForm.patchValue({
           accountCode: response.accountCode,
           accountName: response.accountName,
-          accountGroupId: response.accountGroupId,          
-          isDefaultCash: response.isDefaultCash,
-          isDefaultBank: response.isDefaultBank,
-          openingBal: response.openingBal,
-          dc: response.dc,
-          netBal: response.netBal,
-          minAppBal: response.minAppBal
+          accountGroupId: response.accountGroupId,                    
+          openingBal: response.openingBal,          
+          netBal: response.netBal,        
+          isDefault: response.isDefault,  
         });
+        
+        // Disable opening balance if existing value is not 0
+        this.setOpeningBalanceState();
       },
       (error:any) => {
         this.toastService.error(error.error.message || 'Error fetching Account Group');
       }
     );
+  }
+}
+private setOpeningBalanceState(): void {
+  const openingBal = Number(this.myForm.get('openingBal')?.value);
+
+  if (this.isUpdateMode && openingBal !== 0) {
+    this.myForm.get('openingBal')?.disable();
+  } else {
+    this.myForm.get('openingBal')?.enable();
   }
 }
   onSubmitAccount() {   
@@ -78,13 +85,9 @@ export class AccountComponent {
         id: this.route.snapshot.paramMap.get('id') || 0,
         accountCode: this.myForm.value.accountCode,
         accountName: this.myForm.value.accountName,
-        accountGroupId: this.myForm.value.accountGroupId,        
-        isDefaultCash: this.myForm.value.isDefaultCash,
-        isDefaultBank: this.myForm.value.isDefaultBank,
-        openingBal: this.myForm.value.openingBal,
-        dc: this.myForm.value.dc,
-        netBal: this.myForm.value.netBal,
-        minAppBal: this.myForm.value.minAppBal,
+        accountGroupId: this.myForm.value.accountGroupId,                
+        openingBal: this.myForm.value.openingBal,        
+        netBal: this.myForm.value.netBal,        
         companyId: this.companyId,
         isActive: true,
         createdBy: this.userId,

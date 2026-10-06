@@ -8,12 +8,13 @@ import { AuthService } from '../../../services/auth.service';
 import { MasterService } from '../../../services/master.service';
 import { ToastService } from '../../../services/toast.service';
 import { EmployeesService } from '../../../services/employees.service';
+import { UpperCaseDirective } from '../../../shared/directives/upper-case.directive';
 
 
 @Component({
   selector: 'app-employee-form',
   providers: [DateUtcPipe],
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TableModule],
+  imports: [CommonModule,FormsModule, ReactiveFormsModule,TableModule,UpperCaseDirective],
   templateUrl: './employee-form.component.html',
   styleUrl: './employee-form.component.scss'
 })
@@ -25,30 +26,23 @@ export class EmployeeFormComponent {
   activeTab: string = 'employeeForm'; // default active tab
   employeeForm = new FormGroup({
     employeeCode: new FormControl('', [Validators.required,Validators.maxLength(20)]),
-    firstName: new FormControl('', Validators.required),
-    middleName: new FormControl(''),
-    lastName: new FormControl('', Validators.required),
-    localAddress: new FormControl('', Validators.required),
-    permanentAddress: new FormControl('', Validators.required),
-    city: new FormControl('', Validators.required),
-    postalCode: new FormControl('', Validators.required),
-    phonePrimary: new FormControl('', [
-      Validators.required,
-      Validators.pattern('^[0-9]{10,15}$')
-    ]),
-    phoneSecondary: new FormControl('', [
-      Validators.pattern('^[0-9]{10,15}$')
-    ]),
-    email: new FormControl('', [
-      Validators.required,
-      Validators.email
-    ]),
-    birthDate: new FormControl('', Validators.required),
-    joinDate: new FormControl('', Validators.required),
+    firstName: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+    middleName: new FormControl('', [Validators.maxLength(50)]),
+    lastName: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+    localAddress: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+    permanentAddress: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+    city: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+    postalCode: new FormControl('', [Validators.required, Validators.maxLength(10)]),
+    phonePrimary: new FormControl('', [Validators.required, Validators.maxLength(12), Validators.pattern('^[0-9]{10,15}$')]),
+    phoneSecondary: new FormControl('', [Validators.maxLength(12), Validators.pattern('^[0-9]{10,15}$')]),
+    email: new FormControl('', [Validators.maxLength(150), Validators.email]),
+    birthDate: new FormControl('', [Validators.required]),
+    joinDate: new FormControl('', [Validators.required]),
+    jobProfile: new FormControl('', [Validators.required, Validators.maxLength(50)]),
     referredBy: new FormControl(''),
     isActive: new FormControl(true),
     companyId: new FormControl(''),
-    stateId: new FormControl('', Validators.required)
+    stateId: new FormControl('', [Validators.required])
   });
    constructor(
     private authService: AuthService,
@@ -91,6 +85,7 @@ export class EmployeeFormComponent {
           email: response.email,          
           birthDate: this.dateUtcPipe.transform(new Date(response.birthDate), 'input'),
           joinDate: this.dateUtcPipe.transform(new Date(response.joinDate), 'input'),
+          jobProfile : response.jobProfile,
           referredBy: response.referredBy,
           isActive: response.isActive,
           stateId: response.stateId

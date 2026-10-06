@@ -1,14 +1,9 @@
 <div class="container-fluid min-vh-100 d-flex p-0">
-
   <div class="row g-0 w-100">
-
     <div class="col-12">
-
       <div class="card h-100 w-100 rounded-0">
-
         <!-- HEADER -->
-        <div class="card-header bg-danger">
-
+        <div class="card-header bg-primary text-white">
           <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
 
             <!-- Title -->
@@ -46,7 +41,7 @@
                  <!-- Load -->
                 <button
                 type="button"
-                class="btn btn-primary text-nowrap text-white"
+                class="btn btn-light text-nowrap"
                 (click)="loadApprovedSalariesByMonthYear()">
                 Load Salaries
                 </button>
@@ -54,81 +49,39 @@
             </div>
 
           </div>
-
         </div>
-
         <!-- BODY -->
         <div class="card-body">
 
           <p-table
             [value]="approvedSalaries"
             [paginator]="true"
-            [rows]="10"
-            responsiveLayout="scroll"
+            [rows]="100"
+            [rowsPerPageOptions]="[100,200,500]"
             showGridlines="true"
-            styleClass="p-datatable-sm p-datatable-gridlines"
-            [sortMode]="'multiple'">
+            sortMode="multiple"
+            paginatorStyleClass="custom-paginator">
 
             <!-- TABLE HEADER -->
             <ng-template pTemplate="header">
-
               <tr>
-
-                <th style="min-width: 80px;">
-                  SR No
-                </th>
-
-                <th pSortableColumn="employeeCode">
-                  Employee Code
-                  <p-sortIcon field="employeeCode"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="employeeFullName">
-                  Employee Name
-                  <p-sortIcon field="employeeFullName"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="employeeContact">
-                  Contact
-                  <p-sortIcon field="employeeContact"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="salaryMonth">
-                  Month
-                  <p-sortIcon field="salaryMonth"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="salaryYear">
-                  Year
-                  <p-sortIcon field="salaryYear"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="totalWorkingDays">
-                  Working Days
-                  <p-sortIcon field="totalWorkingDays"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="presentDays">
-                  Present Days
-                  <p-sortIcon field="presentDays"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="netPayableSalary">
-                  ₹Net Salary
-                  <p-sortIcon field="netPayableSalary"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="status">
-                  Status
-                  <p-sortIcon field="status"></p-sortIcon>
-                </th>
-
-                <th style="min-width: 120px;">
-                  Action
-                </th>
-
+                <th>SR</th>
+                <th pSortableColumn="employeeFullName"> Employee Name <p-sortIcon field="employeeFullName"></p-sortIcon></th>
+                <th pSortableColumn="employeeContact"> Contact <p-sortIcon field="employeeContact"></p-sortIcon> </th>
+                <th pSortableColumn="salaryMonth"> Month <p-sortIcon field="salaryMonth"></p-sortIcon></th>
+                <th pSortableColumn="salaryYear"> Year <p-sortIcon field="salaryYear"></p-sortIcon></th>
+                <th pSortableColumn="totalWorkingDays" pTooltip="Working Days" tooltipPosition="top"> W Days <p-sortIcon field="totalWorkingDays"></p-sortIcon></th>
+                <th pSortableColumn="presentDays" pTooltip="Present Days" tooltipPosition="top"> PR <p-sortIcon field="presentDays"></p-sortIcon></th>                
+                <th pSortableColumn="absentDays" pTooltip="Absent Days" tooltipPosition="top"> AB <p-sortIcon field="absentDays"></p-sortIcon></th>
+                <th pSortableColumn="halfDayLeave" pTooltip="Half Days" tooltipPosition="top"> HD <p-sortIcon field="halfDayLeave"></p-sortIcon></th>
+                <th pSortableColumn="sundayPresentDays" pTooltip="Sunday Presents" tooltipPosition="top"> SP <p-sortIcon field="sundayPresentDays"></p-sortIcon></th>                
+                <th pSortableColumn="sundayHalfDays" pTooltip="Sunday Half Days" tooltipPosition="top"> SH <p-sortIcon field="sundayHalfDays"></p-sortIcon></th>
+                <th pSortableColumn="otherDeductionAmount" pTooltip="Other Deduction Amount" tooltipPosition="top"> Other Ded <p-sortIcon field="otherDeductionAmount"></p-sortIcon></th>
+                <th pSortableColumn="otherAdditionalAmount" pTooltip="Other Additional Amount" tooltipPosition="top"> Other Add <p-sortIcon field="otherAdditionalAmount"></p-sortIcon></th>
+                <th pSortableColumn="netPayableSalary"> ₹Net Sal <p-sortIcon field="netPayableSalary"></p-sortIcon> </th>
+                <th pSortableColumn="status"> Status <p-sortIcon field="status"></p-sortIcon> </th>
+                <th> Action </th>
               </tr>
-
             </ng-template>
 
             <!-- TABLE BODY -->
@@ -138,70 +91,36 @@
               let-rowIndex="rowIndex">
 
               <tr>
-
                 <!-- SR Number -->
-                <td>
-                  {{ rowIndex + 1 }}
-                </td>
-
-                <!-- Employee Code -->
-                <td>
-                  {{ salary.employeeCode }}
-                </td>
-
-                <!-- Employee Name -->
-                <td>
-                  {{ salary.employeeFullName }}
-                </td>
-
-                <!-- Employee Contact -->
-                <td>
-                  {{ salary.phonePrimary }}
-                </td>
-
-                <!-- Salary Month -->
-                <td>
-                  {{ getMonthName(salary.salaryMonth) }}
-                </td>
-
-                <!-- Salary Year -->
-                <td>
-                  {{ salary.salaryYear }}
-                </td>
-
-                <!-- Working Days -->
-                <td>
-                  {{ salary.totalWorkingDays }}
-                </td>
-
-                <!-- Present Days -->
-                <td>
-                  {{ salary.presentDays }}
-                </td>
-                
-                <!-- Net Payable Salary -->
-                <td class="fw-bold text-success">
-                  ₹{{ salary.netPayableSalary}}
-                </td>
-                <!-- Status -->
+                <td>{{ rowIndex + 1 }}</td>                
+                <td>{{ salary.employeeFullName }}</td>                
+                <td>{{ salary.phonePrimary }}</td>                
+                <td>{{ getMonthName(salary.salaryMonth) }}</td>                
+                <td>{{ salary.salaryYear }}</td>                
+                <td>{{ salary.totalWorkingDays }}</td>                
+                <td>{{ salary.presentDays }}</td>
+                <td>{{ salary.absentDays }}</td>                
+                <td>{{ salary.halfDayLeave }}</td>
+                <td>{{ salary.sundayPresentDays }}</td>
+                <td>{{ salary.sundayHalfDays }}</td>
+                <td class="text-danger">₹{{ salary.otherDeductionAmount }}</td>
+                <td class="text-success">₹{{ salary.otherAdditionalAmount }}</td>
+                <td class="fw-bold text-success">₹{{ salary.netPayableSalary}}</td>                
                 <td>
                   <span
                     class="badge"
                     [ngClass]="{                      
-                      'bg-success': salary.status === 'Confirmed'
+                      'bg-success': salary.status === 'Approved'
                     }">
                     {{ salary.status }}
                   </span>
-
                 </td>
-
                 <!-- Action -->
                 <td>
-
                   <div class="d-flex align-items-center gap-2">
-                    <button *ngIf="salary.status === 'Confirmed'"
+                    <button *ngIf="salary.status === 'Approved'"
                     type="button" 
-                    class="btn fixed-badge btn-primary rounded-pill mt-1 mb-1"
+                    class="btn btn-link edit-btn" 
                     cTooltip="Pay Salary"
                     (click)="onPaySalary(salary)">
                     <svg cIcon name="cil-dollar"></svg>
@@ -210,36 +129,22 @@
                   </div>
 
                 </td>
-
               </tr>
-
             </ng-template>
 
             <!-- EMPTY MESSAGE -->
             <ng-template pTemplate="emptymessage">
-
               <tr>
-
-                <td colspan="9" class="text-center py-4">
-
+                <td colspan="16" class="text-center py-4">
                   <div class="text-muted fw-bold">
                     No Approved Salaries Found
                   </div>
-
                 </td>
-
               </tr>
-
             </ng-template>
-
           </p-table>
-
         </div>
-
       </div>
-
     </div>
-
   </div>
-
 </div>

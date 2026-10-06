@@ -28,7 +28,7 @@
             <div class="col-md-2">
                 <label class="form-label">Voucher Type</label>
                 <select class="form-select form-select-sm"
-                        [(ngModel)]="voucherType">
+                        [(ngModel)]="voucherReportType">
                     <option [ngValue]="null">All</option>
                     <option *ngFor="let item of voucherTypes"
                             [ngValue]="item.value">
@@ -62,8 +62,26 @@
 
     <!-- Table -->
     <div class="card-body">
+        <div class="d-flex justify-content-end gap-2 mb-3">
+           <button
+        type="button"
+        class="btn btn-success"
+        (click)="ExportExcel()">
+        <i class="pi pi-file-excel me-2"></i>
+        Export Excel
+    </button>
+
+    <button
+        type="button"
+        class="btn btn-primary"
+        (click)="exportCSV()">
+        <i class="pi pi-file me-2"></i>
+        Export CSV
+    </button>
+        </div>
 
         <p-table
+            #dt
             [value]="voucherReports"
             [paginator]="true" 
             [rows]="20" 
@@ -74,8 +92,8 @@
 
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Date</th>
-                    <th>Module</th>
+                    <th>SR</th>
+                    <th>Date</th>                    
                     <th>Voucher No</th>
                     <th>Voucher Type</th>
                     <th>Status</th>
@@ -108,8 +126,8 @@
 
             <ng-template pTemplate="body" let-row>
                 <tr>
-                    <td>{{row.voucherDate | date:'dd/MM/yyyy'}}</td>
-                    <td>{{row.module}}</td>                    
+                    <td>{{row.serialNumber}}</td>
+                    <td>{{row.voucherDate | date:'dd/MM/yyyy'}}</td>                    
                     <td>{{row.voucherNumber}}</td>
                     <td>{{row.voucherType}}</td>
                     <td>{{row.status}}</td>
@@ -132,13 +150,13 @@
                     <td>{{row.chequeNumber}}</td>
                     <td>{{row.remark}}</td>
                     <td>{{row.createdBy}}</td>
-                    <td>{{row.createdDate | date:'dd/MM/yyyy HH:mm'}}</td>
+                    <td>{{row.createdDate | date:'dd/MM/yyyy'}}</td>
 
                     <td>{{row.approvedBy}}</td>
-                    <td>{{row.approvedDate | date:'dd/MM/yyyy HH:mm'}}</td>
+                    <td>{{row.approvedDate | date:'dd/MM/yyyy'}}</td>
 
                     <td>{{row.paidBy}}</td>
-                    <td>{{row.paidDate | date:'dd/MM/yyyy HH:mm'}}</td>
+                    <td>{{row.paidDate | date:'dd/MM/yyyy'}}</td>
 
                 </tr>
             </ng-template>

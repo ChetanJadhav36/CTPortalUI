@@ -38,34 +38,34 @@
 
                 </select>
             </div>
+            <!-- Employee -->
+            <div class="col-12 col-sm-6 col-md-3 col-lg-2 position-relative"
+                *ngIf="selectedLedgerType === 'EMPLOYEE'">
+            <input
+                type="text"
+                class="form-control form-control-sm"
+                [(ngModel)]="employeeFullName"
+                placeholder="Search Employee..."
+                autocomplete="off"
+                (input)="searchEmployee($event)"
+                (keydown)="onEmployeeKeydown($event)"
+            />
 
-            <!-- Employee -->          
-            <div class="col-12 col-sm-6 col-md-3 col-lg-2 position-relative" *ngIf="selectedLedgerType=='EMPLOYEE'">
-
-                <input
-                    type="text"
-                    class="form-control form-control-sm"
-                    [(ngModel)]="employeeFullName"
-                    placeholder="Enter Employee Name"
-                    (input)="searchEmployee($event)"
-                    autocomplete="off">
-
-                <ul *ngIf="employees.length > 0"
-                    class="list-group position-absolute w-100 shadow"
-                    style="z-index:1000; max-height:200px; overflow-y:auto">
-
-                    <li
-                        *ngFor="let employee of employees"
-                        class="list-group-item list-group-item-action"
-                        (click)="selectEmployee(employee)">
-
-                        {{employee.employeeFullName}}
-
-                    </li>
-
-                </ul>
-
-            </div>
+            <ul
+                *ngIf="employees.length > 0"
+                class="list-group position-absolute w-100 shadow"
+                style="z-index: 1000; max-height: 200px; overflow-y: auto;"
+            >
+                <li
+                *ngFor="let employee of employees; let i = index"
+                class="list-group-item list-group-item-action"
+                [class.active]="i === selectedEmployeeIndex"
+                (mousedown)="selectEmployee(employee)"
+                >
+                {{ employee.employeeFullName }}
+                </li>
+            </ul>
+            </div>           
 
             <!-- From -->
             <div class="col-6 col-md-2 col-lg-2">
@@ -98,80 +98,95 @@
     <!-- Body -->
     <div class="card-body">
 
-        <!-- Table -->
-		<div class="card mt-3" *ngIf="ledger">
-        <div class="card-header">
-            <div class="row">
+        <!-- Export Buttons -->
+        <div class="d-flex justify-content-end gap-2 mb-3" *ngIf="ledger?.transactions?.length">
+            <button
+                type="button"
+                class="btn btn-success"
+                (click)="ExportExcel()">
+                <i class="pi pi-file-excel me-2"></i>
+                Export Excel
+            </button>
 
-                <div class="col">
-                    <b>Opening :</b>
-                    {{ledger.openingBalance}}
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="exportCSV()">
+                <i class="pi pi-file me-2"></i>
+                Export CSV
+            </button>
+        </div>
+
+        <!-- Table -->
+        <div class="card mt-3" *ngIf="ledger">
+            <div class="card-header">
+                <div class="row">
+
+                    <div class="col">
+                        <b>Total Debit :</b>
+                        {{ledger.totalDebit}}
+                    </div>
+                    <div class="col">
+                        <b>Total Credit :</b>
+                        {{ledger.totalCredit}}
+                    </div>
+                    <div class="col">
+                        <b>Closing :</b>
+                        {{ledger.closingBalance}}
+                    </div>
+
                 </div>
-                <div class="col">
-                    <b>Total Debit :</b>
-                    {{ledger.totalDebit}}
-                </div>
-                <div class="col">
-                    <b>Total Credit :</b>
-                    {{ledger.totalCredit}}
-                </div>
-                <div class="col">
-                    <b>Closing :</b>
-                    {{ledger.closingBalance}}
-                </div>
+            </div>
+
+            <div class="card-body">
+                <p-table
+                    [value]="ledger.transactions"
+                    [paginator]="true"
+                    [rows]="15"
+                    showGridlines="true">
+
+                    <ng-template pTemplate="header">
+
+                        <tr>
+                            <th>Date</th>
+                            <th>Voucher No</th>
+                            <th>Type</th>
+                            <th>Particular</th>
+                            <th>Dr. Amt</th>
+                            <th>Cr. Amt</th>
+                            <th>Net Balance</th>
+                            <th>Narration</th>
+                        </tr>
+
+                    </ng-template>
+
+                    <ng-template
+                        pTemplate="body"
+                        let-row>
+
+                        <tr>
+                            <td>{{row.date | date}}</td>
+                            <td>{{row.voucherNo}}</td>
+                            <td>{{row.voucherType}}</td>
+                            <td>{{row.particular}}</td>
+                            <td class="text-danger">
+                                {{row.debit}}
+                            </td>
+                            <td class="text-success">
+                                {{row.credit}}
+                            </td>
+                            <td>
+                                {{row.balance}}
+                            </td>
+                            <td>{{row.narration}}</td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
 
             </div>
-        </div>
-
-        <div class="card-body">
-            <p-table
-                [value]="ledger.transactions"
-                [paginator]="true"
-                [rows]="15"
-                showGridlines="true">
-
-                <ng-template pTemplate="header">
-
-                    <tr>
-                        <th>Date</th>
-                        <th>Voucher</th>
-                        <th>Type</th>
-                        <th>Particular</th>
-                        <th>Dr. Amt</th>
-                        <th>Cr. Amt</th>
-                        <th>Net Balance</th>
-                        <th>Narration</th>
-                    </tr>
-
-                </ng-template>
-
-                <ng-template
-                    pTemplate="body"
-                    let-row>
-
-                    <tr>
-                        <td>{{row.date | date}}</td>
-                        <td>{{row.voucherNo}}</td>
-                        <td>{{row.voucherType}}</td>
-                        <td>{{row.particular}}</td>
-                        <td class="text-danger">
-                            {{row.debit}}
-                        </td>
-                        <td class="text-success">
-                            {{row.credit}}
-                        </td>
-                        <td>
-                            {{row.balance}}
-                        </td>
-                        <td>{{row.narration}}</td>
-                    </tr>
-                </ng-template>
-
-            </p-table>
 
         </div>
-
-    </div>
 
     </div>
 

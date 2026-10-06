@@ -21,6 +21,10 @@ export class JournalVoucherComponent {
   isUpdateMode: boolean = false;
   sourceEmployees: any[] = [];
   destinationEmployees: any[] = [];  
+
+  selectedSourceEmployeeIndex: number = -1;
+  selectedDestinationEmployeeIndex: number = -1;
+
   jvForm = new FormGroup({
     id: new FormControl(0),
     companyId: new FormControl(0),
@@ -29,15 +33,11 @@ export class JournalVoucherComponent {
     voucherNumber: new FormControl({ value: 0, disabled: true }),
     voucherType: new FormControl('JV'),
 
-    sourceAccountId: new FormControl('', Validators.required),
-    sourceAccountName: new FormControl('', Validators.required),
+    sourceEmployeeId: new FormControl('', Validators.required),
+    sourceEmployeeName: new FormControl('', Validators.required),
 
-    destinationAccountId: new FormControl('', Validators.required),
-    destinationAccountName: new FormControl('', Validators.required),
-
-    sourceEmployeeAdvanceId: new FormControl(0),
-    destinationEmployeeAdvanceId: new FormControl(0),
-
+    destinationEmployeeId: new FormControl('', Validators.required),
+    destinationEmployeeName: new FormControl('', Validators.required),
     amount: new FormControl(0, [
       Validators.required,
       Validators.min(1),
@@ -82,36 +82,25 @@ getJournalVoucherById(id: any) {
 
   this.financeService.getJournalVoucherById(payload)
     .subscribe({
-
       next: (data: any) => {
         this.jvForm.patchValue({
-
           id: data.id,
           voucherDate: this.dateUtcPipe.transform(
             data.voucherDate,
             'input'
           ),
-
           voucherNumber: data.voucherNumber,
 
-          sourceAccountId: data.sourceAccountId,
-          sourceAccountName: data.sourceAccountName,
-          sourceEmployeeAdvanceId: data.sourceEmployeeAdvanceId,
+          sourceEmployeeId: data.sourceEmployeeId,
+          sourceEmployeeName: data.sourceEmployeeName,         
 
-          destinationAccountId: data.destinationAccountId,
-          destinationAccountName: data.destinationAccountName,
-          destinationEmployeeAdvanceId:
-            data.destinationEmployeeAdvanceId,
-
+          destinationEmployeeId: data.destinationEmployeeId,
+          destinationEmployeeName: data.destinationEmployeeName,          
           amount: data.amount,
-
           netSalary: data.netSalary,
-
           narration: data.narration,
-
           createdByName: data.createdByName
         });
-
       },
 
       error: err => {
@@ -124,77 +113,252 @@ getJournalVoucherById(id: any) {
     });
 
 }
-searchSourceEmployee(event: any) {
-  const keyword = event.target.value;
+searchSourceEmployee(event: any): void {
+  const keyword = event.target.value.trim();
 
-  if (keyword.length < 2) {
+  // Reset keyboard selection
+  this.selectedSourceEmployeeIndex = -1;
+
+  // User is typing again, so clear previously selected employee
+  this.jvForm.patchValue({
+    sourceEmployeeId: ''
+  });
+
+  if (!keyword || keyword.length < 2) {
     this.sourceEmployees = [];
     return;
   }
 
-  const destinationId = this.jvForm.get('destinationAccountId')?.value;
+  const destinationId =
+    this.jvForm.get('destinationAccountId')?.value;
 
-  this.financeService.searchJVEmployee(keyword, this.companyId)
-    .subscribe(res => {
-      this.sourceEmployees = res.filter(
-        (emp: any) => emp.employeeId !== destinationId
-      );
+  this.financeService
+    .searchJVEmployee(keyword, this.companyId)
+    .subscribe({
+      next: (response: any[]) => {
+        this.sourceEmployees = (response || []).filter(
+          (emp: any) =>
+            Number(emp.employeeId) !== Number(destinationId)
+        );
+        this.selectedSourceEmployeeIndex = -1;
+      },
+
+      error: (error: any) => {
+        this.sourceEmployees = [];
+        this.toastService.error(
+          error?.error?.message ||
+          'Error fetching employees'
+        );
+      }
     });
 }
-selectSourceEmployee(employee: any) {
+selectSourceEmployee(employee: any): void {
+
   this.jvForm.patchValue({
-    sourceAccountId: employee.employeeId,
-    sourceAccountName: employee.employeeFullName,
-    sourceEmployeeAdvanceId:employee.employeeAdvanceId,
+    sourceEmployeeId: employee.employeeId,
+    sourceEmployeeName: employee.employeeFullName
   });
 
+  // Close dropdown
   this.sourceEmployees = [];
+
+  // Reset keyboard selection
+  this.selectedSourceEmployeeIndex = -1;
 }
 
-searchDestinationEmployee(event: any) {
-  const keyword = event.target.value;
+onSourceEmployeeKeydown(event: KeyboardEvent): void {
 
-  if (keyword.length < 2) {
+  if (!this.sourceEmployees || this.sourceEmployees.length === 0) {
+    return;
+  }
+
+  // Arrow Down
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+
+    if (
+      this.selectedSourceEmployeeIndex <
+      this.sourceEmployees.length - 1
+    ) {
+      this.selectedSourceEmployeeIndex++;
+    } else {
+      this.selectedSourceEmployeeIndex = 0;
+    }
+  }
+
+  // Arrow Up
+  else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+
+    if (this.selectedSourceEmployeeIndex > 0) {
+      this.selectedSourceEmployeeIndex--;
+    } else {
+      this.selectedSourceEmployeeIndex =
+        this.sourceEmployees.length - 1;
+    }
+  }
+
+  // Enter
+  else if (event.key === 'Enter') {
+    event.preventDefault();
+
+    if (
+      this.selectedSourceEmployeeIndex >= 0 &&
+      this.selectedSourceEmployeeIndex < this.sourceEmployees.length
+    ) {
+      const employee =
+        this.sourceEmployees[this.selectedSourceEmployeeIndex];
+
+      this.selectSourceEmployee(employee);
+    }
+  }
+
+  // Escape
+  else if (event.key === 'Escape') {
+    event.preventDefault();
+
+    this.sourceEmployees = [];
+    this.selectedSourceEmployeeIndex = -1;
+  }
+}
+searchDestinationEmployee(event: any): void {
+  const keyword = event.target.value.trim();
+
+  // Reset keyboard selection
+  this.selectedDestinationEmployeeIndex = -1;
+
+  // User is typing again
+  this.jvForm.patchValue({
+    destinationEmployeeId: '',
+    netSalary: ''
+  });
+
+  if (!keyword || keyword.length < 2) {
     this.destinationEmployees = [];
     return;
   }
 
-  const sourceId = this.jvForm.get('sourceAccountId')?.value;
+  const sourceId =
+    this.jvForm.get('sourceAccountId')?.value;
 
-  this.financeService.searchJVEmployee(keyword, this.companyId)
-    .subscribe(res => {      
-      this.destinationEmployees = res.filter(
-      (emp: any) => emp.employeeId !== sourceId
-      );
+  this.financeService
+    .searchJVEmployee(keyword, this.companyId)
+    .subscribe({
+      next: (response: any[]) => {
+
+        this.destinationEmployees = (response || []).filter(
+          (emp: any) =>
+            Number(emp.employeeId) !== Number(sourceId)
+        );
+
+        this.selectedDestinationEmployeeIndex = -1;
+      },
+
+      error: (error: any) => {
+        this.destinationEmployees = [];
+
+        this.toastService.error(
+          error?.error?.message ||
+          'Error fetching employees'
+        );
+      }
     });
 }
-selectDestinationEmployee(employee: any) {  
+
+selectDestinationEmployee(employee: any): void {
+
   this.jvForm.patchValue({
-    destinationAccountId: employee.employeeId,
-    destinationAccountName: employee.employeeFullName,
-    destinationEmployeeAdvanceId: employee.employeeAdvanceId,
+    destinationEmployeeId: employee.employeeId,
+    destinationEmployeeName: employee.employeeFullName,
     netSalary: employee.monthlySalary
   });
 
+  // Close dropdown
   this.destinationEmployees = [];
+
+  // Reset keyboard selection
+  this.selectedDestinationEmployeeIndex = -1;
 }
+
+onDestinationEmployeeKeydown(event: KeyboardEvent): void {
+  if (
+    !this.destinationEmployees ||
+    this.destinationEmployees.length === 0
+  ) {
+    return;
+  }
+
+  // Arrow Down
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+
+    if (
+      this.selectedDestinationEmployeeIndex <
+      this.destinationEmployees.length - 1
+    ) {
+      this.selectedDestinationEmployeeIndex++;
+    } else {
+      this.selectedDestinationEmployeeIndex = 0;
+    }
+  }
+
+  // Arrow Up
+  else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+
+    if (this.selectedDestinationEmployeeIndex > 0) {
+      this.selectedDestinationEmployeeIndex--;
+    } else {
+      this.selectedDestinationEmployeeIndex =
+        this.destinationEmployees.length - 1;
+    }
+  }
+
+  // Enter
+  else if (event.key === 'Enter') {
+    event.preventDefault();
+
+    if (
+      this.selectedDestinationEmployeeIndex >= 0 &&
+      this.selectedDestinationEmployeeIndex <
+        this.destinationEmployees.length
+    ) {
+      const employee =
+        this.destinationEmployees[
+          this.selectedDestinationEmployeeIndex
+        ];
+
+      this.selectDestinationEmployee(employee);
+    }
+  }
+
+  // Escape
+  else if (event.key === 'Escape') {
+    event.preventDefault();
+
+    this.destinationEmployees = [];
+    this.selectedDestinationEmployeeIndex = -1;
+  }
+}
+
 
 clearSourceAccount() {
   this.jvForm.patchValue({
-    sourceAccountId: '',
-    sourceAccountName: ''
+    sourceEmployeeId: '',
+    sourceEmployeeName: ''
   });
 
   this.sourceEmployees = [];
 }
-clearDestinationAccount() {
+clearDestinationAccount(): void {
   this.jvForm.patchValue({
-    destinationAccountId: '',
-    destinationAccountName: '',
-    netSalary : ''
+    destinationEmployeeId: '',
+    destinationEmployeeName: '',
+    netSalary: ''
   });
 
   this.destinationEmployees = [];
+  this.selectedDestinationEmployeeIndex = -1;
 }
 
 focusNext(next: HTMLElement) {

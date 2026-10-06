@@ -35,27 +35,49 @@
 
                 <!-- Relationship -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">Relationship</label>
-                  <input type="text" class="form-control"
-                    formControlName="relationship"
-                    placeholder="Enter Relationship"
-                    [ngClass]="{'is-invalid': employeeContactForm.get('relationship')?.invalid && employeeContactForm.get('relationship')?.touched}">
-                </div>
+                <label class="form-label">
+                  Relationship <span class="text-danger">*</span>
+                </label>
+
+                <select
+                  class="form-select form-select-sm"
+                  formControlName="relationship"
+                  id="relationship"
+                  name="relationship"
+                  [ngClass]="{
+                    'is-invalid':
+                      employeeContactForm.get('relationship')?.invalid &&
+                      employeeContactForm.get('relationship')?.touched
+                  }">
+                   <option [ngValue]="null">Select</option>
+                  <option [ngValue]="RelationshipType.Father">Father</option>
+                  <option [ngValue]="RelationshipType.Mother">Mother</option>
+                  <option [ngValue]="RelationshipType.Husband">Husband</option>
+                  <option [ngValue]="RelationshipType.Wife">Wife</option>
+                  <option [ngValue]="RelationshipType.Brother">Brother</option>
+                  <option [ngValue]="RelationshipType.Sister">Sister</option>
+                  <option [ngValue]="RelationshipType.Son">Son</option>
+                  <option [ngValue]="RelationshipType.Daughter">Daughter</option>
+                </select>
+              </div>
 
                 <!-- Full Name -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">Full Name</label>
+                  <label class="form-label">Full Name <span class="text-danger">*</span></label>
                   <input type="text" class="form-control"
                     formControlName="fullName"
+                    maxlength="100"
                     placeholder="Enter Full Name"
-                    [ngClass]="{'is-invalid': employeeContactForm.get('fullName')?.invalid && employeeContactForm.get('fullName')?.touched}">
+                    [ngClass]="{'is-invalid': employeeContactForm.get('fullName')?.invalid && employeeContactForm.get('fullName')?.touched}"
+                    appUpperCase>
                 </div>
 
                 <!-- Primary Phone -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">Primary Phone</label>
+                  <label class="form-label">Primary Phone <span class="text-danger">*</span></label>
                   <input type="text" class="form-control"
                     formControlName="phonePrimary"
+                    maxlength="10"
                     placeholder="Enter Primary Phone"
                     [ngClass]="{'is-invalid': employeeContactForm.get('phonePrimary')?.invalid && employeeContactForm.get('phonePrimary')?.touched}">
                 </div>
@@ -65,16 +87,19 @@
                   <label class="form-label">Secondary Phone</label>
                   <input type="text" class="form-control"
                     formControlName="phoneSecondary"
+                    maxlength="10"
                     placeholder="Enter Secondary Phone">
                 </div>
 
                 <!-- Address -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">Address</label>
+                  <label class="form-label">Address <span class="text-danger">*</span></label>
                   <input type="text" class="form-control"
                     formControlName="address"
+                    maxlength="100"
                     placeholder="Enter Address"
-                    [ngClass]="{'is-invalid': employeeContactForm.get('address')?.invalid && employeeContactForm.get('address')?.touched}">
+                    [ngClass]="{'is-invalid': employeeContactForm.get('address')?.invalid && employeeContactForm.get('address')?.touched}"
+                    appUpperCase>
                 </div>
 
                 <!-- Notes -->
@@ -83,7 +108,8 @@
                   <textarea class="form-control"
                     formControlName="notes"
                     rows="1"
-                    placeholder="Enter Notes"></textarea>
+                    placeholder="Enter Notes"
+                    maxlength="200"></textarea>
                 </div>
 
               </div>
@@ -101,7 +127,7 @@
 
                  <!-- Monthly Salary -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">Monthly Salary</label>
+                  <label class="form-label">Monthly Salary <span class="text-danger">*</span></label>
                   <input type="number" class="form-control"
                     formControlName="monthlySalary"
                     placeholder="Enter Monthly Salary"
@@ -110,46 +136,56 @@
 
                 <!-- Aadhaar Number -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">Aadhaar Number</label>
+                  <label class="form-label">Aadhaar Number <span class="text-danger">*</span></label>
                   <input type="text" class="form-control"
                     formControlName="aadhaarNumber"
+                    maxlength="12"
                     placeholder="Enter Aadhaar Number"
-                    [ngClass]="{'is-invalid': employeeContactForm.get('aadhaarNumber')?.invalid && employeeContactForm.get('aadhaarNumber')?.touched}">
+                    [ngClass]="{'is-invalid': employeeContactForm.get('aadhaarNumber')?.invalid && employeeContactForm.get('aadhaarNumber')?.touched}"
+                    appUpperCase`>
                 </div>
 
                 <!-- PAN Number -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">PAN Number</label>
+                  <label class="form-label">PAN Number <span class="text-danger">*</span></label>
                   <input type="text" class="form-control"
                     formControlName="panNumber"
+                    maxlength="10"
                     placeholder="Enter PAN Number"
-                    [ngClass]="{'is-invalid': employeeContactForm.get('panNumber')?.invalid && employeeContactForm.get('panNumber')?.touched}">
+                    [ngClass]="{'is-invalid': employeeContactForm.get('panNumber')?.invalid && employeeContactForm.get('panNumber')?.touched}"
+                    appUpperCase>
                 </div>
 
                 <!-- Bank Name -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">Bank Name</label>
+                  <label class="form-label">Bank Name <span class="text-danger">*</span></label>
                   <input type="text" class="form-control"
                     formControlName="bankName"
-                    placeholder="Enter Bank Name">
+                    maxlength="100"
+                    placeholder="Enter Bank Name"
+                    appUpperCase>
                 </div>
 
                 <!-- Bank Account Number -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">Bank Account Number</label>
+                  <label class="form-label">Bank Account Number <span class="text-danger">*</span></label>
                   <input type="text" class="form-control"
                     formControlName="bankAccountNumber"
+                    maxlength="20"
                     placeholder="Enter Bank Account Number"
-                    [ngClass]="{'is-invalid': employeeContactForm.get('bankAccountNumber')?.invalid && employeeContactForm.get('bankAccountNumber')?.touched}">
+                    [ngClass]="{'is-invalid': employeeContactForm.get('bankAccountNumber')?.invalid && employeeContactForm.get('bankAccountNumber')?.touched}"
+                    appUpperCase>
                 </div>
 
                 <!-- IFSC Code -->
                 <div class="col-md-4 mb-3">
-                  <label class="form-label">IFSC Code</label>
+                  <label class="form-label">IFSC Code <span class="text-danger">*</span></label>
                   <input type="text" class="form-control"
                     formControlName="ifscCode"
+                    maxlength="11"
                     placeholder="Enter IFSC Code"
-                    [ngClass]="{'is-invalid': employeeContactForm.get('ifscCode')?.invalid && employeeContactForm.get('ifscCode')?.touched}">
+                    [ngClass]="{'is-invalid': employeeContactForm.get('ifscCode')?.invalid && employeeContactForm.get('ifscCode')?.touched}"
+                    appUpperCase>
                 </div>
 
               </div>

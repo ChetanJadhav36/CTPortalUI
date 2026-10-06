@@ -29,7 +29,8 @@
                 maxlength="20"
                 [ngClass]="{'is-invalid': myForm.get('accountGroupCode')?.invalid && myForm.get('accountGroupCode')?.touched,
               'readonly-field': isUpdateMode}"
-              [readonly]="isUpdateMode">
+              [readonly]="isUpdateMode"
+              appUpperCase>
             </div>
 
             <!-- Second Textbox -->
@@ -43,7 +44,8 @@
                 id="accountGroupName"
                 formControlName="accountGroupName"
                 placeholder="Enter Account Group Name"
-                [ngClass]="{'is-invalid': myForm.get('accountGroupName')?.invalid && myForm.get('accountGroupName')?.touched}">
+                [ngClass]="{'is-invalid': myForm.get('accountGroupName')?.invalid && myForm.get('accountGroupName')?.touched}"
+                appUpperCase>
             </div>
 
             <!-- Third Textbox -->
@@ -57,7 +59,8 @@
                 id="ugName"
                 formControlName="ugName"
                 placeholder="Enter User Group Name"
-                [ngClass]="{'is-invalid': myForm.get('ugName')?.invalid && myForm.get('ugName')?.touched}">
+                [ngClass]="{'is-invalid': myForm.get('ugName')?.invalid && myForm.get('ugName')?.touched}"
+                appUpperCase>
             </div>
 
             <!-- Submit Button -->

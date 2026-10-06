@@ -46,8 +46,20 @@ export class DashboardComponent implements OnInit {
   getNotesDenominations(companyId: any): void {
   this.financeService.GetNotesDenominations(companyId)
     .subscribe({
-      next: (res: any[]) => {
-        this.notesData = res;          
+      next: (res: any) => {
+        this.notesData = res;  
+        this.notesData.totalNotesCount = [
+            res.notes2000,
+            res.notes1000,
+            res.notes500,
+            res.notes200,
+            res.notes100,
+            res.notes50,
+            res.notes20,
+            res.notes10,
+            res.notes5,
+            res.coins
+          ].reduce((sum, value) => sum + (value || 0), 0);
       },
       error: (error) => {
         this.toastService.error(
@@ -58,52 +70,34 @@ export class DashboardComponent implements OnInit {
 } 
 loadDashboardSummary(): void { 
   forkJoin({
-    voucher: this.financeService.getVoucherTransactionsDashboardSummary(this.companyId),
-    advance: this.financeService.getEmployeeAdvancesDashboardSummary(this.companyId),
-    salary: this.financeService.getSalaryDashboardSummary(this.companyId)
-  }).subscribe({
-    next: (response: any) => {      
+    expenses: this.financeService.getExpenseDashboardSummary(this.companyId),
+    bankDeposits: this.financeService.getBankDepositDashboardSummary(this.companyId),
+    advances: this.financeService.getEmployeeAdvancesDashboardSummary(this.companyId),
+    salaries: this.financeService.getSalaryDashboardSummary(this.companyId)
+  }).subscribe({next: (response: any) => {        
       // Expenses
-      this.dashboard.expenseApprovalPending =
-        response.voucher?.draftPendingCount ?? 0;
+      this.dashboard.expenseApprovalPending = response.expenses?.draftPendingCount ?? 0;
+      this.dashboard.expenseApprovalAmount = response.expenses?.draftPendingAmount ?? 0;
+      this.dashboard.expensePaymentPending = response.expenses?.paymentPendingCount ?? 0;
+      this.dashboard.expensePaymentAmount = response.expenses?.paymentPendingAmount ?? 0;
 
-      this.dashboard.expenseApprovalAmount =
-        response.voucher?.draftPendingAmount ?? 0;
-
-      this.dashboard.expensePaymentPending =
-        response.voucher?.paymentPendingCount ?? 0;
-
-      this.dashboard.expensePaymentAmount =
-        response.voucher?.paymentPendingAmount ?? 0;
-
+      // Bank Deposits
+      this.dashboard.bankDepositApprovalPending = response.bankDeposits?.draftPendingCount ?? 0;
+      this.dashboard.bankDepositApprovalAmount = response.bankDeposits?.draftPendingAmount ?? 0;
+      this.dashboard.bankDepositPaymentPending = response.bankDeposits?.paymentPendingCount ?? 0;
+      this.dashboard.bankDepositPaymentAmount = response.bankDeposits?.paymentPendingAmount ?? 0;
 
       // Advances
-      this.dashboard.advanceApprovalPending =
-        response.advance?.draftPendingCount ?? 0;
-
-      this.dashboard.advanceApprovalAmount =
-        response.advance?.draftPendingAmount ?? 0;
-
-      this.dashboard.advancePaymentPending =
-        response.advance?.paymentPendingCount ?? 0;
-
-      this.dashboard.advancePaymentAmount =
-        response.advance?.paymentPendingAmount ?? 0;
-
+      this.dashboard.advanceApprovalPending = response.advances?.draftPendingCount ?? 0;
+      this.dashboard.advanceApprovalAmount = response.advances?.draftPendingAmount ?? 0;
+      this.dashboard.advancePaymentPending = response.advances?.paymentPendingCount ?? 0;
+      this.dashboard.advancePaymentAmount = response.advances?.paymentPendingAmount ?? 0;
 
       // Salaries
-      this.dashboard.salaryApprovalPending =
-        response.salary?.draftPendingCount ?? 0;
-
-      this.dashboard.salaryApprovalAmount =
-        response.salary?.draftPendingAmount ?? 0;
-
-      this.dashboard.salaryPaymentPending =
-        response.salary?.paymentPendingCount ?? 0;
-
-      this.dashboard.salaryPaymentAmount =
-        response.salary?.paymentPendingAmount ?? 0;
-
+      this.dashboard.salaryApprovalPending = response.salaries?.draftPendingCount ?? 0;
+      this.dashboard.salaryApprovalAmount = response.salaries?.draftPendingAmount ?? 0;
+      this.dashboard.salaryPaymentPending = response.salaries?.paymentPendingCount ?? 0;
+      this.dashboard.salaryPaymentAmount = response.salaries?.paymentPendingAmount ?? 0;
     },
     error: (error) => {
       this.toastService.error(

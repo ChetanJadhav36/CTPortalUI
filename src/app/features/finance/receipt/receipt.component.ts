@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MasterService } from '../../../services/master.service';
 import { AuthService } from '../../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,10 +24,11 @@ export class ReceiptComponent {
   accounts: any[] = [];
   sourceAccounts: any[] = [];
   cashInHandAccount: any;
-  bankAccount: any;
-  vehicleList: any[] = [];
+  bankAccounts: any[] = [];  
   employees: any[] = [];
+  selectedEmployeeIndex: number = -1;
   vehicles: any[] = [];
+  selectedVehicleIndex: number = -1;
   PaymentType = PaymentType;
   // In your component
   amountPaidOptions = [
@@ -51,6 +52,7 @@ export class ReceiptComponent {
     destinationAccountId: new FormControl('', Validators.required),   // Received In
     destinationAccountCode: new FormControl(''),
     destinationAccountName: new FormControl(''),
+    bankAccountId: new FormControl(''),
 
     sourceAccountId: new FormControl('', Validators.required),
     sourceAccountName: new FormControl(''),
@@ -64,16 +66,16 @@ export class ReceiptComponent {
     narration: new FormControl('', Validators.maxLength(250)),
     transactionNo: new FormControl('',Validators.required),    
     isAmountPaid: new FormControl(true,Validators.required),    
-    notes2000: new FormControl(0),
-    notes1000: new FormControl(0),
-    notes500: new FormControl(0),
-    notes100: new FormControl(0),
-    notes200: new FormControl(0),
-    notes50: new FormControl(0),
-    notes20: new FormControl(0),
-    notes10: new FormControl(0),
-    notes5: new FormControl(0),
-    coins: new FormControl(0),
+    notes2000: new FormControl<number | null>(null),
+    notes1000: new FormControl<number | null>(null),
+    notes500: new FormControl<number | null>(null),
+    notes100: new FormControl<number | null>(null),
+    notes200: new FormControl<number | null>(null),
+    notes50: new FormControl<number | null>(null),
+    notes20: new FormControl<number | null>(null),
+    notes10: new FormControl<number | null>(null),
+    notes5: new FormControl<number | null>(null),
+    coins: new FormControl<number | null>(null),
 
     bankName: new FormControl(''),
     chequeNumber: new FormControl(''),
@@ -139,15 +141,16 @@ getAccountsByCompanyId(companyId: any): void {
     .subscribe({
       next: (res: any[]) => {
         this.accounts = res;
-       this.cashInHandAccount = this.accounts.find(
-        acc => acc.accountCode === 'CIH'
-      );
 
-      this.bankAccount = this.accounts.find(
-        acc => acc.accountCode === 'BNK'
-      );
+        this.cashInHandAccount = this.accounts.find(
+          acc => acc.accountCode === 'CIH'
+        );
 
-        // Account Name dropdown should not show Cash In Hand
+        // Get all accounts under BNK account group
+        this.bankAccounts = this.accounts
+        .filter(acc => acc.accountGroupCode === 'BNK')
+        .sort((a, b) => Number(b.isDefault) - Number(a.isDefault));       
+
         this.sourceAccounts = this.accounts.filter(
           acc => acc.accountCode !== 'CIH'
         );
@@ -163,19 +166,20 @@ getAccountsByCompanyId(companyId: any): void {
               }
             ])
           ).values()
-        ];   
-        
-        // Default = Cash
+        ];
+
+        // Default Received In = Cash In Hand
         if (this.cashInHandAccount) {
           this.receiptForm.patchValue({
             destinationAccountId: this.cashInHandAccount.id,
             destinationAccountName: this.cashInHandAccount.accountName,
             destinationAccountCode: this.cashInHandAccount.accountCode
-          });          
+          });
 
+          // Keep Received In disabled
           this.receiptForm.get('destinationAccountId')?.disable();
           this.receiptForm.get('destinationAccountCode')?.disable();
-        }        
+        }
 
         if (this.receiptId) {
           this.onGetReceiptById(this.receiptId);
@@ -206,7 +210,9 @@ onGetReceiptById(id: any): void {
   this.financeService
     .getReceiptById(id, this.companyId)
     .subscribe({
-      next: (receiptData: any) => {      
+      next: (receiptData: any) => {
+        paymentType: PaymentType[receiptData.paymentType as keyof typeof PaymentType],
+
         this.receiptForm.patchValue({
           id: receiptData.id,
           companyId: receiptData.companyId,
@@ -217,9 +223,14 @@ onGetReceiptById(id: any): void {
           vehicleId: receiptData.vehicleId,
           vehicleNumber: receiptData.vehicleNumber,
 
-          voucherDate: this.dateUtcPipe.transform(receiptData.voucherDate,'input'),
+          voucherDate: this.dateUtcPipe.transform(
+            receiptData.voucherDate,
+            'input'
+          ),
 
           voucherNumber: receiptData.voucherNumber,
+
+          // IMPORTANT: Do NOT use PaymentType[...] here
           paymentType: PaymentType[receiptData.paymentType as keyof typeof PaymentType],
 
           sourceAccountId: receiptData.sourceAccountId,
@@ -228,7 +239,13 @@ onGetReceiptById(id: any): void {
           accountGroupName: receiptData.accountGroupName,
 
           destinationAccountId: receiptData.destinationAccountId,
+          destinationAccountCode: receiptData.destinationAccountCode,
           destinationAccountName: receiptData.destinationAccountName,
+
+          // IMPORTANT:
+          // Your bank dropdown is bound to bankAccountId.
+          // Set it from the response.
+          bankAccountId: receiptData.destinationAccountId,
 
           systemAmount: receiptData.systemAmount,
           amount: receiptData.amount,
@@ -239,16 +256,16 @@ onGetReceiptById(id: any): void {
 
           isAmountPaid: receiptData.paidBy ? true : false,
 
-          notes2000: receiptData.notes2000,
-          notes1000: receiptData.notes1000,
-          notes500: receiptData.notes500,
-          notes200: receiptData.notes200,
-          notes100: receiptData.notes100,
-          notes50: receiptData.notes50,
-          notes20: receiptData.notes20,
-          notes10: receiptData.notes10,
-          notes5: receiptData.notes5,
-          coins: receiptData.coins,
+          notes2000: receiptData.notes2000 === 0 ? null : receiptData.notes2000,
+          notes1000: receiptData.notes1000 === 0 ? null : receiptData.notes1000,
+          notes500: receiptData.notes500 === 0 ? null : receiptData.notes500,
+          notes200: receiptData.notes200 === 0 ? null : receiptData.notes200,
+          notes100: receiptData.notes100 === 0 ? null : receiptData.notes100,
+          notes50: receiptData.notes50 === 0 ? null : receiptData.notes50,
+          notes20: receiptData.notes20 === 0 ? null : receiptData.notes20,
+          notes10: receiptData.notes10 === 0 ? null : receiptData.notes10,
+          notes5: receiptData.notes5 === 0 ? null : receiptData.notes5,
+          coins: receiptData.coins === 0 ? null : receiptData.coins,
 
           bankName: receiptData.bankName,
           chequeNumber: receiptData.chequeNumber,
@@ -267,13 +284,22 @@ onGetReceiptById(id: any): void {
 
         if (selectedAccount) {
           this.receiptForm.patchValue({
-            accountGroupName: selectedAccount.accountGroupName
-          });         
+            accountGroupName:
+              `${selectedAccount.accountGroupCode} - ${selectedAccount.accountGroupName}`
+          });
         }
 
-        this.onPaymentTypeChange(
-          this.receiptForm.get('paymentType')?.value
-        );
+        // Apply payment type.
+        const paymentType = PaymentType[receiptData.paymentType as keyof typeof PaymentType];
+        this.receiptForm.patchValue({ paymentType,});
+
+        // Apply payment type after patching the form.
+        this.onPaymentTypeChange(paymentType);
+
+        // Ensure the API-selected bank is restored.
+        if (paymentType === PaymentType.Bank && receiptData.destinationAccountId) {
+          this.setBankAccountFromReceipt(receiptData);
+        }        
       },
 
       error: (error) => {
@@ -282,7 +308,6 @@ onGetReceiptById(id: any): void {
           'Error fetching receipt details'
         );
       }
-
     });
 }
 onPaymentTypeChange(selectedValue: any): void {
@@ -290,23 +315,32 @@ onPaymentTypeChange(selectedValue: any): void {
   const bankNameCtrl = this.receiptForm.get('bankName');
   const chequeCtrl = this.receiptForm.get('chequeNumber');
 
-  this.isCashMode = selectedValue === PaymentType.Cash;
+  const paymentType = Number(selectedValue);
+
+  this.isCashMode = paymentType === PaymentType.Cash;
+
+  // Received In must ALWAYS remain disabled
+  this.receiptForm.get('destinationAccountId')?.disable();
+  this.receiptForm.get('destinationAccountCode')?.disable();
 
   if (this.isCashMode) {
 
-    // Enable cash notes section
     this.enableCashSection();
 
-    // Remove bank validations
     bankNameCtrl?.clearValidators();
     chequeCtrl?.clearValidators();
 
-    // Select Cash In Hand account automatically
+    // Received In = Cash In Hand
     if (this.cashInHandAccount) {
+
       this.receiptForm.patchValue({
         destinationAccountId: this.cashInHandAccount.id,
         destinationAccountName: this.cashInHandAccount.accountName,
         destinationAccountCode: this.cashInHandAccount.accountCode,
+
+        // Clear bank selection in cash mode
+        bankAccountId: '',
+
         bankName: '',
         chequeNumber: '',
         remark: ''
@@ -315,22 +349,48 @@ onPaymentTypeChange(selectedValue: any): void {
 
   } else {
 
-    // Disable cash notes section
     this.disableCashSection();
 
-    // Bank fields required
     bankNameCtrl?.setValidators([Validators.required]);
     chequeCtrl?.setValidators([Validators.required]);
 
-    // Select BNK account automatically
-    if (this.bankAccount) {
-      this.receiptForm.patchValue({
-        destinationAccountId: this.bankAccount.id,
-        destinationAccountName: this.bankAccount.accountName,
-        destinationAccountCode: this.bankAccount.accountCode,
+    /*
+     * IMPORTANT
+     *
+     * First try to find the bank already selected in the form.
+     *
+     * This is important for UPDATE mode because
+     * bankAccountId has already been populated from API.
+     *
+     * If nothing is selected, it means CREATE mode,
+     * so select the default bank.
+     */
+    let selectedBankAccount = this.bankAccounts.find(
+      acc =>
+        Number(acc.id) ===
+        Number(this.receiptForm.get('bankAccountId')?.value)
+    );
 
-        // Auto-fill bank name textbox
-        bankName: this.bankAccount.accountName
+    // CREATE MODE:
+    // No existing bank -> select default bank.
+    if (!selectedBankAccount) {
+
+      selectedBankAccount =
+        this.bankAccounts.find(
+          acc => acc.isDefault === true
+        ) || this.bankAccounts[0];
+    }
+
+    if (selectedBankAccount) {
+
+      this.receiptForm.patchValue({
+        bankAccountId: selectedBankAccount.id,
+
+        destinationAccountId: selectedBankAccount.id,
+        destinationAccountName: selectedBankAccount.accountName,
+        destinationAccountCode: selectedBankAccount.accountCode,
+
+        bankName: selectedBankAccount.accountName
       });
     }
   }
@@ -338,6 +398,56 @@ onPaymentTypeChange(selectedValue: any): void {
   bankNameCtrl?.updateValueAndValidity();
   chequeCtrl?.updateValueAndValidity();
 }
+private setBankAccountFromReceipt(receiptData: any): void {
+  const bankAccountId = receiptData.destinationAccountId;
+  if (!bankAccountId) {
+    return;
+  }
+  const selectedBankAccount = this.bankAccounts.find(
+    acc => Number(acc.id) === Number(bankAccountId)
+  );
+
+  if (!selectedBankAccount) {
+    return;
+  }
+
+  this.receiptForm.patchValue({
+    bankAccountId: selectedBankAccount.id,
+
+    destinationAccountId: selectedBankAccount.id,
+    destinationAccountName: selectedBankAccount.accountName,
+    destinationAccountCode: selectedBankAccount.accountCode,
+
+    bankName:
+      receiptData.bankName ||
+      selectedBankAccount.accountName
+  });
+}
+onBankAccountChange(): void {
+
+  const accountId =
+    this.receiptForm.get('bankAccountId')?.value;
+
+  if (!accountId) {
+    return;
+  }
+
+  const selectedAccount = this.bankAccounts.find(
+    acc =>  Number(acc.id) === Number(accountId));
+
+  if (!selectedAccount) {
+    return;
+  }
+
+  this.receiptForm.patchValue({
+    destinationAccountId: selectedAccount.id,
+    destinationAccountName: selectedAccount.accountName,
+    destinationAccountCode: selectedAccount.accountCode,
+
+    bankName: selectedAccount.accountName
+  });
+}
+
 disableCashSection() {
   const controls = [
     'notes2000','notes1000','notes500','notes200',
@@ -416,14 +526,12 @@ enableCashSection() {
     amountDifference: difference
   });
   }
-  searchEmployee(event: any) {
+ searchEmployee(event: any) {
   const keyword = event.target.value;
-
   if (keyword.length <= 1) {
     this.employees = [];
     return;
   }
-
   this.employeesService.searchEmployees(keyword, this.companyId).subscribe(
     (response: any) => {         
       this.employees = response;
@@ -432,41 +540,138 @@ enableCashSection() {
       this.toastService.error(error.error.message || 'Error fetching Employees');
     }
   );
+}
+onEmployeeKeydown(event: KeyboardEvent): void {
+  if (!this.employees || this.employees.length === 0) {
+    return;
   }
-  selectEmployee(employee: any) {
+
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    if (this.selectedEmployeeIndex < this.employees.length - 1) {
+      this.selectedEmployeeIndex++;
+    } else {
+      this.selectedEmployeeIndex = 0;
+    }
+  }
+
+  else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    if (this.selectedEmployeeIndex > 0) {
+      this.selectedEmployeeIndex--;
+    } else {
+      this.selectedEmployeeIndex = this.employees.length - 1;
+    }
+  }
+
+  else if (event.key === 'Enter') {
+    event.preventDefault();
+    if (this.selectedEmployeeIndex >= 0 && this.selectedEmployeeIndex < this.employees.length) {
+      this.selectEmployee(
+        this.employees[this.selectedEmployeeIndex]
+      );
+    }
+  }
+
+  else if (event.key === 'Escape') {
+    event.preventDefault();
+
+    this.employees = [];
+    this.selectedEmployeeIndex = -1;
+  }
+}
+
+selectEmployee(employee: any): void {
   this.receiptForm.patchValue({
-  employeeId: employee.employeeId,
-  employeeFullName: employee.employeeFullName
+    employeeId: employee.employeeId,
+    employeeFullName: employee.employeeFullName
   });
 
   this.employees = [];
-  }
-  searchVehicle(event: any) {
-  const keyword = event.target.value;
+  this.selectedEmployeeIndex = -1;
+}
+searchVehicle(event: any): void {
+  const keyword = event.target.value?.trim();
 
-  if (keyword.length < 2) {
+  this.selectedVehicleIndex = -1;
+
+  if (!keyword || keyword.length < 2) {
     this.vehicles = [];
     return;
   }
 
   this.masterService.searchVehicles(keyword, this.companyId).subscribe(
     (response: any) => {
-      this.vehicles = response;
+      this.vehicles = response || [];
+      this.selectedVehicleIndex = -1;
     },
     (error: any) => {
-      this.toastService.error(error.error.message || 'Error fetching Vehicles');
+      this.vehicles = [];
+      this.selectedVehicleIndex = -1;
+
+      this.toastService.error(
+        error?.error?.message || 'Error fetching Vehicles'
+      );
     }
   );
-  }
-  selectVehicle(vehicle: any) {
-    this.receiptForm.patchValue({
-      vehicleId: vehicle.id,
-      vehicleNumber: vehicle.code + ' - ' + vehicle.name + ' - ' + vehicle.vehicleNumber
-    });
+}  
+selectVehicle(vehicle: any): void {
 
-    this.vehicles = [];
+  if (!vehicle) {
+    return;
   }
-  onAmountPaidChange(event: any) {
+
+  this.receiptForm.patchValue({
+    vehicleId: vehicle.id,
+    vehicleNumber:
+      `${vehicle.code} - ${vehicle.name} - ${vehicle.vehicleNumber}`
+  });
+
+  this.vehicles = [];
+  this.selectedVehicleIndex = -1;
+}
+
+onVehicleKeydown(event: KeyboardEvent): void {
+  if (!this.vehicles || this.vehicles.length === 0) {
+    return;
+  }
+
+  // Arrow Down
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    if (this.selectedVehicleIndex < this.vehicles.length - 1) {
+      this.selectedVehicleIndex++;
+    } else {
+      this.selectedVehicleIndex = 0;
+    }
+  }
+
+  // Arrow Up
+  else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    if (this.selectedVehicleIndex > 0) {
+      this.selectedVehicleIndex--;
+    } else {
+      this.selectedVehicleIndex = this.vehicles.length - 1;
+    }
+  }
+
+  // Enter
+  else if (event.key === 'Enter') {
+    event.preventDefault();
+    if ( this.selectedVehicleIndex >= 0 && this.selectedVehicleIndex < this.vehicles.length) {
+        this.selectVehicle(this.vehicles[this.selectedVehicleIndex]);
+    }
+  }
+
+  // Escape
+  else if (event.key === 'Escape') {
+    event.preventDefault();
+    this.vehicles = [];
+    this.selectedVehicleIndex = -1;
+  }
+}  
+onAmountPaidChange(event: any) {
   const value = event.target.value === 'true';
 
   const control = this.receiptForm.get('isAmountPaid');
@@ -481,42 +686,35 @@ enableCashSection() {
 
   control?.updateValueAndValidity();
 }
-// Set null/empty note counts to 0 before calculation
-handleCashSection() {
-  const controls = [
-    'notes2000',
-    'notes1000',
-    'notes500',
-    'notes200',
-    'notes100',
-    'notes50',
-    'notes20',
-    'notes10',
-    'notes5',
-    'coins'
-  ];
+private prepareReceiptData(): any {
+  const data = this.receiptForm.getRawValue();
 
-  controls.forEach(ctrl => {
-    const control = this.receiptForm.get(ctrl);
-
-    if (control?.value == null || control.value === '') {
-      control?.setValue(0);
-    }
-  });
+  return {
+    ...data,
+    notes2000: data.notes2000 ?? 0,
+    notes1000: data.notes1000 ?? 0,
+    notes500: data.notes500 ?? 0,
+    notes200: data.notes200 ?? 0,
+    notes100: data.notes100 ?? 0,
+    notes50: data.notes50 ?? 0,
+    notes20: data.notes20 ?? 0,
+    notes10: data.notes10 ?? 0,
+    notes5: data.notes5 ?? 0,
+    coins: data.coins ?? 0
+  };
 }
-
-  onSubmitReceipt() {
+onSubmitReceipt() {
   // Validation: amount mismatch
   if (this.isAmountMismatch()) {
     this.toastService.error("Notes total must match Amount");
-    return;
-  }
+  return;
+}
 
-  // Form validation
-  if (!this.receiptForm.valid) {
-    this.toastService.error('Please fill all required fields correctly');
-    return;
-  }
+// Form validation
+if (!this.receiptForm.valid) {
+  this.toastService.error('Please fill all required fields correctly');
+  return;
+}
 
   // Patch common values
   this.receiptForm.patchValue({
@@ -525,11 +723,10 @@ handleCashSection() {
     voucherDate: this.dateUtcPipe.transform(this.receiptForm.get('voucherDate')?.value, 'withCurrentTime'),
     voucherType: VoucherType.REC,
   });
-  if (this.receiptForm.get('paymentType')?.value === PaymentType.Cash) {
-    this.handleCashSection();    
-  }
   
-  const receiptData = this.receiptForm.getRawValue();  
+  // null in UI -> 0 in API request
+  const receiptData = this.prepareReceiptData();
+  
   // Decide Create vs Update
   if (this.receiptId) {
     this.updateReceipt(receiptData);
@@ -573,4 +770,5 @@ isInvalid(controlName: string): boolean {
 focusNext(next: HTMLElement) {
   next.focus();
 }
+
 }

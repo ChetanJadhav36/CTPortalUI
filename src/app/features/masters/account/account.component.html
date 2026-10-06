@@ -10,112 +10,147 @@
          <div class="card-header bg-primary text-white d-flex justify-content-between" *ngIf="isUpdateMode">
           <strong>Update Account</strong>
         </div>        
+          <div class="card-body">
 
-        <div class="card-body">
+            <form [formGroup]="myForm" (ngSubmit)="onSubmitAccount()">
 
-      <form [formGroup]="myForm" (ngSubmit)="onSubmitAccount()">
+              <div class="row">
+                <!-- Account Code -->
+                <div class="col-md-6 mb-3">
+                  <label for="accountCode" class="form-label">
+                    Account Code <span class="text-danger">*</span>
+                  </label>
 
-        <div class="row">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="accountCode"
+                    formControlName="accountCode"
+                    placeholder="Enter Account Code"
+                    maxlength="10"
+                    [readonly]="isUpdateMode"
+                    [ngClass]="{
+                      'is-invalid': myForm.get('accountCode')?.invalid && myForm.get('accountCode')?.touched,
+                      'readonly-field': isUpdateMode
+                    }" appUpperCase>
 
-          <!-- Account Code -->
-          <div class="col-md-6 mb-3">
-            <label for="accountCode" class="form-label">Account Code</label>
-            <input
-              type="text"
-              class="form-control"
-              id="accountCode"
-              formControlName="accountCode"
-              placeholder="Enter Account Code"
-              maxlength="10"
-              [ngClass]="{'is-invalid': myForm.get('accountCode')?.invalid && myForm.get('accountCode')?.touched,
-              'readonly-field': isUpdateMode}"
-              [readonly]="isUpdateMode">
+                  <div
+                    class="text-danger mt-1"
+                    *ngIf="myForm.get('accountCode')?.touched && myForm.get('accountCode')?.hasError('required')">
+                    <small>Account Code is required.</small>
+                  </div>
+                </div>
+
+                <!-- Account Name -->
+                <div class="col-md-6 mb-3">
+                  <label for="accountName" class="form-label">
+                    Account Name <span class="text-danger">*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="accountName"
+                    formControlName="accountName"
+                    placeholder="Enter Account Name"
+                    [ngClass]="{
+                      'is-invalid': myForm.get('accountName')?.invalid && myForm.get('accountName')?.touched
+                    }" appUpperCase>
+
+                  <div
+                    class="text-danger mt-1"
+                    *ngIf="myForm.get('accountName')?.touched && myForm.get('accountName')?.hasError('required')">
+                    <small>Account Name is required.</small>
+                  </div>
+                </div>
+
+                <!-- Account Group Name -->
+                <div class="col-md-6 mb-3">
+                  <label for="accountGroupId" class="form-label">
+                    Account Group Name <span class="text-danger">*</span>
+                  </label>
+
+                  <select
+                    class="form-select"
+                    id="accountGroupId"
+                    formControlName="accountGroupId"
+                    [ngClass]="{
+                      'is-invalid': myForm.get('accountGroupId')?.invalid && myForm.get('accountGroupId')?.touched
+                    }">
+                    <option value="" disabled>Select Account Group</option>
+                    <option *ngFor="let group of accountGroups" [value]="group.id">
+                      {{ group.accountGroupCode }} - {{ group.accountGroupName }}
+                    </option>
+                  </select>
+
+                  <div
+                    class="text-danger mt-1"
+                    *ngIf="myForm.get('accountGroupId')?.touched && myForm.get('accountGroupId')?.hasError('required')">
+                    <small>Account Group is required.</small>
+                  </div>
+                </div>                      
+                        
+                <!-- Opening Balance -->
+                <div class="col-md-6 mb-3">
+                  <label for="openingBal" class="form-label">Opening Balance
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="openingBal"
+                    formControlName="openingBal"
+                    placeholder="Enter Opening Balance">
+
+                  <div
+                      class="text-danger mt-1"
+                      *ngIf="myForm.get('openingBal')?.touched && myForm.get('openingBal')?.hasError('required')">
+                    <small>Opening Balance is required.</small>
+                  </div>
+                </div>        
+
+                <!-- Net Balance -->
+                <div class="col-md-6 mb-3">
+                  <label for="netBal" class="form-label">Net Balance
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="netBal"
+                    formControlName="netBal"
+                    placeholder="Enter Net Balance">
+                    <div
+                      class="text-danger mt-1"
+                      *ngIf="myForm.get('netBal')?.touched && myForm.get('netBal')?.hasError('required')">
+                    <small>Net Balance is required.</small>
+                  </div>
+                    
+                </div>    
+                
+                <!-- Is Active -->
+                <div class="col-md-6 mb-3">
+                    <div class="form-check mt-4">
+                    <input type="checkbox"
+                            class="form-check-input"
+                            formControlName="isDefault">
+                    <label class="form-check-label">Default Account</label>
+                    </div>
+                </div>
+
+              </div>
+
+            <!-- Submit Button -->
+            <div class="text-end">
+              <button type="submit" class="btn btn-primary" [disabled]="myForm.invalid">
+                Submit
+              </button>
+            </div>
+
+            </form>
+
           </div>
-
-          <!-- Account Name -->
-          <div class="col-md-6 mb-3">
-            <label for="accountName" class="form-label">Account Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="accountName"
-              formControlName="accountName"
-              placeholder="Enter Account Name"
-              [ngClass]="{'is-invalid': myForm.get('accountName')?.invalid && myForm.get('accountName')?.touched}">
-          </div>
-
-          <!-- Account Group Name -->
-          <div class="col-md-6 mb-3">
-            <label for="accountGroupId" class="form-label">Account Group Name</label>
-            <select
-              class="form-select"
-              id="accountGroupId"
-              formControlName="accountGroupId">
-              <option value="" disabled>Select Account Group</option>
-              <option *ngFor="let group of accountGroups" [value]="group.id">
-                {{ group.accountGroupCode }} - {{ group.accountGroupName }}
-              </option>
-            </select>
-          </div>        
-                   
-          <!-- Opening Balance -->
-          <div class="col-md-6 mb-3">
-            <label for="openingBal" class="form-label">Opening Balance</label>
-            <input
-              type="number"
-              class="form-control"
-              id="openingBal"
-              formControlName="openingBal"
-              placeholder="Enter Opening Balance">
-          </div>
-
-          <!-- DC -->
-          <div class="col-md-6 mb-3">
-            <label for="dc" class="form-label">DC</label>
-            <input
-              type="text"
-              class="form-control"
-              id="dc"
-              formControlName="dc"
-              placeholder="Enter DC">
-          </div>
-
-          <!-- Net Balance -->
-          <div class="col-md-6 mb-3">
-            <label for="netBal" class="form-label">Net Balance</label>
-            <input
-              type="number"
-              class="form-control"
-              id="netBal"
-              formControlName="netBal"
-              placeholder="Enter Net Balance">
-          </div>
-
-          <!-- Minimum App Balance -->
-          <div class="col-md-6 mb-3">
-            <label for="minAppBal" class="form-label">Minimum App Balance</label>
-            <input
-              type="number"
-              class="form-control"
-              id="minAppBal"
-              formControlName="minAppBal"
-              placeholder="Enter Minimum App Balance">
-          </div>
-
-        </div>
-
-      <!-- Submit Button -->
-      <div class="text-end">
-        <button type="submit" class="btn btn-primary" [disabled]="myForm.invalid">
-          Submit
-        </button>
       </div>
-
-      </form>
-
-</div>
-      </div>
-
     </div>
   </div>
 

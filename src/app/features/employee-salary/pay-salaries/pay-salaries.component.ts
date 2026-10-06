@@ -4,7 +4,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TooltipModule } from '@coreui/angular';
+import { TooltipModule } from 'primeng/tooltip';
 import { DateUtcPipe } from '../../../shared/pipes/date-utc.pipe';
 import { TableModule } from 'primeng/table';
 import { IconDirective } from '@coreui/icons-angular';
@@ -65,7 +65,7 @@ export class PaySalariesComponent {
       salaryYear: this.salaryYear
     };
 
-    this.financeService.getConfirmedSalariesByCompanyId(requestData)
+    this.financeService.getApprovedSalariesByCompanyId(requestData)
       .subscribe((res: any[]) => {        
           this.approvedSalaries = res;
           if (this.approvedSalaries.length > 0) {
@@ -95,7 +95,7 @@ onPaySalary(salary: any) {
       salaryMonth: this.salaryMonth,
       salaryYear: this.salaryYear
     };
-    this.financeService.getConfirmedSalariesByCompanyId(requestData).subscribe(
+    this.financeService.getApprovedSalariesByCompanyId(requestData).subscribe(
       (res: any[]) => {
         this.approvedSalaries = res;
           if (this.approvedSalaries.length > 0) {

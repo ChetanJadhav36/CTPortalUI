@@ -5,14 +5,16 @@ import { DateUtcPipe } from '../../../shared/pipes/date-utc.pipe';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
-import { TooltipModule } from '@coreui/angular';
+import { TooltipModule } from 'primeng/tooltip';
 import { SalaryApprovalConfirmationPopUpComponent } from '../salary-approval-confirmation-pop-up/salary-approval-confirmation-pop-up.component';
 import { ToastService } from '../../../services/toast.service';
+import { SalaryAdjustmentPopUpComponent } from '../salary-adjustment-pop-up/salary-adjustment-pop-up.component';
+import { IconDirective } from '@coreui/icons-angular';
 
 @Component({
   selector: 'app-generate-salary',
   providers: [DateUtcPipe],
-  imports: [CommonModule,FormsModule,TableModule,TooltipModule,SalaryApprovalConfirmationPopUpComponent],
+  imports: [CommonModule,FormsModule,TableModule,TooltipModule,SalaryApprovalConfirmationPopUpComponent,SalaryAdjustmentPopUpComponent,IconDirective],
   templateUrl: './generate-salary.component.html',
   styleUrl: './generate-salary.component.scss'
 })
@@ -31,6 +33,9 @@ export class GenerateSalaryComponent {
 
   @ViewChild(SalaryApprovalConfirmationPopUpComponent)
   popup!: SalaryApprovalConfirmationPopUpComponent;
+
+  @ViewChild(SalaryAdjustmentPopUpComponent)
+  salaryAdjustmentPopUp!: SalaryAdjustmentPopUpComponent;
 
   constructor(
     private financeService: FinanceService,
@@ -58,8 +63,8 @@ export class GenerateSalaryComponent {
       companyId: this.companyId,
       salaryMonth: this.salaryMonth,
       salaryYear: this.salaryYear,
-      otherDeductionAmount: 0,
       otherAdditionalAmount: 0,
+      otherDeductionAmount: 0,      
       remarks: 'Temp Salary Generated'
     };
 
@@ -170,30 +175,7 @@ updateSelectAllState(): void {
     this.salaryReport.every((salary: any) => salary.isSelected);
 }
 
-approveSelectedEmployees(): void {
-  this.selectedEmployees = this.salaryReport.filter(
-    (employee: any) => employee.isSelected
-  );
-
-  if (!this.selectedEmployees.length) {
-    this.toastService.warning(
-      'Please select at least one employee'
-    );
-    return;
-  }
-
-  const payload = {
-    companyId: this.companyId,
-    salaryIds: this.selectedEmployees.map(
-      (employee: any) => employee.id
-    ),
-    salaryMonth: this.salaryMonth,
-    salaryYear: this.salaryYear,
-    approveAll: this.allSalaryEmployeesSelected
-  };
-
-  this.popup.open(payload);
-}  
+  
 onApprovalConfirmed(payload: any): void {
   this.financeService.approveSelectedEmployeesSalary(payload)
     .subscribe({
@@ -254,7 +236,7 @@ hasSalaryData(): boolean {
 
 hasGeneratedSalary(): boolean {
   return this.salaryReport?.some(
-    (salary: any) => salary.status === 'Generated'
+    (salary: any) => salary.status === 'Draft'
   );
 }
 
@@ -284,14 +266,37 @@ canDeleteSalary(): boolean {
   return (this.hasGeneratedSalary());
 }
 
-/**
- * 3. Any one Approved record
- * Show Confirm button
- */
-canConfirmSalary(): boolean {
-  return this.hasApprovedSalary();
-}
 onSalaryViewTypeChange(event: any): void {  
   this.loadSalaryReport();
+}
+openSalaryAdjustmentPopup(salary: any): void {
+  if (salary.status !== 'Draft') {
+    this.toastService.warning('Salary adjustment is allowed only for Draft salary.');
+    return;
+  }
+  this.salaryAdjustmentPopUp.open(salary);
+}
+onSalaryAdjustmentSubmitted(payload: any): void {
+  const request = {
+    companyId: this.companyId,
+    tempSalaryId: payload.tempSalaryId,
+    employeeId: payload.employeeId,
+    otherDeductionAmount: payload.otherDeductionAmount,
+    otherDeductionAmtRemark: payload.otherDeductionAmtRemark,
+    otherAdditionalAmount: payload.otherAdditionalAmount,
+    otherAdditionalAmtRemark: payload.otherAdditionalAmtRemark
+  };
+  this.financeService.updateTempSalary(request)
+    .subscribe({
+      next: (res: any) => {
+        this.toastService.success(res?.message || 'Salary adjustment updated successfully.');
+        this.loadSalaryReport();
+      },
+      error: (err: any) => {
+        this.toastService.error(err?.error?.message || 'Error updating salary adjustment.');
+      }
+    });
+}
+onSalaryAdjustmentPopupClose(): void {
 }
 }

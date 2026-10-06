@@ -47,11 +47,11 @@ export class CompanyUserComponent {
    ngOnInit(): void {
     this.registerForm = this.fb.group(
       {
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        phoneNumber: ['', Validators.required],
-        password: ['', [Validators.required, Validators.minLength(6)]],
+        firstName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[A-Za-z ]+$/)]],
+        lastName: ['',[Validators.required,Validators.maxLength(50),Validators.pattern(/^[A-Za-z ]+$/)]],
+        email: ['', [Validators.required, Validators.email, Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)]],
+        phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,12}$/)]],
+        password: ['',[Validators.required, Validators.minLength(6), Validators.maxLength(15), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{6,15}$/)]],
         confirmPassword: ['', Validators.required],
         role: [2, Validators.required] // Default = User
       },

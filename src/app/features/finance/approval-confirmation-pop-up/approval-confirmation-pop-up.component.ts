@@ -11,7 +11,6 @@ import {
 } from '@coreui/angular';
 import { FinanceService } from '../../../services/finance.service';
 import { ToastService } from '../../../services/toast.service';
-import { VoucherType } from '../../../enums/permission.enum';
 
 @Component({
   selector: 'app-approval-confirmation-pop-up',
@@ -45,17 +44,32 @@ export class ApprovalConfirmationPopUpComponent {
   }
 
   confirmApproval() {    
-    if (this.transactionData.voucherType === 'EXP' || this.transactionData.voucherType === 'DEP') {
-      this.onApproveVoucherTransactions();
-    }       
-    else if(this.transactionData.voucherType === 'ADV') {
+    if (this.transactionData.voucherType === 'EXP') {
+      this.onApproveExpense();
+    } else if(this.transactionData.voucherType === 'BDEP'){
+      this.onApproveBankDeposit();
+    } else if(this.transactionData.voucherType === 'EADV') {
       this.onApproveEmployeeAdvances();
     }
     this.close();
   }
   // Approve Expense and Bank Deposit
-  onApproveVoucherTransactions(){
-    this.financeService.approveVoucherTransaction(this.transactionData).subscribe({
+  onApproveExpense(){
+    this.financeService.approveExpense(this.transactionData).subscribe({
+        next: (res: any) => {
+          this.toastService.success(res?.message || 'Transaction approved successfully');
+          this.close();
+        },
+        error: (err) => {
+          console.error('Error approving transaction:', err);
+          this.toastService.error(err?.error?.message || 'Error approving transaction');
+        }
+    });   
+  }
+
+  // Approve Bank Deposit
+  onApproveBankDeposit(){
+    this.financeService.approveBankDeposit(this.transactionData).subscribe({
         next: (res: any) => {
           this.toastService.success(res?.message || 'Transaction approved successfully');
           this.close();

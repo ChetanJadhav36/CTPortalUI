@@ -39,16 +39,10 @@
               </th>              
                <th pSortableColumn="openingBal">
                 Opening Bal <p-sortIcon field="openingBal"></p-sortIcon>
-              </th>
-              <th pSortableColumn="dc">
-                DC <p-sortIcon field="dc"></p-sortIcon>
-              </th>
+              </th>              
                <th pSortableColumn="netBal">
                 Net Bal <p-sortIcon field="netBal"></p-sortIcon>
-              </th>
-               <th pSortableColumn="minAppBal">
-                MinApp Bal <p-sortIcon field="minAppBal"></p-sortIcon>
-              </th>
+              </th>              
               <th>Action</th>
             </tr>
           </ng-template>
@@ -59,10 +53,8 @@
               <td>{{ account.accountName }}</td>
               <td>{{ account.accountGroupCode }}</td>
               <td>{{ account.accountGroupName }}</td>              
-              <td>{{ account.openingBal }}</td>
-              <td>{{ account.dc }}</td>
-              <td>{{ account.netBal }}</td>
-              <td>{{ account.minAppBal }}</td>
+              <td>{{ account.openingBal }}</td>              
+              <td>{{ account.netBal }}</td>              
               <td>                               
                 <button type="button" 
                   class="btn btn-link p-0 edit-btn" 

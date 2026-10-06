@@ -27,45 +27,15 @@
             <!-- HEADER -->
             <ng-template pTemplate="header">
               <tr>
-                <th pSortableColumn="voucherDate">
-                    E Date <p-sortIcon field="voucherDate"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="voucherNumber">
-                  V No <p-sortIcon field="voucherNumber"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="sourceAccountName">
-                  Paid From <p-sortIcon field="sourceAccountName"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="amount">
-                  ₹Amount <p-sortIcon field="amount"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="destinationAccountName">
-                  Paid To <p-sortIcon field="destinationAccountName"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="paymentType">
-                  P Mode <p-sortIcon field="paymentType"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="transactionNo">
-                  Transaction No <p-sortIcon field="transactionNo"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="isAmountApproved">
-                  Status <p-sortIcon field="isAmountApproved"></p-sortIcon>
-                </th>    
-                <th pSortableColumn="narration">
-                  Narration <p-sortIcon field="narration"></p-sortIcon>
-                </th>            
-
-                <th pSortableColumn="remarks">
-                  Remarks <p-sortIcon field="remarks"></p-sortIcon>
-                </th>
-
+                <th pSortableColumn="voucherDate"> E Date <p-sortIcon field="voucherDate"></p-sortIcon> </th>
+                <th pSortableColumn="voucherNumber"> V No <p-sortIcon field="voucherNumber"></p-sortIcon> </th>
+                <th pSortableColumn="voucherType"> V Type <p-sortIcon field="voucherType"></p-sortIcon> </th>
+                <th pSortableColumn="sourceAccountName"> Paid From <p-sortIcon field="sourceAccountName"></p-sortIcon> </th>
+                <th pSortableColumn="amount"> ₹Amount <p-sortIcon field="amount"></p-sortIcon> </th>
+                <th pSortableColumn="destinationAccountName">Paid To <p-sortIcon field="destinationAccountName"></p-sortIcon> </th>
+                <th pSortableColumn="paymentType"> P Mode <p-sortIcon field="paymentType"></p-sortIcon> </th>
+                <th pSortableColumn="transactionNo"> Transaction No <p-sortIcon field="transactionNo"></p-sortIcon> </th>                
+                <th pSortableColumn="isAmountApproved"> Status <p-sortIcon field="isAmountApproved"></p-sortIcon> </th>                
                 <th>Action</th>
               </tr>
             </ng-template>
@@ -75,24 +45,22 @@
               <tr>
                 <td>{{ expense.voucherDate | date }}</td>
                 <td>{{ expense.voucherNumber }}</td>                
+                <td>{{ expense.voucherType }}</td>                
                 <td>{{ expense.sourceAccountName }}</td>
                 <td class="fw-bold text-success">₹{{ expense.amount }}</td>
                 <td>{{ expense.destinationAccountName }}</td>
                 <td>{{ expense.paymentType }}</td>
-                <td>{{ expense.transactionNo }}</td>
+                <td>{{ expense.transactionNo }}</td>                                
                 <td>
-                <span class="badge fixed-badge"
-                      [ngClass]="{
-                        'bg-warning': expense.status === 'Draft',
-                        'bg-info': expense.status === 'Approved',
-                        'bg-success': expense.status === 'Paid'
-                      }">
-                  {{ expense.status }}
-                </span>
-              </td>
-                <td>{{ expense.narration }}</td>
-                <td>{{ expense.remark }}</td>
-
+                  <span class="badge fixed-badge"
+                        [ngClass]="{
+                          'bg-warning': expense.status === 'Draft',
+                          'bg-info': expense.status === 'Approved',
+                          'bg-success': expense.status === 'Paid'
+                        }">
+                    {{ expense.status }}
+                  </span>
+                </td>
                 <td>
                   <button 
                     type="button" 

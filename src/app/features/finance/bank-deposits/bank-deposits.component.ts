@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { PaymentType, VoucherType } from '../../../enums/permission.enum';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { BankDepositType, PaymentType, VoucherType } from '../../../enums/permission.enum';
 import { FinanceService } from '../../../services/finance.service';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
@@ -11,7 +11,8 @@ import { TableModule } from 'primeng/table';
   selector: 'app-bank-deposits',
   imports: [CommonModule,IconDirective,TableModule],
   templateUrl: './bank-deposits.component.html',
-  styleUrl: './bank-deposits.component.scss'
+  styleUrl: './bank-deposits.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class BankDepositsComponent {
   companyId: any;
@@ -36,8 +37,8 @@ export class BankDepositsComponent {
 
   // Fetch Deposits
   getDeposits() {
-    let transactionData = { companyId: this.companyId, voucherType: VoucherType.DEP };
-    this.financeService.getVoucherTransactionsByCompanyId(transactionData).subscribe(
+    let transactionData = { companyId: this.companyId, voucherType: BankDepositType.BDEP }; // Ensure voucherType is set to BDEP
+    this.financeService.getBankDepositsByCompanyId(transactionData).subscribe(
       (res: any[]) => {
         this.deposits = res;
       },

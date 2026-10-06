@@ -3,55 +3,36 @@
     <div class="col-12">
 
       <div class="card h-100 w-100 rounded-0">
-        <div class="card-header bg-success d-flex justify-content-between">
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
           <strong class="h5">Bank Deposits</strong>
 
-          <button type="button" class="btn btn-primary" (click)="onAddNewDeposit()">
+          <button type="button" class="btn btn-light" (click)="onAddNewDeposit()">
             <svg cIcon class="me-2" name="cilUserFollow"></svg>
             Add Deposit
           </button>
         </div>
 
         <div class="card-body">
-
           <p-table 
             [value]="deposits" 
-            [paginator]="true" 
-            [rows]="10"
-            showGridlines="true" 
-            [sortMode]="'multiple'">
+            [paginator]="true"
+            [rows]="20"
+            [rowsPerPageOptions]="[20,50,100]"
+            showGridlines="true"
+            sortMode="multiple"
+            paginatorStyleClass="custom-paginator">
 
             <!-- HEADER -->
             <ng-template pTemplate="header">
               <tr>
-                <th pSortableColumn="voucherDate">
-                  Date <p-sortIcon field="voucherDate"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="voucherNumber">
-                  V No <p-sortIcon field="voucherNumber"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="destinationAccountName">
-                  Received In <p-sortIcon field="destinationAccountName"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="amount">
-                  ₹Amount <p-sortIcon field="amount"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="sourceAccountName">
-                  Received From <p-sortIcon field="sourceAccountName"></p-sortIcon>
-                </th>              
-
-                <th pSortableColumn="status">
-                  Status <p-sortIcon field="status"></p-sortIcon>
-                </th>
-
-                <th pSortableColumn="narration">
-                  Narration <p-sortIcon field="narration"></p-sortIcon>
-                </th>               
-
+                <th pSortableColumn="voucherDate"> Date <p-sortIcon field="voucherDate"></p-sortIcon> </th>
+                <th pSortableColumn="voucherNumber"> V No <p-sortIcon field="voucherNumber"></p-sortIcon> </th>
+                <th pSortableColumn="voucherType"> Type <p-sortIcon field="voucherType"></p-sortIcon> </th>
+                <th pSortableColumn="destinationAccountName"> Received In <p-sortIcon field="destinationAccountName"></p-sortIcon> </th>
+                <th pSortableColumn="amount"> ₹Amount <p-sortIcon field="amount"></p-sortIcon> </th>
+                <th pSortableColumn="sourceAccountName"> Received From <p-sortIcon field="sourceAccountName"></p-sortIcon> </th>              
+                <th pSortableColumn="status"> Status <p-sortIcon field="status"></p-sortIcon> </th>
+                <th pSortableColumn="narration"> Narration <p-sortIcon field="narration"></p-sortIcon> </th>               
                 <th>Action</th>
               </tr>
             </ng-template>
@@ -61,6 +42,7 @@
               <tr>
                 <td>{{ deposit.voucherDate | date }}</td>
                 <td>{{ deposit.voucherNumber }}</td>                
+                <td>{{ deposit.voucherType }}</td>                
                 <td>{{ deposit.destinationAccountName }}</td>
                 <td class="fw-bold text-success">₹{{ deposit.amount }}</td>
                 <td>{{ deposit.sourceAccountName }}</td>                              
@@ -80,7 +62,7 @@
                 <td>
                   <button 
                     type="button" 
-                    class="btn btn-primary rounded-pill mt-1 mb-1 me-1"
+                    class="btn btn-link p-0 edit-btn" 
                     (click)="onEditDeposit(deposit.id)">
                     <svg cIcon name="cilPencil"></svg>
                   </button>                  

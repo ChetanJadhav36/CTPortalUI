@@ -46,42 +46,69 @@ export class FinanceService {
   
   // #region Expenses API
   // Get all voucher transactions by company ID
-  getVoucherTransactionsByCompanyId(transactionData: any): Observable<any> {    
-    return this.http.post<any>(`${this.base}/VoucherTransactions/getvouchertransactionsbycompanyid`,transactionData,{ headers: this.httpOptions });
+  getExpensesByCompanyId(transactionData: any): Observable<any> {    
+    return this.http.post<any>(`${this.base}/Expense/getexpensesbycompanyid`,transactionData,{ headers: this.httpOptions });
   }
   // Get single voucher transaction by ID
-  getVoucherTransactionById(transactionData: any): Observable<any> {
-    return this.http.post<any>(`${this.base}/VoucherTransactions/getvouchertransactionbyid`,transactionData,{ headers: this.httpOptions });
+  getExpenseById(transactionData: any): Observable<any> {
+    return this.http.post<any>(`${this.base}/Expense/getexpensebyid`,transactionData,{ headers: this.httpOptions });
   }
-  // Create new voucher transaction
-  createVoucherTransaction(transactionData: any): Observable<any> {
-    return this.http.post<any>(`${this.base}/VoucherTransactions/createvouchertransaction`,transactionData,{ headers: this.httpOptions });
-  }
-  // Update existing voucher transaction
-  updateVoucherTransaction(id: any, transactionData: any): Observable<any> {
-    return this.http.put<any>(`${this.base}/VoucherTransactions/updatevouchertransaction/${id}`,transactionData,{ headers: this.httpOptions });
-  }
-  // Soft delete voucher transaction
-  softDeleteVoucherTransaction(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.base}/VoucherTransactions/soft/${id}`,{ headers: this.httpOptions });
+  // Get all draft expenses
+  getDraftExpenses(companyId: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/Expense/getdraftexpenses?companyId=${companyId}`, { headers: this.httpOptions });    
   }  
-  // Get all transactions by company
-  getTransactionsByCompanyId(companyId: number): Observable<any> {
-    return this.http.get<any>(`${this.base}/VoucherTransactions/approval/drafts?companyId=${companyId}`,{ headers: this.httpOptions });
+  // Create new expense
+  createExpense(transactionData: any): Observable<any> {
+    return this.http.post<any>(`${this.base}/Expense/createExpense`,transactionData,{ headers: this.httpOptions });
   }
+  // Update existing expense
+  updateExpense(id: any, transactionData: any): Observable<any> {
+    return this.http.put<any>(`${this.base}/Expense/updateexpense/${id}`,transactionData,{ headers: this.httpOptions });
+  }
+  approveExpense(payload: any){
+    return this.http.post<any>(`${this.base}/Expense/approveexpense`, payload, { headers: this.httpOptions });        
+  }
+  payExpense(payload: any){
+    return this.http.post<any>(`${this.base}/Expense/payexpense`, payload, { headers: this.httpOptions });    
+  }
+  // Soft delete expense
+  softDeleteExpense(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.base}/Expense/soft/${id}`,{ headers: this.httpOptions });
+  }    
   // #endregion
   
-  // #region Approval Transactions APIs
-  // Approve voucher transaction
-  approveVoucherTransaction(transactionData: any): Observable<any> {
-    return this.http.post<any>(`${this.base}/VoucherTransactions/approvevouchertransaction`, transactionData, { headers: this.httpOptions });
+  // #region Bank Deposit API
+  // Get all Bank Deposits by company ID
+  getBankDepositsByCompanyId(transactionData: any): Observable<any> {    
+    return this.http.post<any>(`${this.base}/BankDeposits/getbankdepositsbycompanyid`,transactionData,{ headers: this.httpOptions });
   }
-
-  // Pay voucher transaction
-  payVoucherTransaction(transactionData: any): Observable<any> {
-    return this.http.post<any>(`${this.base}/VoucherTransactions/payvouchertransaction`, transactionData, { headers: this.httpOptions });
+  // Get single voucher transaction by ID
+  getBankDepositById(transactionData: any): Observable<any> {
+    return this.http.post<any>(`${this.base}/BankDeposits/getbankdepositbyid`,transactionData,{ headers: this.httpOptions });
   }
-  // #endregion  
+   // Get all draft bank deposits
+  getDraftBankDeposits(companyId: number): Observable<any> {    
+    return this.http.get<any>(`${this.base}/BankDeposits/getdraftbankdeposits?companyId=${companyId}`, { headers: this.httpOptions });    
+  } 
+  // Create new bank deposit
+  createBankDeposit(transactionData: any): Observable<any> {
+    return this.http.post<any>(`${this.base}/BankDeposits/createbankdeposit`,transactionData,{ headers: this.httpOptions });
+  }
+  // Update existing bank deposit
+  updateBankDeposit(id: any, transactionData: any): Observable<any> {
+    return this.http.put<any>(`${this.base}/BankDeposits/updatebankdeposit/${id}`,transactionData,{ headers: this.httpOptions });
+  }
+  approveBankDeposit(payload: any){
+    return this.http.post<any>(`${this.base}/BankDeposits/approvebankdeposit`, payload, { headers: this.httpOptions });        
+  }
+  markBankDepositAsPaid(payload: any){
+    return this.http.post<any>(`${this.base}/BankDeposits/markbankdepositaspaid`, payload, { headers: this.httpOptions });    
+  }
+  // Soft delete bank deposit
+  softDeleteBankDeposit(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.base}/BankDeposits/softdeletebankdeposit/${id}`,{ headers: this.httpOptions });
+  }    
+  // #endregion
   
   // #region Generate Salary
   // Generate Salary
@@ -101,9 +128,9 @@ export class FinanceService {
     return this.http.post<any>(`${this.base}/Salary/approveSalary`, employeeData, { headers: this.httpOptions });
   }
 
-  // Get Confirmed Salaries by Company ID
-  getConfirmedSalariesByCompanyId(payload: any): Observable<any> {
-    return this.http.post<any>(`${this.base}/Salary/confirmed-salaries`, payload, { headers: this.httpOptions });
+  // Get Approved Salaries by Company ID
+  getApprovedSalariesByCompanyId(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.base}/Salary/approved-salaries`, payload, { headers: this.httpOptions });
   }
   // Get Employee Salary by ID
   getEmployeeSalaryById(payload: any): Observable<any> {
@@ -129,13 +156,16 @@ export class FinanceService {
   approveSelectedEmployeesSalary(payload: any): Observable<any> {
     return this.http.post<any>(`${this.base}/Salary/approve-temp-selected-salary`, payload, { headers: this.httpOptions });
   }
+  updateTempSalary(payload: any): Observable<any> {
+    return this.http.put<any>(`${this.base}/Salary/update-temp-salary`, payload, { headers: this.httpOptions });
+  }
 
   // #endregion
   
   // #region Notes Denominations
     // Get notes denominations
     GetNotesDenominations(companyId: number): Observable<any> {
-      return this.http.get<any>(`${this.base}/VoucherTransactions/getnotesdenominations?companyId=${companyId}`, { headers: this.httpOptions });
+      return this.http.get<any>(`${this.base}/expense/getnotesdenominations?companyId=${companyId}`, { headers: this.httpOptions });
     }
   // #endregion
 
@@ -144,6 +174,10 @@ export class FinanceService {
   // Get all employee advances by company ID
   getEmployeeAdvancesByCompanyId(data: any): Observable<any> {
     return this.http.post<any>(`${this.base}/EmployeeAdvance/getemployeeadvancesbycompanyid`,data,{ headers: this.httpOptions });
+  }
+  // Get all draft employee advances
+  getDraftEmployeeAdvances(companyId: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/EmployeeAdvance/getdraftemployeeadvances?companyId=${companyId}`, { headers: this.httpOptions });    
   }
   // Get single employee advance by ID
   getEmployeeAdvanceById(data: any): Observable<any> {
@@ -218,16 +252,18 @@ export class FinanceService {
     return this.http.post<any>(`${this.base}/reports/voucher/getvoucherreport`,data,{ headers: this.httpOptions });
   }
   //#endregion
-  //#region Voucher Transaction, Employe Advance and Salary Dashbboard Summary
-  getVoucherTransactionsDashboardSummary(companyId: any): Observable<any> {
-    return this.http.get<any>(`${this.base}/VoucherTransactions/voucher-tran-dashboard-summary?companyId=${companyId}`,{ headers: this.httpOptions });
+  //#region Expense, Bank Deposit, Employe Advance and Salary Dashbboard Summary
+  getExpenseDashboardSummary(companyId: any): Observable<any> {
+    return this.http.get<any>(`${this.base}/Expense/expense-dashboard-summary?companyId=${companyId}`,{ headers: this.httpOptions });
+  }
+  getBankDepositDashboardSummary(companyId: any): Observable<any> {
+    return this.http.get<any>(`${this.base}/BankDeposits/bankdeposit-dashboard-summary?companyId=${companyId}`,{ headers: this.httpOptions });
   }
   getEmployeeAdvancesDashboardSummary(companyId: any): Observable<any> {
     return this.http.get<any>(`${this.base}/EmployeeAdvance/employee-adv-dashboard-summary?companyId=${companyId}`,{ headers: this.httpOptions });
   }    
   getSalaryDashboardSummary(companyId: any): Observable<any> {
     return this.http.get<any>(`${this.base}/Salary/salary-dashboard-summary?companyId=${companyId}`,{ headers: this.httpOptions });
-  } 
-
+  }  
   //#endregion
 }

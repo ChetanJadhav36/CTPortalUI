@@ -1,100 +1,243 @@
 <div class="container-fluid min-vh-100 d-flex p-0 page-no-top">
   <c-container>
     <c-row class="justify-content-center">
-      <c-col lg="7" md="9" xl="6">
+      <c-col lg="9" md="11" xl="8">
         <c-card>
           <c-card-body>
             <form cForm [formGroup]="registerForm" (ngSubmit)="onSubmit()">
               <h1>Register</h1>
               <p class="text-body-secondary">Register New User</p>
-              <c-input-group class="mb-3">
+
+              <!-- First Name -->
+              <div class="row align-items-center mb-3">
+                <div class="col-md-8">
+                  <c-input-group>
+                    <span cInputGroupText>
+                      <svg cIcon name="cilUser"></svg>
+                      <span class="text-danger">*</span>
+                    </span>
+
+                    <input
+                      cFormControl
+                      formControlName="firstName"
+                      placeholder="First Name" />
+                  </c-input-group>
+                </div>
+
+                <div class="col-md-4 text-danger"
+                  *ngIf="registerForm.get('firstName')?.touched &&
+                        registerForm.get('firstName')?.invalid">
+
+                  <small *ngIf="registerForm.get('firstName')?.hasError('required')">
+                    First name is required.
+                  </small>
+
+                  <small *ngIf="registerForm.get('firstName')?.hasError('pattern')">
+                    Only letters are allowed.
+                  </small>
+                </div>
+              </div>
+
+              <!-- Last Name -->
+              <div class="row align-items-center mb-3">
+                <div class="col-md-8">
+                  <c-input-group>
+                    <span cInputGroupText>
+                      <svg cIcon name="cilUser"></svg>
+                      <span class="text-danger">*</span>
+                    </span>
+
+                    <input
+                      cFormControl
+                      formControlName="lastName"
+                      autoComplete="family-name"
+                      placeholder="Last Name"
+                      maxlength="50" />
+                  </c-input-group>
+                </div>
+
+                <div
+                  class="col-md-4 text-danger"
+                  *ngIf="registerForm.get('lastName')?.touched &&
+                        registerForm.get('lastName')?.invalid">
+
+                  <small *ngIf="registerForm.get('lastName')?.errors?.['required']">
+                    Last name is required.
+                  </small>
+
+                  <small *ngIf="registerForm.get('lastName')?.errors?.['pattern']">
+                    Only letters are allowed.
+                  </small>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="row align-items-center mb-3">
+                <div class="col-md-8">
+                  <c-input-group>
+                    <span cInputGroupText>
+                      &#64;
+                      <span class="text-danger">*</span>
+                    </span>
+
+                    <input
+                      cFormControl
+                      autoComplete="email"
+                      placeholder="Email"
+                      formControlName="email"
+                      maxlength="100" />
+                  </c-input-group>
+                </div>
+
+                <div
+                  class="col-md-4 text-danger"
+                  *ngIf="registerForm.get('email')?.touched &&
+                        registerForm.get('email')?.invalid">
+
+                  <small *ngIf="registerForm.get('email')?.errors?.['required']">
+                    Email is required.
+                  </small>
+
+                  <small *ngIf="registerForm.get('email')?.errors?.['email']">
+                    Enter a valid email address.
+                  </small>
+                </div>
+              </div>
+
+              <!-- Phone Number -->
+              <div class="row align-items-center mb-3">
+                <div class="col-md-8">
+                  <c-input-group>
+                    <span cInputGroupText>
+                      <svg cIcon name="cilSpeech"></svg>
+                      <span class="text-danger">*</span>
+                    </span>
+
+                    <input
+                      cFormControl
+                      autoComplete="tel"
+                      placeholder="Phone Number"
+                      formControlName="phoneNumber"
+                      maxlength="12" />
+                  </c-input-group>
+                </div>
+
+                <div
+                  class="col-md-4 text-danger"
+                  *ngIf="registerForm.get('phoneNumber')?.touched &&
+                        registerForm.get('phoneNumber')?.invalid">
+
+                  <small *ngIf="registerForm.get('phoneNumber')?.errors?.['required']">
+                    Phone number is required.
+                  </small>
+
+                  <small *ngIf="registerForm.get('phoneNumber')?.errors?.['pattern']">
+                    Phone number must contain 10–12 digits.
+                  </small>
+                </div>
+              </div>
+
+              <!-- Password -->
+            <div class="row align-items-center mb-3">
+              <div class="col-md-8">
+                <c-input-group>
+                  <span cInputGroupText>
+                    <svg cIcon name="cilLockLocked"></svg>
+                    <span class="text-danger">*</span>
+                  </span>
+
+                  <input
+                    cFormControl
+                    type="password"
+                    autoComplete="new-password"
+                    placeholder="Password"
+                    formControlName="password"
+                    maxlength="15" />
+                </c-input-group>
+              </div>
+
+              <div
+                class="col-md-4 text-danger"
+                *ngIf="registerForm.get('password')?.touched &&
+                      registerForm.get('password')?.invalid">
+
+                <small *ngIf="registerForm.get('password')?.errors?.['required']">
+                  Password is required.
+                </small>
+
+                <small *ngIf="registerForm.get('password')?.errors?.['pattern']">
+                  Password must contain:
+                  <ul class="mb-0">
+                    <li>One uppercase letter</li>
+                    <li>One lowercase letter</li>
+                    <li>One number</li>
+                    <li>One special character</li>
+                    <li>6–15 characters</li>
+                  </ul>
+                </small>
+              </div>
+            </div>            
+            
+            <!-- Confirm Password -->
+            <div class="row align-items-center mb-3">
+              <div class="col-md-8">
+                <c-input-group>
+                  <span cInputGroupText>
+                    <svg cIcon name="cilLockLocked"></svg>
+                    <span class="text-danger">*</span>
+                  </span>
+
+                  <input
+                    cFormControl
+                    type="password"
+                    autoComplete="new-password"
+                    placeholder="Repeat Password"
+                    formControlName="confirmPassword"
+                    maxlength="15" />
+                </c-input-group>
+              </div>
+
+              <div
+                class="col-md-4 text-danger"
+                *ngIf="registerForm.errors?.['passwordsNotMatch'] &&
+                      registerForm.get('confirmPassword')?.touched">
+
+                <small>Passwords do not match.</small>
+              </div>
+            </div>
+              <div class="row align-items-center mb-3">
+                <div class="col-md-8">
+                    <c-input-group class="mb-3">
                 <span cInputGroupText>
-                  <svg cIcon name="cilUser"></svg>
+                  <svg cIcon name="cilPeople"></svg>
                 </span>
-                <input
-                  cFormControl
-                  autoComplete="given-name"
-                  placeholder="First Name"
-                  formControlName="firstName"
-                  maxlength="50" />
-              </c-input-group>
 
-              <c-input-group class="mb-3">
-                <span cInputGroupText>
-                  <svg cIcon name="cilUser"></svg>
-                </span>
-                <input
-                  cFormControl
-                  autoComplete="family-name"
-                  placeholder="Last Name"
-                  formControlName="lastName"
-                  maxlength="50" />
-              </c-input-group>
+                <select
+                  class="form-select"
+                  formControlName="role">
+                  <option *ngFor="let role of roles" [value]="role.id">
+                    {{ role.name }}
+                  </option>
+                </select>
+              </c-input-group>              
 
-              <c-input-group class="mb-3">
-                <span cInputGroupText>&#64;</span>
-                <input
-                  cFormControl
-                  autoComplete="email"
-                  placeholder="Email"
-                  formControlName="email"
-                  maxlength="100" />
-              </c-input-group>
+                </div>
+                <div class="col-md-4">
 
-              <c-input-group class="mb-3">
-                <span cInputGroupText>
-                  <svg cIcon name="cilSpeech"></svg>
-                </span>
-                <input
-                  cFormControl
-                  autoComplete="tel"
-                  placeholder="Phone Number"
-                  formControlName="phoneNumber"
-                  maxlength="12" />
-              </c-input-group>
+                </div>
+              </div>             
+            
 
-              <c-input-group class="mb-3">
-                <span cInputGroupText>
-                  <svg cIcon name="cilLockLocked"></svg>
-                </span>
-                <input
-                  cFormControl
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Password"
-                  formControlName="password"
-                  maxlength="15" />
-              </c-input-group>
-
-              <c-input-group class="mb-4">
-                <span cInputGroupText>
-                  <svg cIcon name="cilLockLocked"></svg>
-                </span>
-                <input
-                  cFormControl
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Repeat Password"
-                  formControlName="confirmPassword"
-                  maxlength="15" />
-              </c-input-group>
-              
-              <c-input-group class="mb-3">
-              <span cInputGroupText>
-                <svg cIcon name="cilPeople"></svg>
-              </span>
-
-              <select
-                class="form-select"
-                formControlName="role">
-                <option *ngFor="let role of roles" [value]="role.id">
-                  {{ role.name }}
-                </option>
-              </select>
-            </c-input-group>              
-
-              <div class="d-grid">
-                <button type="submit" cButton color="success" [disabled]="registerForm.invalid">Create Account</button>
+              <div>
+                
+              </div>
+              <div class="row text-end">                  
+                <div class="col-md-8 d-grid">
+                  <button type="submit" cButton color="success" [disabled]="registerForm.invalid">Create Account</button>
+                </div>                    
+                <div class="col-md-4">
+                  
+                </div>         
               </div>
             </form>
           </c-card-body>

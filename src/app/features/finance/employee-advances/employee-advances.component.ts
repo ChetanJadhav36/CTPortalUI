@@ -36,10 +36,10 @@ ngOnInit() {
 
 // Fetch Employee Advances
 getEmployeeAdvances() {
-  let transactionData = { companyId: this.companyId, voucherType: VoucherType.ADV };
+  let transactionData = { companyId: this.companyId, voucherType: VoucherType.EADV }; // Ensure voucherType is set to EADV
   this.financeService.getEmployeeAdvancesByCompanyId(transactionData).subscribe(
     (res: any[]) => {
-      this.employeeAdvances = res;      
+      this.employeeAdvances = res;            
     },
     (error) => {      
     }

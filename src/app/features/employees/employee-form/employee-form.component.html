@@ -17,8 +17,8 @@
 
                     <!-- Employee Code -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Employee Code</label>
-                        <input type="text"
+                        <label class="form-label">Employee Code <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="20"
                             class="form-control"
                             formControlName="employeeCode"
                             maxlength="20"
@@ -27,43 +27,46 @@
                             'is-invalid': employeeForm.get('employeeCode')?.invalid && employeeForm.get('employeeCode')?.touched,
                             'readonly-field': isUpdateMode
                             }"
-                            [readonly]="isUpdateMode">
+                            [readonly]="isUpdateMode" appUpperCase>
                     </div>
 
                     <!-- First Name -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">First Name</label>
-                        <input type="text"
+                        <label class="form-label">First Name <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="50"
                             class="form-control"
                             formControlName="firstName"
                             placeholder="Enter First Name"
-                            [ngClass]="{'is-invalid': employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched}">
+                            [ngClass]="{'is-invalid': employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched}"
+                            appUpperCase>
                     </div>
 
                     <!-- Middle Name -->
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Middle Name</label>
-                        <input type="text"
+                        <input type="text" maxlength="50"
                             class="form-control"
                             formControlName="middleName"
                             placeholder="Enter Middle Name"
-                            [ngClass]="{'is-invalid': employeeForm.get('middleName')?.invalid && employeeForm.get('middleName')?.touched}">
+                            [ngClass]="{'is-invalid': employeeForm.get('middleName')?.invalid && employeeForm.get('middleName')?.touched}"
+                            appUpperCase>
                     </div>
 
                     <!-- Last Name -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Last Name</label>
-                        <input type="text"
+                        <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="50"
                             class="form-control"
                             formControlName="lastName"
                             placeholder="Enter Last Name"
-                            [ngClass]="{'is-invalid': employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched}">
+                            [ngClass]="{'is-invalid': employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched}"
+                            appUpperCase>
                     </div>      
 
                     <!-- Primary Phone -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Primary Phone</label>
-                        <input type="text"
+                        <label class="form-label">Primary Phone <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="12"
                             class="form-control"
                             formControlName="phonePrimary"
                             placeholder="Enter Primary Phone"
@@ -73,7 +76,7 @@
                     <!-- Secondary Phone -->
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Secondary Phone</label>
-                        <input type="text"
+                        <input type="text" maxlength="12"
                             class="form-control"
                             formControlName="phoneSecondary"
                             placeholder="Enter Secondary Phone"
@@ -83,46 +86,50 @@
                     <!-- Email -->
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email"
+                        <input type="email" maxlength="100"
                             class="form-control"
                             formControlName="email"
                             placeholder="Enter Email"
-                            [ngClass]="{'is-invalid': employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched}">
+                            [ngClass]="{'is-invalid': employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched}"
+                            appUpperCase>
                     </div>
 
                     <!-- Local Address -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Local Address</label>
-                        <textarea class="form-control"
+                        <label class="form-label">Local Address <span class="text-danger">*</span></label>
+                        <textarea class="form-control" maxlength="100"
                                 formControlName="localAddress"
                                 rows="2"
                                 placeholder="Enter Local Address"
-                                [ngClass]="{'is-invalid': employeeForm.get('localAddress')?.invalid && employeeForm.get('localAddress')?.touched}"></textarea>
+                                [ngClass]="{'is-invalid': employeeForm.get('localAddress')?.invalid && employeeForm.get('localAddress')?.touched}"
+                                appUpperCase></textarea>
                     </div>
 
                     <!-- Permanent Address -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Permanent Address</label>
-                        <textarea class="form-control"
+                        <label class="form-label">Permanent Address <span class="text-danger">*</span></label>
+                        <textarea class="form-control" maxlength="100"
                                 formControlName="permanentAddress"
                                 rows="2"
                                 placeholder="Enter Permanent Address"
-                                [ngClass]="{'is-invalid': employeeForm.get('permanentAddress')?.invalid && employeeForm.get('permanentAddress')?.touched}"></textarea>
+                                [ngClass]="{'is-invalid': employeeForm.get('permanentAddress')?.invalid && employeeForm.get('permanentAddress')?.touched}"
+                                appUpperCase></textarea>
                     </div>                   
 
                     <!-- City -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">City</label>
-                        <input type="text"
+                        <label class="form-label">City <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="50"
                             class="form-control"
                             formControlName="city"
                             placeholder="Enter City"
-                            [ngClass]="{'is-invalid': employeeForm.get('city')?.invalid && employeeForm.get('city')?.touched}">
+                            [ngClass]="{'is-invalid': employeeForm.get('city')?.invalid && employeeForm.get('city')?.touched}"
+                            appUpperCase>
                     </div>
 
                     <!-- State -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">State</label>
+                        <label class="form-label">State <span class="text-danger">*</span></label>
                         <select
                         class="form-select"
                         formControlName="stateId">
@@ -135,8 +142,8 @@
 
                     <!-- Postal Code -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Postal Code</label>
-                        <input type="text"
+                        <label class="form-label">Postal Code <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="10"
                             class="form-control"
                             formControlName="postalCode"
                             placeholder="Enter Postal Code"
@@ -145,7 +152,7 @@
 
                     <!-- Birth Date -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Birth Date</label>
+                        <label class="form-label">Birth Date <span class="text-danger">*</span></label>
                         <input type="date"
                             class="form-control"
                             formControlName="birthDate"
@@ -154,21 +161,32 @@
 
                     <!-- Join Date -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Join Date</label>
+                        <label class="form-label">Join Date <span class="text-danger">*</span></label>
                         <input type="date"
                             class="form-control"
                             formControlName="joinDate"
                             [ngClass]="{'is-invalid': employeeForm.get('joinDate')?.invalid && employeeForm.get('joinDate')?.touched}">
                     </div>
 
+                   <!-- Job Profile -->
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Job Profile <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="50"
+                            class="form-control"
+                            formControlName="jobProfile"
+                            placeholder="Enter Job Profile"
+                            [ngClass]="{'is-invalid': employeeForm.get('jobProfile')?.invalid && employeeForm.get('jobProfile')?.touched}"
+                            appUpperCase>
+                    </div>
+
                     <!-- Referred By -->
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Referred By</label>
-                        <input type="text"
+                        <input type="text" maxlength="50"
                             class="form-control"
                             formControlName="referredBy"
                             placeholder="Enter Referrer Name"
-                            [ngClass]="{'is-invalid': employeeForm.get('referredBy')?.invalid && employeeForm.get('referredBy')?.touched}">
+                            appUpperCase>
                     </div>                    
 
                     <!-- Is Active -->

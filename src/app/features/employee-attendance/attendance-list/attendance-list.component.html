@@ -48,28 +48,19 @@
 
       <!-- Employee -->
       <th style="min-width:220px">
-        Employees
-      </th>
-
-      <!-- Action -->
-      <th style="min-width:120px">
-        Action
+        EMPLOYEES
       </th>
 
       <!-- Days -->
       <th
         *ngFor="let day of daysInMonth"
-        class="text-center"
-        style="min-width:120px">
-
+        class="text-center attendance-day-header"
+        >
         <div>{{ day }}</div>
-
         <small class="text-muted">
           {{ getDayName(day) }}
         </small>
-
       </th>
-
     </tr>
   </ng-template>
 
@@ -80,17 +71,7 @@
       <!-- Employee Name -->
       <td class="fw-bold">
         {{ employee.fullName }}
-      </td>
-
-      <!-- Action Column -->
-      <td>
-        <button
-          type="button"
-          class="btn btn-link p-0 edit-btn"
-          (click)="markToday(employee)">
-          Today
-        </button>
-      </td>
+      </td>          
 
       <!-- Attendance Columns -->
       <td
@@ -102,30 +83,25 @@
         [attr.name]="'employeeAttendance-' + (employee.employeeId || employee.id || dayIndex) + '-' + day"     
           class="form-select form-select-sm"
           [(ngModel)]="employee.attendance[day]"
-          [ngModelOptions]="{ standalone: true }">
-
+          [ngModelOptions]="{ standalone: true }"
+          [style.background-color]="getAttendanceColor(employee.attendance[day], day)"
+          [style.color]="getAttendanceTextColor(employee.attendance[day], day)">
           <option [ngValue]="null">--</option>
-
           <option [ngValue]="AttendanceStatus.Present">
-            Present
+            P
           </option>
-
           <option [ngValue]="AttendanceStatus.Absent">
-            Absent
-          </option>       
-
+            A
+          </option>     
           <option [ngValue]="AttendanceStatus.HalfDay">
-            Half Day
+            HD
           </option>
-
           <option [ngValue]="AttendanceStatus.OnLeave">
-            On Leave
+            L
           </option>
-
           <option [ngValue]="AttendanceStatus.Holiday">
-            Holiday
+            H
           </option>
-
         </select>
 
       </td>

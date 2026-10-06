@@ -68,19 +68,7 @@
 
         <tr class="table-success fw-bold">
           <td>Total</td>
-          <td>
-            {{
-              (notesData.notes2000 || 0) +
-              (notesData.notes1000 || 0) +
-              (notesData.notes500 || 0) +
-              (notesData.notes200 || 0) +
-              (notesData.notes100 || 0) +
-              (notesData.notes50 || 0) +
-              (notesData.notes20 || 0) +
-              (notesData.notes10 || 0) +
-              (notesData.notes5 || 0)
-            }}
-          </td>
+          <td> {{notesData.totalNotesCount}}</td>
           <td class="fw-bold text-success">₹{{ notesData.totalCashAmount || 0 }}</td>
         </tr>
       </tbody>
@@ -89,80 +77,129 @@
 
   <!-- Right Side -->
   <div class="col-12 col-lg-8">
-    <!-- Expenses -->
-  <div class="mb-4">
-    <table class="table table-bordered table-sm w-auto">
-      <thead>
-        <tr>
-          <th class="bg-primary text-white">Expenses</th>
-          <th class="bg-primary text-white">Pending</th>
-          <th class="bg-primary text-white">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="fw-bold">Draft</td>
-          <td>{{ dashboard.expenseApprovalPending || 0 }}</td>
-          <td class="fw-bold text-success">₹{{ dashboard.expenseApprovalAmount || 0 }}</td>
-        </tr>
-        <tr>
-          <td class="fw-bold">Payment</td>
-          <td>{{ dashboard.expensePaymentPending || 0 }}</td>
-          <td class="fw-bold text-success">₹{{ dashboard.expensePaymentAmount || 0 }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    
+    <div class="row g-3">
+      <!-- Column 1: Expenses + Bank Deposits -->
+      <div class="col-12 col-md-4">
+        <!-- Expenses -->
+        <div class="mb-4">
+          <table class="table table-bordered table-sm w-auto">
+            <thead>
+              <tr>
+                <th class="bg-primary text-white">Expenses</th>
+                <th class="bg-primary text-white">Pending</th>
+                <th class="bg-primary text-white">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fw-bold">Draft</td>
+                <td>{{ dashboard.expenseApprovalPending || 0 }}</td>
+                <td class="fw-bold text-success">
+                  ₹{{ dashboard.expenseApprovalAmount || 0 }}
+                </td>
+              </tr>
+              <tr>
+                <td class="fw-bold">Payment</td>
+                <td>{{ dashboard.expensePaymentPending || 0 }}</td>
+                <td class="fw-bold text-success">
+                  ₹{{ dashboard.expensePaymentAmount || 0 }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Bank Deposits -->
+        <div class="mb-4">
+          <table class="table table-bordered table-sm w-auto">
+            <thead>
+              <tr>
+                <th class="bg-primary text-white">Bank DEP</th>
+                <th class="bg-primary text-white">Pending</th>
+                <th class="bg-primary text-white">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fw-bold">Draft</td>
+                <td>{{ dashboard.bankDepositApprovalPending || 0 }}</td>
+                <td class="fw-bold text-success">
+                  ₹{{ dashboard.bankDepositApprovalAmount || 0 }}
+                </td>
+              </tr>
+              <tr>
+                <td class="fw-bold">Payment</td>
+                <td>{{ dashboard.bankDepositPaymentPending || 0 }}</td>
+                <td class="fw-bold text-success">
+                  ₹{{ dashboard.bankDepositPaymentAmount || 0 }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-  <!-- Advances -->
-  <div class="mb-4">
-    <table class="table table-bordered table-sm w-auto">
-      <thead class="table-light">
-        <tr>
-          <th class="bg-primary text-white">Advances</th>
-          <th class="bg-primary text-white">Pending</th>
-          <th class="bg-primary text-white">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="fw-bold">Draft</td>
-          <td>{{ dashboard.advanceApprovalPending || 0 }}</td>
-          <td class="fw-bold text-success">₹{{ dashboard.advanceApprovalAmount || 0 }}</td>
-        </tr>
-        <tr>
-          <td class="fw-bold">Payment</td>
-          <td>{{ dashboard.advancePaymentPending || 0 }}</td>
-          <td class="fw-bold text-success">₹{{ dashboard.advancePaymentAmount || 0 }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <!-- Column 2: Advances + Salaries -->
+      <div class="col-12 col-md-4">
+        <!-- Advances -->
+        <div class="mb-4">
+          <table class="table table-bordered table-sm w-auto">
+            <thead>
+              <tr>
+                <th class="bg-primary text-white">Advances</th>
+                <th class="bg-primary text-white">Pending</th>
+                <th class="bg-primary text-white">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fw-bold">Draft</td>
+                <td>{{ dashboard.advanceApprovalPending || 0 }}</td>
+                <td class="fw-bold text-success">
+                  ₹{{ dashboard.advanceApprovalAmount || 0 }}
+                </td>
+              </tr>
+              <tr>
+                <td class="fw-bold">Payment</td>
+                <td>{{ dashboard.advancePaymentPending || 0 }}</td>
+                <td class="fw-bold text-success">
+                  ₹{{ dashboard.advancePaymentAmount || 0 }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Salaries -->
+        <div class="mb-4">
+          <table class="table table-bordered table-sm w-auto">
+            <thead>
+              <tr>
+                <th class="bg-primary text-white">Salaries</th>
+                <th class="bg-primary text-white">Pending</th>
+                <th class="bg-primary text-white">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fw-bold">Approval</td>
+                <td>{{ dashboard.salaryApprovalPending || 0 }}</td>
+                <td class="fw-bold text-success">
+                  ₹{{ dashboard.salaryApprovalAmount || 0 }}
+                </td>
+              </tr>
+              <tr>
+                <td class="fw-bold">Payment</td>
+                <td>{{ dashboard.salaryPaymentPending || 0 }}</td>
+                <td class="fw-bold text-success">
+                  ₹{{ dashboard.salaryPaymentAmount || 0 }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-  <!-- Salaries -->
-  <div class="mb-4">
-    <table class="table table-bordered table-sm w-auto">
-      <thead class="table-light">
-        <tr>
-          <th class="bg-primary text-white">Salaries</th>
-          <th class="bg-primary text-white">Pending</th>
-          <th class="bg-primary text-white">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="fw-bold">Approval</td>
-          <td>{{ dashboard.salaryApprovalPending || 0 }}</td>
-          <td class="fw-bold text-success">₹{{ dashboard.salaryApprovalAmount || 0 }}</td>
-        </tr>
-        <tr>
-          <td class="fw-bold">Payment</td>
-          <td>{{ dashboard.salaryPaymentPending || 0 }}</td>
-          <td class="fw-bold text-success">₹{{ dashboard.salaryPaymentAmount || 0 }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>  
+      </div>
+    </div>
 
   </div>
 

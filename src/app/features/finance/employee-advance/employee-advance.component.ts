@@ -8,8 +8,7 @@ import { FinanceService } from '../../../services/finance.service';
 import { DateUtcPipe } from '../../../shared/pipes/date-utc.pipe';
 import { CommonModule } from '@angular/common';
 import { EmployeesService } from '../../../services/employees.service';
-import { PaymentType, TransactionStatus, VoucherType } from '../../../enums/permission.enum';
-import { of, switchMap, tap } from 'rxjs';
+import { EmployeeAdvanceType, PaymentType, TransactionStatus, VoucherType } from '../../../enums/permission.enum';
 
 @Component({
   selector: 'app-employee-advance',
@@ -25,10 +24,14 @@ export class EmployeeAdvanceComponent {
   sourceAccounts: any[] = [];
   destinationAccounts: any[] = [];  
   employees: any[] = []; 
+  selectedEmployeeIndex: number = -1;
+
+  bankAccounts: any[] = []; 
+  cashAccount: any = null;  
   
    // Expose the enum to the template
   PaymentType = PaymentType;  // <-- THIS IS CRUCIAL
-  VoucherType = VoucherType;  // <-- THIS IS CRUCIAL
+  VoucherType = EmployeeAdvanceType.EADV;  // <-- THIS IS CRUCIAL
   TransactionStatus = TransactionStatus;  // <-- THIS IS CRUCIAL
 
   draftForm = new FormGroup({
@@ -47,11 +50,13 @@ export class EmployeeAdvanceComponent {
 
   // Source Account
   sourceAccountId: new FormControl({ value: '', disabled: true }, Validators.required),
+  bankAccountSelection : new FormControl(''),
   sourceAccountCode: new FormControl({ value: '', disabled: true }),
-  sourceAccountName: new FormControl({ value: '', disabled: true }),
-
-  netSalary: new FormControl({ value: '', disabled: true }),
-  advanceAmount: new FormControl(0, [Validators.required, Validators.min(0)]),
+  sourceAccountName: new FormControl({ value: '', disabled: true }), 
+  
+  bankAccountId: new FormControl(''),
+  
+  advanceAmount: new FormControl(0, [Validators.required, Validators.min(0.01)]),
   narration: new FormControl(''),
   transactionNo: new FormControl(''), 
   
@@ -70,27 +75,27 @@ export class EmployeeAdvanceComponent {
   createdByName: new FormControl({ value: '', disabled: true }),
   transactionStatus: new FormControl('Draft'), // Default to Draft
 
-  voucherType: new FormControl(VoucherType.ADV), // Default to EXP
+  voucherType: new FormControl(VoucherType.EADV), // Default to EADV
 });
 
 cashNotesForm = new FormGroup({ 
   id: new FormControl(0), // or transactionId
   voucherId: new FormControl(0),
   companyId: new FormControl(0),
-  voucherType: new FormControl(VoucherType.ADV),
+  voucherType: new FormControl(EmployeeAdvanceType.EADV),
   paymentType: new FormControl(PaymentType.Cash),
 
   // Cash
-  notes2000: new FormControl(0),
-  notes1000: new FormControl(0),
-  notes500: new FormControl(0),
-  notes200: new FormControl(0),
-  notes100: new FormControl(0),
-  notes50: new FormControl(0),
-  notes20: new FormControl(0),
-  notes10: new FormControl(0),
-  notes5: new FormControl(0),
-  coins: new FormControl(0),  
+  notes2000: new FormControl<number | null>(null),
+  notes1000: new FormControl<number | null>(null),
+  notes500: new FormControl<number | null>(null),
+  notes100: new FormControl<number | null>(null),
+  notes200: new FormControl<number | null>(null),
+  notes50: new FormControl<number | null>(null),
+  notes20: new FormControl<number | null>(null),
+  notes10: new FormControl<number | null>(null),
+  notes5: new FormControl<number | null>(null),
+  coins: new FormControl<number | null>(null)
 });
 
   isUpdateMode: boolean = false;
@@ -133,34 +138,50 @@ getAccountsByCompanyId(companyId: any): void {
   this.masterService.getAccountsByCompanyId(companyId)
     .subscribe({
       next: (res: any[]) => {
-        this.accounts = res;
-        // Source Accounts = Cash In Hand + Bank
-        this.sourceAccounts = this.accounts.filter(
-          acc => acc.accountCode === 'CIH' || acc.accountCode === 'BNK'
-        );
+        this.accounts = res || [];
 
-        // Destination Accounts = Everything except Cash In Hand + Bank
-        this.destinationAccounts = this.accounts.filter(
-          acc => acc.accountCode !== 'CIH' && acc.accountCode !== 'BNK'
-        );
-
-        const cashInHand = this.accounts.find(
+        // Cash in Hand
+        this.cashAccount = this.accounts.find(
           acc => acc.accountCode === 'CIH'
-        );         
+        );
 
-        if (cashInHand) {
-          this.draftForm.patchValue({
-            sourceAccountId: cashInHand.id,
-            sourceAccountCode: cashInHand.accountCode,
-            sourceAccountName: cashInHand.accountName
-          });
+        // Source Accounts
+        this.sourceAccounts = this.accounts.filter(
+          acc =>
+            acc.accountCode === 'CIH' ||
+            acc.accountGroupCode === 'BNK'
+        );
+
+        // ALL Bank Accounts under Bank Account Group
+        this.bankAccounts = this.accounts.filter(
+          acc => acc.accountGroupCode === 'BNK'
+        );
+
+        // Destination Accounts
+        this.destinationAccounts = this.accounts.filter(
+          acc =>
+            acc.accountCode !== 'CIH' &&
+            acc.accountGroupCode !== 'BNK'
+        );
+
+        if (this.cashAccount) {
+          this.setCashSourceAccount();
         }
 
         if (this.employeeAdvanceId) {
           this.getEmployeeAdvanceById(this.employeeAdvanceId);
-        }   
-        this.onPaymentTypeChange(this.draftForm.get('paymentType')?.value);             
+        } else {
+          this.setCashSourceAccount();
+          this.onPaymentTypeChange(
+            this.draftForm.get('paymentType')?.value
+          );
+        }
+
+        this.onPaymentTypeChange(
+          this.draftForm.get('paymentType')?.value
+        );
       },
+
       error: err => {
         this.toastService.error(
           err?.error?.message || 'Error loading accounts'
@@ -169,89 +190,189 @@ getAccountsByCompanyId(companyId: any): void {
     });
 }
 getEmployeeAdvanceById(id: any) {
-var employeeAdvancePayload = { id: id, companyId: this.companyId, voucherType: VoucherType.EXP };
-  this.financeService.getEmployeeAdvanceById(employeeAdvancePayload).subscribe(
-    (employeeAdvanceData: any) => {      
+  const employeeAdvancePayload = {id: id, companyId: this.companyId, voucherType: VoucherType.EADV};
+
+  this.financeService.getEmployeeAdvanceById(employeeAdvancePayload).subscribe({
+    next: (employeeAdvanceData: any) => {            
+      const sourceAccountId = Number(employeeAdvanceData.sourceAccountId);
+      // Find bank account from loaded accounts
+      const selectedBank = this.bankAccounts.find(
+        x => Number(x.id) === sourceAccountId
+      );
       this.currentStatus = TransactionStatus[employeeAdvanceData.status as keyof typeof TransactionStatus];
-      this.draftForm.patchValue({                    
-          voucherDate: this.dateUtcPipe.transform(employeeAdvanceData.voucherDate, 'input'),
+      this.draftForm.patchValue({
+        voucherNumber: employeeAdvanceData.voucherNumber,
+        voucherDate: this.dateUtcPipe.transform(employeeAdvanceData.voucherDate,'input'),
+        sourceAccountId: employeeAdvanceData.sourceAccountId,
+        sourceAccountCode: employeeAdvanceData.sourceAccountCode,
+        sourceAccountName: employeeAdvanceData.sourceAccountName,
 
-          sourceAccountId:employeeAdvanceData.sourceAccountId,          
-          sourceAccountName: employeeAdvanceData.sourceAccountName,          
-          sourceAccountCode: employeeAdvanceData.sourceAccountCode,
+        // IMPORTANT
+        bankAccountSelection: String(employeeAdvanceData.sourceAccountId),
 
-          employeeId : employeeAdvanceData.employeeId,
-          employeeFullName: employeeAdvanceData.employeeFullName,    
-          netSalary:     employeeAdvanceData.monthlySalary,
-          
-          advanceAmount: employeeAdvanceData.advanceAmount,
-          narration: employeeAdvanceData.narration,
-          transactionNo: employeeAdvanceData.transactionNo,         
-          paymentType: PaymentType[employeeAdvanceData.paymentType as keyof typeof PaymentType],
-          bankName: employeeAdvanceData.bankName,
-          chequeNumber: employeeAdvanceData.chequeNumber,
-          remark: employeeAdvanceData.remark,
-          transactionStatus: employeeAdvanceData.status, // Assuming API returns status as string like 'Draft', 'Approved', etc.                            
+        bankName: selectedBank?.accountName || employeeAdvanceData.bankName ||'',
+        employeeId: employeeAdvanceData.employeeId,
+        employeeFullName: employeeAdvanceData.employeeFullName,        
 
-          createdByName: employeeAdvanceData.createdByName,
-          approvedByName: employeeAdvanceData.approvedByName          
-      });      
+        advanceAmount: employeeAdvanceData.advanceAmount,
+        narration: employeeAdvanceData.narration,
+        transactionNo: employeeAdvanceData.transactionNo,
 
-      if (employeeAdvanceData) {
-        this.cashNotesForm.patchValue({
-          notes2000: employeeAdvanceData.notes2000,
-          notes1000: employeeAdvanceData.notes1000,
-          notes500: employeeAdvanceData.notes500,
-          notes200: employeeAdvanceData.notes200,
-          notes100: employeeAdvanceData.notes100,
-          notes50: employeeAdvanceData.notes50,
-          notes20: employeeAdvanceData.notes20,
-          notes10: employeeAdvanceData.notes10,
-          notes5: employeeAdvanceData.notes5,
-          coins: employeeAdvanceData.coins,
-        })
-      }      
+        paymentType: PaymentType[employeeAdvanceData.paymentType as keyof typeof PaymentType],
+
+        chequeNumber: employeeAdvanceData.chequeNumber,
+        remark: employeeAdvanceData.remark,
+
+        transactionStatus: employeeAdvanceData.status,
+
+        createdByName: employeeAdvanceData.createdByName,
+        approvedByName: employeeAdvanceData.approvedByName
+      });
+
+      this.cashNotesForm.patchValue({
+        notes2000: employeeAdvanceData.notes2000,
+        notes1000: employeeAdvanceData.notes1000,
+        notes500: employeeAdvanceData.notes500,
+        notes200: employeeAdvanceData.notes200,
+        notes100: employeeAdvanceData.notes100,
+        notes50: employeeAdvanceData.notes50,
+        notes20: employeeAdvanceData.notes20,
+        notes10: employeeAdvanceData.notes10,
+        notes5: employeeAdvanceData.notes5,
+        coins: employeeAdvanceData.coins
+      });
+      this.isCashMode = PaymentType[employeeAdvanceData.paymentType as keyof typeof PaymentType] === PaymentType.Cash;
       this.applyStatusRules();
-      this.onPaymentTypeChange(this.draftForm.get('paymentType')?.value);
-      this.cd.detectChanges(); // force refresh
-      const selectedAccount = this.accounts.find(
-    acc =>
-      Number(acc.id) ===
-      Number(employeeAdvanceData.destinationAccountId)
-    );
 
+      this.cd.detectChanges();
     },
-    (error: any) => {
-      this.toastService.error(error?.error?.message || 'Error fetching employee advance details');
+
+    error: (error: any) => {
+      this.toastService.error(
+        error?.error?.message ||
+        'Error fetching employee advance details'
+      );
     }
-  );
+  });
 }
+
+private setCashSourceAccount(): void {
+  if (!this.cashAccount) {
+    return;
+  }
+
+  this.draftForm.patchValue({
+    sourceAccountId: this.cashAccount.id,
+    sourceAccountCode: this.cashAccount.accountCode,
+    sourceAccountName: this.cashAccount.accountName,
+    bankName: ''
+  });
+}
+private setBankSourceAccount(): void {
+
+  // First check whether user already selected a bank account
+  const selectedBankAccountId = this.draftForm.get('bankAccountId')?.value;
+
+  let account = this.bankAccounts.find(
+    acc => Number(acc.id) === Number(selectedBankAccountId)
+  );
+
+  // If no bank is selected, automatically select default bank
+  if (!account) {
+    account = this.getDefaultBankAccount();
+  }
+
+  if (!account) {
+    // No bank account configured
+    this.draftForm.patchValue({
+      bankAccountId: '',
+      sourceAccountId: '',
+      sourceAccountCode: '',
+      sourceAccountName: '',
+      bankName: ''
+    });
+
+    return;
+  }
+
+  // Set selected/default bank account
+  this.draftForm.patchValue({
+    bankAccountId: account.id,
+
+    // Bank becomes source account
+    sourceAccountId: account.id,
+    sourceAccountCode: account.accountCode,
+    sourceAccountName: account.accountName,
+
+    bankName: account.accountName
+  });
+
+  // Source account must remain readonly/disabled
+  this.disableSourceAccount();
+}
+private getDefaultBankAccount(): any {
+    return this.bankAccounts.find(
+      acc => acc.isDefault === true
+    ) || this.bankAccounts[0] || null;
+  }
+onBankAccountChange(accountId?: any): void {
+  const selectedId = accountId ?? this.draftForm.get('bankAccountSelection')?.value;
+
+  let selectedAccount = this.bankAccounts.find(
+    acc => Number(acc.id) === Number(selectedId));
+
+  // If nothing is selected, automatically use default bank
+  if (!selectedAccount) {
+    selectedAccount = this.getDefaultBankAccount();
+  }
+
+  if (!selectedAccount) {
+    return;
+  }
+
+  this.draftForm.patchValue({
+    bankAccountSelection: selectedAccount.id,
+
+    // Bank account becomes source account
+    sourceAccountId: selectedAccount.id,
+    sourceAccountCode: selectedAccount.accountCode,
+    sourceAccountName: selectedAccount.accountName,
+
+    bankName: selectedAccount.accountName
+  });
+
+  // Source account must remain disabled
+  this.disableSourceAccount();
+}
+
 private applyStatusRules(): void {
 
-const paymentType = this.draftForm.get('paymentType')?.value;
-switch (this.currentStatus) {
-  case TransactionStatus.Draft:
-    // Draft => Editable
-    this.draftForm.enable();
-    this.disableAlwaysDisabledFields();
-    this.cashNotesForm.disable();      
-    break;
-
-  case TransactionStatus.Approved:
-      this.draftForm.disable();
-      if (paymentType === PaymentType.Bank) {
-        this.cashNotesForm.disable();
-      } else {
+  const paymentType = Number(this.draftForm.get('paymentType')?.value);
+  switch (this.currentStatus) {
+    case TransactionStatus.Draft:
+      this.draftForm.enable();
+      this.disableAlwaysDisabledFields();
+      if (paymentType === PaymentType.Cash) {
         this.cashNotesForm.enable();
+      } else {
+        this.cashNotesForm.disable();
       }
       break;
-
-  case TransactionStatus.Paid:
-    // Paid => Everything locked
-    this.draftForm.disable();
-    this.cashNotesForm.disable();
-    break;
-}
+    case TransactionStatus.Approved:
+      this.draftForm.disable();
+      if (paymentType === PaymentType.Cash) {
+        this.cashNotesForm.enable();
+      } else {
+        this.cashNotesForm.disable();
+      }
+      break;
+    case TransactionStatus.Paid:
+      this.draftForm.disable();
+      this.cashNotesForm.disable();
+      break;
+  }
+  // Always disabled
+  this.disableSourceAccount();
 }
 
 private alwaysDisabledFields: string[] = [
@@ -260,8 +381,6 @@ private alwaysDisabledFields: string[] = [
   'sourceAccountId',
   'sourceAccountCode',
   'sourceAccountName',
-  'netSalary'   ,
-  'bankName' ,
   'approvedBy',
   'approvedDate',
   'approvedByName',
@@ -307,20 +426,69 @@ private setSourceAccount(accountCode: string): void {
     });
   }
 }
+onPaymentTypeChange(selectedValue: any): void {
 
-onPaymentTypeChange(selectedValue: any) {
   const paymentType = Number(selectedValue);
+
   this.isCashMode = paymentType === PaymentType.Cash;
-  if (paymentType === PaymentType.Cash) {
-    this.setSourceAccount('CIH');
+
+  const chequeNumberControl =
+    this.draftForm.get('chequeNumber');
+
+  if (paymentType === PaymentType.Bank) {
+
+    chequeNumberControl?.setValidators([
+      Validators.required
+    ]);
+    chequeNumberControl?.updateValueAndValidity();
+
+    // Automatically select default bank
+    this.onBankAccountChange();
+
+    // Bank does not use cash notes
+    this.cashNotesForm.disable();
+
+  } else if (paymentType === PaymentType.Cash) {
+
+    chequeNumberControl?.clearValidators();
+    chequeNumberControl?.updateValueAndValidity();
+
+    // Cash = Cash In Hand
+    this.setCashSourceAccount();
+
+    this.draftForm.patchValue({
+      bankAccountSelection: '',
+      bankName: '',
+      chequeNumber: '',
+      remark: ''
+    });
+
     this.cashNotesForm.enable();
-  } else if (paymentType === PaymentType.Bank) {
-    this.setSourceAccount('BNK');
-    this.setNotesToZero();
+
+  } else {
+
+    chequeNumberControl?.clearValidators();
+    chequeNumberControl?.updateValueAndValidity();
+
     this.cashNotesForm.disable();
   }
+
+  this.disableSourceAccount();
   this.applyStatusRules();
 }
+private disableSourceAccount(): void {
+    this.draftForm.get('sourceAccountId')?.disable({
+      emitEvent: false
+    });
+
+    this.draftForm.get('sourceAccountCode')?.disable({
+      emitEvent: false
+    });
+
+    this.draftForm.get('sourceAccountName')?.disable({
+      emitEvent: false
+    });
+  }
 
 getNotesCountTotal(): number {
   const val = this.cashNotesForm.value;
@@ -354,58 +522,115 @@ getNotesTotal(): number {
   );
 }
 
-setNotesToZero() {
-  const controls = [
-    'notes2000','notes1000','notes500','notes200',
-    'notes100','notes50','notes20','notes10','notes5','coins'
-  ];
-
-  controls.forEach(controlName => {
-  this.cashNotesForm.get(controlName)?.setValue(0);
-});
-}
-
 isAmountMismatch(): boolean {
-  const paymentMode = Number(this.draftForm.get('paymentType')?.value);
+  const paymentType = Number(this.draftForm.get('paymentType')?.value);
 
-  // Ignore mismatch for Bank
-  if (paymentMode === PaymentType.Bank) {
+  // Bank payment does not require cash-note matching
+  if (paymentType === PaymentType.Bank) {
     return false;
   }
 
-  const amount = this.draftForm.get('advanceAmount')?.value || 0;
-  const notesTotal = this.getNotesTotal();
+  const amount = Number(this.draftForm.get('advanceAmount')?.value ?? 0);
+  const notesTotal = Number(this.getNotesTotal());
 
   return amount !== notesTotal;
 }
 
-searchEmployee(event: any) {
-  const keyword = event.target.value;
+searchEmployee(event: any): void {
+  const keyword = event.target.value.trim();
 
-   // Clear previously selected employee details
+  // Reset selected index
+  this.selectedEmployeeIndex = -1;
+
+  // Clear employee ID while user is typing
   this.draftForm.patchValue({
-    employeeId: '',
-    netSalary: '',
+    employeeId: ''
   });
 
-  if (keyword.length <= 1) {    
-    this.employees = [];        
+  // Don't search for less than 2 characters
+  if (!keyword || keyword.length < 2) {
+    this.employees = [];
     return;
   }
-  this.employeesService.searchEmployeeAdvancePayment(keyword, this.companyId).subscribe(
-    res => this.employees = res,
-    err => this.toastService.error(err?.error?.message || 'Error fetching employees')
-  );
+
+  this.employeesService
+    .searchEmployees(keyword, this.companyId)
+    .subscribe(
+      (response: any) => {
+        this.employees = response || [];
+        this.selectedEmployeeIndex = -1;
+      },
+      (error: any) => {
+        this.employees = [];
+
+        this.toastService.error(
+          error.error?.message || 'Error fetching employees'
+        );
+      }
+    );
 }
-selectEmployee(employee:any) {
-    this.draftForm.patchValue({
-      employeeId: employee.employeeId,
-      employeeFullName : employee.employeeFullName,
-      netSalary: employee.monthlySalary
-    });
+onEmployeeKeydown(event: KeyboardEvent): void {
+  // No suggestions
+  if (!this.employees || this.employees.length === 0) {
+    return;
+  }
+
+  // Arrow Down
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+
+    if (this.selectedEmployeeIndex < this.employees.length - 1) {
+      this.selectedEmployeeIndex++;
+    } else {
+      this.selectedEmployeeIndex = 0;
+    }
+  }
+
+  // Arrow Up
+  else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+
+    if (this.selectedEmployeeIndex > 0) {
+      this.selectedEmployeeIndex--;
+    } else {
+      this.selectedEmployeeIndex = this.employees.length - 1;
+    }
+  }
+
+  // Enter
+  else if (event.key === 'Enter') {
+    event.preventDefault();
+    if (
+      this.selectedEmployeeIndex >= 0 &&
+      this.selectedEmployeeIndex < this.employees.length
+    ) {
+      const employee = this.employees[this.selectedEmployeeIndex];
+
+      this.selectEmployee(employee);
+    }
+  }
+
+  // Escape
+  else if (event.key === 'Escape') {
+    event.preventDefault();
 
     this.employees = [];
+    this.selectedEmployeeIndex = -1;
   }
+}
+selectEmployee(employee: any): void {
+  this.draftForm.patchValue({
+    employeeId: employee.employeeId,
+    employeeFullName: employee.employeeFullName
+  });
+
+  // Close dropdown
+  this.employees = [];
+
+  // Reset keyboard selection
+  this.selectedEmployeeIndex = -1;
+}
+
 
 isInvalid(controlName: string): boolean {
   const control = this.draftForm.get(controlName);
@@ -415,7 +640,18 @@ isInvalid(controlName: string): boolean {
 focusNext(next: HTMLElement) {
   next.focus();
 }
-onSubmitEmployeeAdvance() {    
+onSubmitEmployeeAdvance() {   
+  
+  const advanceAmount = Number(this.draftForm.get('advanceAmount')?.value);
+
+  // Amount must be greater than zero
+  if (advanceAmount <= 0) {
+    this.draftForm.get('advanceAmount')?.markAsTouched();
+    this.toastService.error('Advance Amount must be greater than 0');
+    return;
+  }
+
+  // Validate entire form
   if (!this.draftForm.valid) {
     this.toastService.error('Please fill all required fields correctly');
     return;
@@ -425,7 +661,7 @@ onSubmitEmployeeAdvance() {
     companyId: this.companyId,
     voucherDate: this.dateUtcPipe.transform(this.draftForm.get('voucherDate')?.value, 'withCurrentTime'),
     paymentType: Number(this.draftForm.get('paymentType')?.value),
-    voucherType: VoucherType.ADV
+    voucherType: VoucherType.EADV
   });
 
   const employeeAdvanceData = this.draftForm.getRawValue();
@@ -455,66 +691,69 @@ private updateEmployeeAdvance(data: any) {
   data.approvedBy = this.draftForm.get('approvedBy')?.value || null; 
   this.financeService.updateEmployeeAdvance(this.employeeAdvanceId, data).subscribe({
     next: res => {
-      this.toastService.success(res?.message || 'Voucher transaction updated successfully');
+      this.toastService.success(res?.message || 'Employee advance updated successfully');
       this.router.navigate(['finance/employee-advances']);
     },
     error: err => this.toastService.error(err?.error?.message || 'Error updating voucher transaction')
   });
 }
-// Set null/empty note counts to 0 before calculation
-handleCashSection() {
-  const controls = [
-    'notes2000',
-    'notes1000',
-    'notes500',
-    'notes200',
-    'notes100',
-    'notes50',
-    'notes20',
-    'notes10',
-    'notes5',
-    'coins'
-  ];
 
-  controls.forEach(ctrl => {
-    const control = this.cashNotesForm.get(ctrl);
+private prepareEmployeeAdvanceData(): any {
+  const employeeAdvanceData = this.draftForm.getRawValue();
+  const cashData = this.cashNotesForm.getRawValue();
 
-    if (control?.value == null || control.value === '') {
-      control?.setValue(0);
-    }
-  });
+  return {
+    ...employeeAdvanceData,
+
+    companyId: this.companyId,
+    paymentType: Number(employeeAdvanceData.paymentType),
+    voucherType: EmployeeAdvanceType.EADV,
+
+    notes2000: cashData.notes2000 ?? 0,
+    notes1000: cashData.notes1000 ?? 0,
+    notes500: cashData.notes500 ?? 0,
+    notes200: cashData.notes200 ?? 0,
+    notes100: cashData.notes100 ?? 0,
+    notes50: cashData.notes50 ?? 0,
+    notes20: cashData.notes20 ?? 0,
+    notes10: cashData.notes10 ?? 0,
+    notes5: cashData.notes5 ?? 0,
+    coins: cashData.coins ?? 0
+  };
 }
-onPayAmount() { 
-  if (this.isAmountMismatch() && this.draftForm.get('paymentType')?.value === PaymentType.Cash) {
-    this.toastService.error("Notes total must match Amount");
-    return;
+
+onPayAmount(): void {
+  const paymentType = Number(this.draftForm.get('paymentType')?.value);
+
+  // Only Cash requires notes
+  if (paymentType === PaymentType.Cash) {    
+    if (this.isAmountMismatch()) {
+      this.toastService.error('Notes total must match Advance Amount');
+      return;
+    }
+
+    if (!this.cashNotesForm.valid) {
+      this.toastService.error('Please fill cash notes correctly');
+      return;
+    }
   }
 
-  if (!this.cashNotesForm.valid && this.draftForm.get('paymentType')?.value === PaymentType.Cash) {
-    this.toastService.error('Please fill cash notes correctly');
-    return;
-  }
-
-  // Set null/empty note counts to 0 before calculation
-  this.handleCashSection();
-  var payload = this.cashNotesForm.getRawValue();
-  payload.id = this.employeeAdvanceId;
-  payload.companyId = this.companyId;
-  payload.voucherType = VoucherType.ADV;  
-
-  if (this.draftForm.get('paymentType')?.value === PaymentType.Cash) {
-    payload.paymentType = PaymentType.Cash
-  }
-  else if(this.draftForm.get('paymentType')?.value === PaymentType.Bank){
-    payload.paymentType = PaymentType.Bank
-  }
-  this.financeService.payEmployeeAdvance(payload).subscribe({
-    next: res => {
+  
+  const employeeAdvanceData = this.prepareEmployeeAdvanceData();
+  employeeAdvanceData.id = this.employeeAdvanceId;
+  employeeAdvanceData.companyId = this.companyId;
+  employeeAdvanceData.voucherType = EmployeeAdvanceType.EADV;
+  employeeAdvanceData.paymentType = paymentType;
+  this.financeService.payEmployeeAdvance(employeeAdvanceData).subscribe({
+    next: (res: any) => {
       this.toastService.success(res?.message || 'Payment successful');
       this.router.navigate(['finance/employee-advances']);
     },
-    error: err =>
-      this.toastService.error(err?.error || 'Error processing payment')
+    error: (err: any) => {
+      this.toastService.error(
+        err?.error?.message || err?.error || 'Error processing payment');
+    }
   });
-}  
+}
+  
 }

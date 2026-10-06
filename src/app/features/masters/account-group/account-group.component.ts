@@ -5,10 +5,11 @@ import { AuthService } from '../../../services/auth.service';
 import { MasterService } from '../../../services/master.service';
 import { ToastService } from '../../../services/toast.service';
 import { CommonModule } from '@angular/common';
+import { UpperCaseDirective } from '../../../shared/directives/upper-case.directive';
 
 @Component({
   selector: 'app-account-group',  
-  imports: [CommonModule,FormsModule, ReactiveFormsModule],
+  imports: [CommonModule,FormsModule, ReactiveFormsModule,UpperCaseDirective],
   templateUrl: './account-group.component.html',
   styleUrl: './account-group.component.scss'
 })
@@ -71,10 +72,10 @@ export class AccountGroupComponent {
   onSubmitAccountGroup() {
     if (this.myForm.valid) {
       let accountGroupData = {
-        accountGroupCode: this.myForm.value.accountGroupCode,
-        accountGroupName: this.myForm.value.accountGroupName,
-        ugName: this.myForm.value.ugName,
         companyId: this.authService.getUserAuthData()?.client?.clientId,
+        accountGroupCode: this.myForm.value.accountGroupCode,
+        accountGroupName: this.myForm.value.accountGroupName,        
+        ugName : this.myForm.value.ugName,
         isActive: true,
         createdBy: this.userId,
         editedBy: this.userId

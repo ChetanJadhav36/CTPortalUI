@@ -20,61 +20,70 @@
 
               <!-- Vehicle Code -->
               <div class="col-lg-4 col-md-6 col-12 mb-3">
-                <label for="code" class="form-label">Vehicle Code</label>
+                <label for="code" class="form-label">Vehicle Code <span class="text-danger">*</span></label>
                 <input type="text" class="form-control"
                   id="code" formControlName="code"
-                  placeholder="Enter Vehicle Code" maxlength="20">
-              </div>
-
-              <!-- Vehicle Name -->
-              <div class="col-lg-4 col-md-6 col-12 mb-3">
-                <label for="name" class="form-label">Vehicle Name</label>
-                <input type="text" class="form-control"
-                  id="name" formControlName="name"
-                  placeholder="Enter Vehicle Name">
+                  placeholder="Enter Vehicle Code" maxlength="20"
+                  [ngClass]="{
+                      'is-invalid': myForm.get('code')?.invalid && myForm.get('code')?.touched
+                  }" appUpperCase>
               </div>
 
               <!-- Vehicle Number -->
               <div class="col-lg-4 col-md-6 col-12 mb-3">
-                <label for="vehicleNumber" class="form-label">Vehicle Number</label>
+                <label for="vehicleNumber" class="form-label">Vehicle Number <span class="text-danger">*</span></label>
                 <input type="text" class="form-control"
-                  id="vehicleNumber" formControlName="vehicleNumber"
-                  placeholder="Enter Vehicle Number">
+                  id="vehicleNumber" formControlName="vehicleNumber" maxlength="20"
+                  placeholder="Enter Vehicle Number"
+                  [ngClass]="{
+                      'is-invalid': myForm.get('vehicleNumber')?.invalid && myForm.get('vehicleNumber')?.touched
+                  }" appUpperCase>
               </div>
 
               <!-- Vehicle Type -->
               <div class="col-lg-4 col-md-6 col-12 mb-3">
-                <label for="vType" class="form-label">Vehicle Type</label>
+                <label for="vType" class="form-label">Vehicle Type <span class="text-danger">*</span></label>
                 <input type="text" class="form-control"
-                  id="vType" formControlName="vType"
-                  placeholder="Enter Vehicle Type">
+                  id="vType" formControlName="vType" maxlength="20"
+                  placeholder="Enter Vehicle Type"
+                  [ngClass]="{
+                      'is-invalid': myForm.get('vType')?.invalid && myForm.get('vType')?.touched
+                  }" appUpperCase>
               </div>
-
+              
               <!-- Driver Name -->
               <div class="col-lg-4 col-md-6 col-12 mb-3 position-relative">
-                <label for="driverName" class="form-label">Driver Name</label>
+                <label for="employeeFullName" class="form-label">
+                  Driver Name
+                </label>
 
-                <input type="text"
-                      class="form-control"
-                      id="employeeId"
-                      formControlName="employeeFullName"
-                      placeholder="Enter Driver Name"
-                      (input)="searchDriver($event)"
-                  autocomplete="off">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="employeeFullName"
+                  formControlName="employeeFullName"
+                  placeholder="Enter Driver Name"
+                  autocomplete="off"
+                  (input)="searchDriver($event)"
+                  (keydown)="onDriverKeydown($event)"
+                />
 
-            <!-- Autocomplete Dropdown -->
-            <ul *ngIf="drivers.length > 0"
-                class="list-group position-absolute w-100 shadow"
-                style="z-index:1000; max-height:200px; overflow-y:auto">
-
-              <li class="list-group-item list-group-item-action"
-                  *ngFor="let driver of drivers"
-                  (click)="selectDriver(driver)">
-                  {{driver.employeeFullName}}
-              </li>
-
-            </ul>
-              </div>            
+                <!-- Autocomplete Dropdown -->
+                <ul
+                  *ngIf="drivers.length > 0"
+                  class="list-group position-absolute w-100 shadow"
+                  style="z-index: 1000; max-height: 200px; overflow-y: auto;"
+                >
+                  <li
+                    *ngFor="let driver of drivers; let i = index"
+                    class="list-group-item list-group-item-action"
+                    [class.active]="i === selectedDriverIndex"
+                    (mousedown)="selectDriver(driver)"
+                  >
+                    {{ driver.employeeFullName }}
+                  </li>
+                </ul>
+              </div>
               
               <!-- Vehicle Average -->
               <div class="col-lg-4 col-md-6 col-12 mb-3">
@@ -86,7 +95,7 @@
 
               <!-- Rate -->
               <div class="col-lg-4 col-md-6 col-12 mb-3">
-                <label for="rate" class="form-label">Rate</label>
+                <label for="rate" class="form-label">Rate </label>
                 <input type="number" class="form-control"
                   id="rate" formControlName="rate"
                   placeholder="Enter Rate">

@@ -1,0 +1,134 @@
+<c-modal
+  [visible]="visiblePopup"
+  (visibleChange)="handleVisibleChange($event)">
+
+  <c-modal-header>
+    <h5 cModalTitle>
+      Salary Adjustment
+    </h5>
+
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="close()">
+    </button>
+  </c-modal-header>
+  
+  <c-modal-body>
+
+  <div class="mb-3">
+    <div class="fw-bold mb-2">
+      {{ salary?.employeeCode }} - {{ salary?.employeeFullName }}
+    </div>
+  </div>
+
+  <!-- Validation Warning -->
+  <div
+    *ngIf="validationMessage"
+    class="alert alert-warning"
+    role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ validationMessage }}
+  </div>
+
+  <hr/>  
+  <!-- OTHER ADDITIONAL -->
+<div class="row g-3">
+  <div class="col-md-6">
+    <label class="form-label fw-semibold text-success">
+      Other Additional Amount
+    </label>
+
+    <input
+      type="number"
+      min="0"
+      class="form-control"
+      [(ngModel)]="otherAdditionalAmount"
+      placeholder="Enter additional amount" />
+  </div>
+
+  <div class="col-md-6">
+  <label class="form-label fw-semibold text-success">
+    Additional Amount Reason
+  </label>
+
+  <input
+    type="text"
+    class="form-control"
+    [(ngModel)]="otherAdditionalAmtRemark"
+    placeholder="Enter additional reason"
+    [class.is-invalid]="
+      otherAdditionalAmount > 0 && !otherAdditionalAmtRemark" />
+
+  <div
+    class="invalid-feedback"
+    *ngIf="otherAdditionalAmount > 0 && !otherAdditionalAmtRemark">
+    Amount reason is required.
+  </div>
+  </div>
+
+</div>
+
+<!-- OTHER DEDUCTION -->
+<div class="row g-3 mt-2">
+  <div class="col-md-6">
+    <label class="form-label fw-semibold text-danger">
+      Other Deduction Amount
+    </label>
+
+    <input
+      type="number"
+      min="0"
+      class="form-control"
+      [(ngModel)]="otherDeductionAmount"
+      placeholder="Enter deduction amount" />
+  </div>
+  
+  <div class="col-md-6">
+  <label class="form-label fw-semibold text-danger">
+    Deduction Reason
+  </label>
+
+  <input
+    type="text"
+    class="form-control"
+    [(ngModel)]="otherDeductionAmtRemark"
+    placeholder="Enter deduction reason"
+    [class.is-invalid]="
+      otherDeductionAmount > 0 &&
+      !otherDeductionAmtRemark" />
+
+  <div
+    class="invalid-feedback"
+    *ngIf="
+      otherDeductionAmount > 0 &&
+      !otherDeductionAmtRemark">
+    Deduction reason is required.
+  </div>
+</div>
+
+</div>
+
+
+</c-modal-body>
+
+  
+  <c-modal-footer>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="close()">
+      Cancel
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="submit()">
+      <i class="bi bi-check-lg me-1"></i>
+      Submit
+    </button>
+  </c-modal-footer>
+
+</c-modal>

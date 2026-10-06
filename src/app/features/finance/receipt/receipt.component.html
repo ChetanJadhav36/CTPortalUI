@@ -205,37 +205,51 @@
             <!-- Employee -->
             <div class="col-md-12 mb-2">
               <div class="row align-items-center">
-                <div class="col-md-3">
-                   <label class="fw-bold">
-                    Employee Name : <span class="text-danger">*</span>
-                </label>
-                </div>
-               
-                <div class="col-md-6">
-                  <input type="text"
-                        #employeeName
-                        (keydown.enter)="focusNext(narration); $event.preventDefault()"
-                        class="form-control"
-                        id="employeeFullName"
-                        name="employeeFullName"
-                        formControlName="employeeFullName"
-                        placeholder="Search Employee..."
-                        (input)="searchEmployee($event)"
-                        [ngClass]="{'is-invalid': isInvalid('employeeFullName')}"
-                        autocomplete="off">                    
 
-                  <ul *ngIf="employees.length > 0"
-                      class="list-group position-absolute w-100 shadow">
-                    <li class="list-group-item"
-                      *ngFor="let employee of employees; let i = index"
-                      (click)="selectEmployee(employee)"
-                      >
-                    {{ employee.employeeFullName }}
-                  </li>
-                  </ul>
+                <div class="col-md-3">
+                  <label class="fw-bold">
+                    Employee Name : <span class="text-danger">*</span>
+                  </label>
                 </div>
+
+                <div class="col-md-6 position-relative">
+
+                  <input
+                    type="text"
+                    #employeeName
+                    class="form-control"
+                    id="employeeFullName"
+                    name="employeeFullName"
+                    formControlName="employeeFullName"
+                    placeholder="Search Employee..."
+                    autocomplete="off"
+                    (input)="searchEmployee($event)"
+                    (keydown)="onEmployeeKeydown($event)"
+                    (keydown.enter)="focusNext(narration); $event.preventDefault()"
+                    [ngClass]="{'is-invalid': isInvalid('employeeFullName')}"
+                  />
+
+                  <ul
+                    *ngIf="employees.length > 0"
+                    class="list-group position-absolute w-100 shadow"
+                    style="z-index: 1000; max-height: 200px; overflow-y: auto;"
+                  >
+
+                    <li
+                      *ngFor="let employee of employees; let i = index"
+                      class="list-group-item list-group-item-action"
+                      [class.active]="i === selectedEmployeeIndex"
+                      (mousedown)="selectEmployee(employee)"
+                    >
+                      {{ employee.employeeFullName }}
+                    </li>
+
+                  </ul>
+
+                </div>
+
               </div>
-            </div>
+            </div>         
 
             <!-- Narration -->
             <div class="col-md-12 mb-2">
@@ -282,39 +296,41 @@
                 </div>
               </div>
             </div>
-
+            
             <!-- Vehicle -->
             <div class="col-md-12 mb-2">
-                <div class="row align-items-center">
+              <div class="row align-items-center">
+                <div class="col-md-3">
+                  <label class="fw-bold"> Vehicle : </label>
+                </div>
 
-                  <div class="col-md-3">
-                    <label class="fw-bold">
-                    Vehicle :
-                  </label>
-                  </div>                 
-            
-                  <div class="col-md-6">
-                    <input type="text"
-                        #vehicle
-                        (keydown.enter)="focusNext(amountPaid); $event.preventDefault()"
-                        class="form-control"
-                        id="vehicleNumber"
-                        name="vehicleNumber"
-                        formControlName="vehicleNumber"
-                        placeholder="Search Vehicle..."
-                        (input)="searchVehicle($event)"
-                        autocomplete="off">
+                <div class="col-md-6 position-relative">
+                  <input
+                    type="text"
+                    #vehicle
+                    (keydown)="onVehicleKeydown($event)"
+                    (keydown.enter)="focusNext(paymentType); $event.preventDefault()"
+                    class="form-control"
+                    id="vehicleNumber"
+                    name="vehicleNumber"
+                    formControlName="vehicleNumber"
+                    placeholder="Search Vehicle..."
+                    autocomplete="off"
+                    (input)="searchVehicle($event)"
+                  >
+                  <ul  *ngIf="vehicles.length > 0" class="list-group position-absolute w-100 shadow"
+                    style="z-index: 1000; max-height: 200px; overflow-y: auto;">
 
-                  <ul *ngIf="vehicles.length > 0"
-                      class="list-group position-absolute w-100 shadow">
-                    <li class="list-group-item"
-                        *ngFor="let vehicle of vehicles"
-                        (click)="selectVehicle(vehicle)">
-                      {{ vehicle.vehicleNumber }}
+                    <li
+                      *ngFor="let vehicle of vehicles; let i = index"
+                      class="list-group-item list-group-item-action"
+                      [class.active]="i === selectedVehicleIndex"
+                      (mousedown)="selectVehicle(vehicle)">
+                      {{ vehicle.code }} - {{ vehicle.name }} - {{ vehicle.vehicleNumber }}
                     </li>
                   </ul>
-                  </div>
                 </div>
+              </div>
             </div>
             
             <!-- Row 1: Receipt Mode and Received -->
@@ -330,7 +346,7 @@
               <div class="col-md-3">
                 <select class="form-select form-select-sm"
                       #paymentType
-                      (keydown.enter)="focusNext(systemAmount); $event.preventDefault()"
+                      (keydown.enter)="focusNext(isAmountPaid); $event.preventDefault()"
                       id="paymentType"
                       name="paymentType"
                       formControlName="paymentType"
@@ -349,7 +365,7 @@
             
               <div class="col-md-3">
                 <select 
-                        #amountPaid
+                        #isAmountPaid
                         (keydown.enter)="focusNext(notes2000); $event.preventDefault()"
                         class="form-select form-select-sm"
                         id="isAmountPaid"
@@ -371,21 +387,34 @@
             <div class="row mb-2" *ngIf="!isCashMode">           
                   
               <!-- Bank Name -->
-              <div class="col-md-3">
+              <div class="col-md-3" *ngIf="!isCashMode">
                 <label class="fw-bold">
-                  Bank Name : <span class="text-danger">*</span>
+                  Bank Account : <span class="text-danger">*</span>
                 </label>
-              </div>       
-
-              <div class="col-md-3">
-               <input type="text"
-                       #bankName                               
-                       class="form-control form-control-sm"
-                        id="bankName"
-                        name="bankName"
-                       formControlName="bankName"
-                       readonly>
               </div>
+
+              <div class="col-md-3" *ngIf="!isCashMode">
+                <select
+                  class="form-select form-select-sm"
+                  formControlName="bankAccountId"
+                  (change)="onBankAccountChange()"
+                  [ngClass]="{
+                    'is-invalid': isInvalid('bankAccountId')
+                  }">
+
+                  <option value="">Select Bank Account</option>
+
+                  <option
+                    *ngFor="let account of bankAccounts"
+                    [value]="account.id">
+
+                    {{ account.accountCode }} - {{ account.accountName }}
+                    {{ account.isDefault ? ' (Default)' : '' }}
+
+                  </option>
+
+                </select>
+              </div>             
 
               <!-- Cheque No / UPI No -->
               <div class="col-md-2">
@@ -404,8 +433,7 @@
                        formControlName="chequeNumber"
                        placeholder="Enter Cheque / UPI No">  
               </div>
-            </div>
-           
+            </div>           
 
             <div class="col-md-12 mb-2" *ngIf="!isCashMode">
               <div class="row align-items-center">
@@ -502,7 +530,7 @@
                   <td>10</td>
                   <td><input type="number" 
                     #notes10
-                    (keydown.enter)="focusNext(coins); $event.preventDefault()"
+                    (keydown.enter)="focusNext(notes5); $event.preventDefault()"
                     class="form-control form-control-sm" id="notes10" name="notes10" formControlName="notes10"></td>
                   <td>{{(receiptForm.value.notes10 ?? 0) * 10}}</td>
                 </tr>
@@ -554,9 +582,7 @@
 
             </div>
 
-          </div>
-
-                
+          </div>                
 
         </form>
       </div>

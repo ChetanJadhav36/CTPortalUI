@@ -26,38 +26,16 @@
 
           <ng-template pTemplate="header">
             <tr>     
-              <th pSortableColumn="voucherDate">
-                Voucher Date <p-sortIcon field="voucherDate"></p-sortIcon>
-              </th> 
-              <th pSortableColumn="voucherNumber">
-                Voucher Number <p-sortIcon field="voucherNumber"></p-sortIcon>
-              </th>         
-              <th pSortableColumn="debitAccountName">
-                Debit Account Name <p-sortIcon field="debitAccountName"></p-sortIcon>
-              </th>
-              <th pSortableColumn="accountGroupName">
-                Entry Type <p-sortIcon field="accountGroupName"></p-sortIcon>
-              </th>
-              <th pSortableColumn="creditAccountName">
-                Credit Account Name <p-sortIcon field="creditAccountName"></p-sortIcon>
-              </th>
-               <th pSortableColumn="employeeFullName">
-                Employee Name <p-sortIcon field="employeeFullName"></p-sortIcon>
-              </th>
-              <th pSortableColumn="systemAmount">
-                ₹System Amount <p-sortIcon field="systemAmount"></p-sortIcon>
-              </th>
-              <th pSortableColumn="amount">
-                ₹Amount <p-sortIcon field="amount"></p-sortIcon>
-              </th>
-              <th pSortableColumn="amountDifference">
-                ₹Amount Difference <p-sortIcon field="amountDifference"></p-sortIcon>
-              </th>
-              <th pSortableColumn="transactionNo">
-                Transaction No <p-sortIcon field="transactionNo"></p-sortIcon>
-              </th>               
-              <th pSortableColumn="paymentType">
-                    Payment Type <p-sortIcon field="paymentType"></p-sortIcon>
+              <th pSortableColumn="voucherDate"> Voucher Date <p-sortIcon field="voucherDate"></p-sortIcon></th> 
+              <th pSortableColumn="voucherNumber"> Voucher No <p-sortIcon field="voucherNumber"></p-sortIcon></th>         
+              <th pSortableColumn="voucherType"> Type <p-sortIcon field="voucherNumber"></p-sortIcon></th>         
+              <th pSortableColumn="debitAccountName"> Debit Account Name <p-sortIcon field="debitAccountName"></p-sortIcon></th>              
+              <th pSortableColumn="creditAccountName"> Credit Account Name <p-sortIcon field="creditAccountName"></p-sortIcon></th>
+              <th pSortableColumn="employeeFullName" class="employee-column"> Employee Name <p-sortIcon field="employeeFullName"></p-sortIcon></th>
+              <th pSortableColumn="systemAmount"> ₹System Amount <p-sortIcon field="systemAmount"></p-sortIcon></th>
+              <th pSortableColumn="amount"> ₹Amount <p-sortIcon field="amount"></p-sortIcon></th>
+              <th pSortableColumn="amountDifference"> ₹Amount Diff <p-sortIcon field="amountDifference"></p-sortIcon></th>                     
+              <th pSortableColumn="paymentType"> Payment Type <p-sortIcon field="paymentType"></p-sortIcon>
               <th>Action</th>
             </tr>
           </ng-template>
@@ -66,14 +44,13 @@
             <tr>
               <td>{{ receipt.voucherDate | date }}</td>
               <td>{{ receipt.voucherNumber }}</td>
+              <td>{{ receipt.voucherType }}</td>
               <td>{{ receipt.destinationAccountName }}</td>
-              <td>{{ receipt.accountGroupName }}</td>
               <td>{{ receipt.sourceAccountName }}</td>
               <td>{{ receipt.employeeFullName }}</td>
               <td>{{ receipt.systemAmount }}</td>
               <td class="fw-bold text-success">₹{{ receipt.amount }}</td>
-              <td>{{ receipt.amountDifference }}</td>
-              <td>{{ receipt.transactionNo }}</td>             
+              <td>{{ receipt.amountDifference }}</td>        
               <td>{{ receipt.paymentType}}</td>
               <td>                               
                 <button type="button" 

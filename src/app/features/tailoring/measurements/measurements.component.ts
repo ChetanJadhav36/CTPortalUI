@@ -7,7 +7,7 @@ import { DateUtcPipe } from '../../../shared/pipes/date-utc.pipe';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
-import { PaymentStatus } from '../../../enums/permission.enum';
+import { PaymentStatus, PaymentType } from '../../../enums/permission.enum';
 import { CustomerDetailsComponent } from '../customer-details/customer-details.component';
 import { UpperGarmentComponent } from '../upper-garment/upper-garment.component';
 import { LowerGarmentComponent } from '../lower-garment/lower-garment.component';
@@ -47,9 +47,7 @@ export class MeasurementsComponent implements OnInit {
 
   ngOnInit():void{
     this.initializeForm();
-
     this.measurementId=this.route.snapshot.paramMap.get('id');
-
     if(this.measurementId){
       this.isUpdateMode=true;
       this.getMeasurementById(this.measurementId);
@@ -62,7 +60,6 @@ export class MeasurementsComponent implements OnInit {
     this.measurementForm=this.fb.group({
       id:[0],
       companyId:[this.companyId],
-
       customer:this.fb.group({
         mobileNo: new FormControl('', Validators.required),
         customerName: new FormControl('', Validators.required),
@@ -94,7 +91,7 @@ export class MeasurementsComponent implements OnInit {
         ugStyle:[''],
         ugFabric:[''],
         ugRemark:[''],
-        ugQuantity:[0]
+        ugQuantity:<number | null>(null),
       }),
 
       lowerGarment:this.fb.group({
@@ -119,32 +116,66 @@ export class MeasurementsComponent implements OnInit {
         lgStyle:[''],
         lgFabric:[''],
         lgRemark:[''],
-        lgQuantity:[0]
+        lgQuantity:<number | null>(null)
       }),
+      
+      billingSummary: this.fb.group({
+        // ================= BILLING =================
+        totalQuantity: [{ value: null, disabled: true }],
+        totalAmount: [null],
+        discountAmount: [null],
+        netAmount: [{ value: null, disabled: true }],
 
-      billingSummary:this.fb.group({
-        totalQuantity:[0],
-        totalAmount:[0],
-        advancePaidAmount:[0],
-        balanceAmount:[0],
-        paymentType:['Cash'],
-        paymentDate:[
-          this.dateUtcPipe.transform(new Date(),'input')
-        ],
-        paymentStatus:[PaymentStatus.Pending],
-        discountAmount:[0],
-        netAmount:[0],
-        isActive:[true],
-        receivedBy:[this.currentUserName]
+        // ================= PAYMENT 1 =================
+        payment1: this.fb.group({
+          amount: [null],
+          paymentType: [PaymentType.Cash],
+          paymentDate: [this.dateUtcPipe.transform(new Date(), 'input')],
+
+          // Cash notes
+          notes2000: [null],
+          notes1000: [null],
+          notes500: [null],
+          notes200: [null],
+          notes100: [null],
+          notes50: [null],
+          notes20: [null],
+          notes10: [null],
+          notes5: [null],
+          coins: [null]
+
+        }),
+
+        // ================= PAYMENT 2 =================
+        payment2: this.fb.group({
+          amount: [null],
+          paymentType: [PaymentType.Cash],
+          paymentDate: [this.dateUtcPipe.transform(new Date(), 'input')],
+
+          // Cash notes
+          notes2000: [null],
+          notes1000: [null],
+          notes500: [null],
+          notes200: [null],
+          notes100: [null],
+          notes50: [null],
+          notes20: [null],
+          notes10: [null],
+          notes5: [null],
+          coins: [null]
+        }),
+
+        // ================= SUMMARY =================
+        totalPaidAmount: [{ value: null, disabled: true }],
+        balanceAmount: [{ value: null, disabled: true }],
+        paymentStatus: [PaymentStatus.Pending],
+        isActive: [true],
+        createdBy: [{ value: null, disabled: true }]
       })
 
     });
   }
-
-  get paymentGroup():FormGroup{
-    return this.measurementForm.get('payment') as FormGroup;
-  }
-
+  
   get customerGroup(): FormGroup {
   return this.measurementForm.get('customer') as FormGroup;
 }
@@ -159,52 +190,90 @@ export class MeasurementsComponent implements OnInit {
 
   get billingSummaryGroup(): FormGroup {
     return this.measurementForm.get('billingSummary') as FormGroup;
-  }
+  }  
+  initializePaymentCalculation(): void {
 
-  initializePaymentCalculation(){
+  const billing = this.billingSummaryGroup;
 
-    this.paymentGroup.get('totalAmount')
-      ?.valueChanges
-      .subscribe(()=>this.calculatePayment());
+  this.upperGarmentGroup.get('ugQuantity')?.valueChanges
+  .subscribe(() => this.calculatePayment());
 
-    this.paymentGroup.get('advancePaidAmount')
-      ?.valueChanges
-      .subscribe(()=>this.calculatePayment());
+  this.lowerGarmentGroup
+    .get('lgQuantity')
+    ?.valueChanges
+    .subscribe(() => this.calculatePayment());
 
-    this.paymentGroup.get('discountAmount')
-      ?.valueChanges
-      .subscribe(()=>this.calculatePayment());
+  billing.get('totalAmount')
+    ?.valueChanges
+    .subscribe(() => this.calculatePayment());
 
-  }
+  billing.get('discountAmount')
+    ?.valueChanges
+    .subscribe(() => this.calculatePayment());
 
-  calculatePayment(){
-    const totalAmount=Number(this.paymentGroup.get('totalAmount')?.value)||0;
-    const advance=Number(this.paymentGroup.get('advancePaidAmount')?.value)||0;
-    const discount=Number(this.paymentGroup.get('discountAmount')?.value)||0;
+  billing.get('payment1.amount')
+    ?.valueChanges
+    .subscribe(() => this.calculatePayment());
 
-    const netAmount=totalAmount-discount;
-    const balance=netAmount-advance;
+  billing.get('payment2.amount')
+    ?.valueChanges
+    .subscribe(() => this.calculatePayment());
 
-    this.paymentGroup.patchValue({netAmount, balanceAmount:balance},{ emitEvent:false});
-    this.updatePaymentStatus(balance,advance,netAmount);
-  }
+  this.calculatePayment();
+}
 
-  updatePaymentStatus(balance:number, advance:number, netAmount:number ){
-    let status=PaymentStatus.Pending;
+  calculatePayment(): void {
 
-    if(advance>0 && balance>0){
-      status=PaymentStatus.Partial;
+    const upperQuantity = Number(this.upperGarmentGroup.get('ugQuantity')?.value) || 0;
+    const lowerQuantity = Number(this.lowerGarmentGroup.get('lgQuantity')?.value) || 0;
+    const totalAmount = Number(this.billingSummaryGroup.get('totalAmount')?.value) || 0;
+    const discount = Number(this.billingSummaryGroup.get('discountAmount')?.value) || 0;
+    const payment1 = Number(this.billingSummaryGroup.get('payment1.amount')?.value) || 0;
+    const payment2 = Number(this.billingSummaryGroup.get('payment2.amount')?.value) || 0;
+
+    // Quantity
+    const totalQuantity = upperQuantity + lowerQuantity;
+
+    // Net
+    const netAmount = Math.max(totalAmount - discount, 0);
+
+    // Total paid
+    const totalPaidAmount = Math.min(payment1 + payment2, netAmount);
+
+    // Remaining
+    const balanceAmount = Math.max(netAmount - totalPaidAmount, 0);
+
+
+    this.billingSummaryGroup.patchValue(
+      {
+        totalQuantity,
+        netAmount,
+        totalPaidAmount,
+        balanceAmount
+      },
+      {
+        emitEvent: false
+      }
+    );
+
+    this.updatePaymentStatus(totalPaidAmount, balanceAmount, netAmount);
+  }   
+  updatePaymentStatus(totalPaid: number, balance: number, netAmount: number): void {
+    let status = PaymentStatus.Pending;
+    if (netAmount <= 0) {
+      status = PaymentStatus.Paid;
+    }
+    else if (totalPaid <= 0) {
+      status = PaymentStatus.Pending;
+    }
+    else if (balance > 0) {
+      status = PaymentStatus.Partial;
+    }
+    else {
+      status = PaymentStatus.Paid;
     }
 
-    if(balance<=0 && netAmount>0){
-      status=PaymentStatus.Paid;
-    }
-
-    this.paymentGroup.get('paymentStatus')
-      ?.setValue(status,{
-        emitEvent:false
-      });
-
+    this.billingSummaryGroup.get('paymentStatus')?.setValue(status, { emitEvent: false });
   }
 
   getMeasurementById(id:any){

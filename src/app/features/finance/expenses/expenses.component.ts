@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IconDirective } from '@coreui/icons-angular';
 import { TableModule } from 'primeng/table';
-import { PaymentType, VoucherType } from '../../../enums/permission.enum';
+import { ExpenseType, PaymentType, VoucherType } from '../../../enums/permission.enum';
 
 @Component({
   selector: 'app-expenses',
@@ -36,8 +36,8 @@ ngOnInit() {
 
 // Fetch Expenses
 getExpenses() {
-  let transactionData = { companyId: this.companyId, voucherType: VoucherType.EXP };
-  this.financeService.getVoucherTransactionsByCompanyId(transactionData).subscribe(
+  let transactionData = { companyId: this.companyId, voucherType: ExpenseType.EXP };
+  this.financeService.getExpensesByCompanyId(transactionData).subscribe(
     (res: any[]) => {
       this.expenses = res;      
     },

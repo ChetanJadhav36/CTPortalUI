@@ -15,7 +15,7 @@ import { ToastComponent } from './components';
     imports: [RouterOutlet, ToastComponent]
 })
 export class AppComponent implements OnInit {
-  title = 'CTPortalUI';
+  title = 'Open Application';
 
   readonly #destroyRef: DestroyRef = inject(DestroyRef);
   readonly #activatedRoute: ActivatedRoute = inject(ActivatedRoute);
@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
     this.#titleService.setTitle(this.title);
     // iconSet singleton
     this.#iconSetService.icons = { ...iconSubset };
-    this.#colorModeService.localStorageItemName.set('CTPortalUI-theme-default');
+    this.#colorModeService.localStorageItemName.set('FundManagementUI-theme-default');
     this.#colorModeService.eventName.set('ColorSchemeChange');
   }
 
