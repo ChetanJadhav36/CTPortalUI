@@ -1,276 +1,505 @@
 <div [formGroup]="group">
+    
+    <!-- BILLING SUMMARY -->
     <div class="card shadow-sm border-0 mt-3">
         <div class="card-header bg-success text-white fw-bold">
             <i class="bi bi-receipt"></i>
             Billing Summary
         </div>
 
-        
-        <div class="row g-3">
-
-            <!-- ================= LEFT BILLING SECTION ================= -->
+        <div class="card-body">
             <div class="row g-3">
-
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label fw-bold">
-                    Total Qty
-                </label>
-
-                <input type="number"
-                    class="form-control form-control-sm"
-                    formControlName="totalQuantity"
-                    readonly>
-            </div>
-
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label fw-bold">
-                    Total Amount
-                </label>
-
-                <input type="number"
-                    class="form-control form-control-sm fw-bold"
-                    formControlName="totalAmount">
-            </div>
-
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label fw-bold">
-                    Discount
-                </label>
-
-                <input type="number"
-                    class="form-control form-control-sm"
-                    formControlName="discountAmount">
-            </div>
-
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label fw-bold">
-                    Net Amount
-                </label>
-
-                <input type="number"
-                    class="form-control form-control-sm fw-bold"
-                    formControlName="netAmount"
-                    readonly>
-            </div>
-
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label fw-bold text-success">
-                    Total Paid
-                </label>
-
-                <input type="number"
-                    class="form-control form-control-sm fw-bold text-success"
-                    formControlName="totalPaidAmount"
-                    readonly>
-            </div>
-
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label fw-bold text-danger">
-                    Remaining
-                </label>
-
-                <input type="number"
-                    class="form-control form-control-sm fw-bold text-danger"
-                    formControlName="balanceAmount"
-                    readonly>
-            </div>
-
-        </div>
-            
-
-            <!-- ================= RIGHT CASH NOTES SECTION ================= -->
-            <div class="col-lg-4"*ngIf="isCashPayment()">
-
-            <div class="card border-success shadow-sm">
-
-                <div class="card-header bg-light text-success fw-bold">
-                <i class="bi bi-cash-stack"></i>
-                Cash Collection
+                <!-- Total Quantity -->
+                <div class="col-lg-2 col-md-4">
+                    <label class="form-label fw-bold">
+                        Total Qty
+                    </label>
+                    <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="totalQuantity"
+                        readonly>
                 </div>
 
-                <div class="card-body p-2">
+                <!-- Total Amount -->
+                <div class="col-lg-2 col-md-4">
+                    <label class="form-label fw-bold">
+                        Total Amount
+                    </label>
+                    <input
+                        type="number"
+                        class="form-control form-control-sm fw-bold"
+                        formControlName="totalAmount">
+                </div>
 
-                <table class="table table-bordered table-sm text-center mb-0">
+                <!-- Discount -->
+                <div class="col-lg-2 col-md-4">
+                    <label class="form-label fw-bold">
+                        Discount
+                    </label>
 
-                    <thead class="table-light">
-                    <tr>
-                        <th>Rs</th>
-                        <th>No. of Notes</th>
-                        <th>Amount</th>
-                    </tr>
-                    </thead>
+                    <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="discountAmount">
+                </div>
 
-                    <tbody>
+                <!-- Net Amount -->
+                <div class="col-lg-2 col-md-4">
+                    <label class="form-label fw-bold">
+                        Net Amount
+                    </label>
+                    <input
+                        type="number"
+                        class="form-control form-control-sm fw-bold"
+                        formControlName="netAmount"
+                        readonly>
+                </div>
 
-                    <tr>
-                        <td>2000</td>
-                        <td>
-                        <input type="number"
-                                #notes2000
+                <!-- Total Paid -->
+                <div class="col-lg-2 col-md-4">
+                    <label class="form-label fw-bold text-success">
+                        Total Paid
+                    </label>
+                    <input
+                        type="number"
+                        class="form-control form-control-sm fw-bold text-success"
+                        formControlName="totalPaidAmount"
+                        readonly>
+                </div>
+
+                <!-- Balance -->
+                <div class="col-lg-2 col-md-4">
+                    <label class="form-label fw-bold text-danger">
+                        Remaining
+                    </label>
+                    <input
+                        type="number"
+                        class="form-control form-control-sm fw-bold text-danger"
+                        formControlName="balanceAmount"
+                        readonly>
+                </div>
+            </div>
+        </div>
+    </div>        
+    
+    <!-- PAYMENT 1 -->
+    <div class="card border-success mt-3">
+
+        <div class="card-header bg-success text-white fw-bold">
+
+            <i class="bi bi-cash-coin"></i>
+
+            Payment 1 - Advance
+
+            <span class="float-end">
+            Remaining:
+            ₹ {{ getNetAmount() | number:'1.2-2' }}
+            </span>
+
+        </div>
+
+        <div class="card-body">
+            <div formGroupName="payment1">
+
+            <div class="row g-3">
+
+                <!-- ================= LEFT ================= -->
+
+                <div class="col-lg-8">
+
+                <div class="row g-3">
+
+                    <!-- Amount -->
+                    <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        min="0"
+                        class="form-control form-control-sm"
+                        formControlName="amount"
+                        placeholder="Enter Advance Amount"
+                        (input)="onPayment1AmountChange()"
+                        [ngClass]="{
+                        'is-invalid': isPayment1AmountExceeded()
+                        }">
+
+                    <div
+                        class="text-danger small mt-1"
+                        *ngIf="isPayment1AmountExceeded()">
+
+                        Payment 1 cannot exceed
+                        ₹ {{ getNetAmount() | number:'1.2-2' }}
+
+                    </div>
+
+                    </div>
+
+
+                    <!-- Payment Mode -->
+                    <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Payment Mode
+                    </label>
+
+                    <select
+                        class="form-select form-select-sm"
+                        formControlName="paymentType"
+                        (change)="onPayment1TypeChange()">
+
+                        <option [ngValue]="PaymentType.Cash">
+                        Cash
+                        </option>
+
+                        <option [ngValue]="PaymentType.Bank">
+                        Bank
+                        </option>
+
+                    </select>
+
+                    </div>
+
+
+                    <!-- Payment Date -->
+                    <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Payment Date
+                    </label>
+
+                    <input
+                        type="date"
+                        class="form-control form-control-sm"
+                        formControlName="paymentDate">
+
+                    </div>
+
+                </div>
+
+
+                <!-- Payment 1 cash mismatch -->
+                <div
+                    class="alert alert-danger py-2 mt-3 mb-0"
+                    *ngIf="isPayment1CashMismatch()">
+
+                    <i class="bi bi-exclamation-triangle"></i>
+
+                    Cash notes total
+                    ₹ {{ getPayment1NotesTotal() | number:'1.2-2' }}
+
+                    does not match payment amount
+                    ₹ {{ getPayment1Amount() | number:'1.2-2' }}.
+
+                </div>
+
+                </div>
+
+
+                <!-- ================= RIGHT CASH NOTES ================= -->
+
+                <div class="col-lg-4">
+
+                <div
+                    class="card border-success"
+                    [class.opacity-50]="!isPayment1Cash()">
+
+                    <div class="card-header bg-light text-success fw-bold">
+
+                    <i class="bi bi-cash-stack"></i>
+
+                    Payment 1 Cash Collection
+
+                    <span
+                        class="float-end"
+                        *ngIf="!isPayment1Cash()">
+
+                        Bank
+
+                    </span>
+
+                    </div>
+
+
+                    <div class="card-body p-2">
+
+                    <table
+                        class="table table-bordered table-sm text-center mb-0">
+
+                        <thead class="table-light">
+
+                        <tr>
+                            <th>Rs</th>
+                            <th>No. of Notes</th>
+                            <th>Amount</th>
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        <!-- 2000 -->
+                        <tr>
+
+                            <td>2000</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
-                                formControlName="notes2000"
-                                (keydown.enter)="focusNext(notes500); $event.preventDefault()">
-                        </td>
-                        <td>
-                        {{ (group.get('notes2000')?.value || 0) * 2000 }}
-                        </td>
-                    </tr>
-                
-                    <tr>
-                        <td>500</td>
-                        <td>
-                        <input type="number"
-                                #notes500
+                                formControlName="notes2000">
+
+                            </td>
+
+                            <td>
+                            {{
+                                (payment1.get('notes2000')?.value || 0) * 2000
+                                | number:'1.0-2'
+                            }}
+                            </td>
+
+                        </tr>                    
+
+                        <!-- 500 -->
+                        <tr>
+
+                            <td>500</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
-                                formControlName="notes500"
-                                (keydown.enter)="focusNext(notes200); $event.preventDefault()">
-                        </td>
-                        <td>
-                        {{ (group.get('notes500')?.value || 0) * 500 }}
-                        </td>
-                    </tr>
+                                formControlName="notes500">
 
-                    <tr>
-                        <td>200</td>
-                        <td>
-                        <input type="number"
-                                #notes200
+                            </td>
+
+                            <td>
+                            {{
+                                (payment1.get('notes500')?.value || 0) * 500
+                                | number:'1.0-2'
+                            }}
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 200 -->
+                        <tr>
+
+                            <td>200</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
-                                formControlName="notes200"
-                                (keydown.enter)="focusNext(notes100); $event.preventDefault()">
-                        </td>
-                        <td>
-                        {{ (group.get('notes200')?.value || 0) * 200 }}
-                        </td>
-                    </tr>
+                                formControlName="notes200">
 
-                    <tr>
-                        <td>100</td>
-                        <td>
-                        <input type="number"
-                                #notes100
+                            </td>
+
+                            <td>
+                            {{
+                                (payment1.get('notes200')?.value || 0) * 200
+                                | number:'1.0-2'
+                            }}
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 100 -->
+                        <tr>
+
+                            <td>100</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
-                                formControlName="notes100"
-                                (keydown.enter)="focusNext(notes50); $event.preventDefault()">
-                        </td>
-                        <td>
-                        {{ (group.get('notes100')?.value || 0) * 100 }}
-                        </td>
-                    </tr>
+                                formControlName="notes100">
 
-                    <tr>
-                        <td>50</td>
-                        <td>
-                        <input type="number"
-                                #notes50
+                            </td>
+
+                            <td>
+                            {{
+                                (payment1.get('notes100')?.value || 0) * 100
+                                | number:'1.0-2'
+                            }}
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 50 -->
+                        <tr>
+
+                            <td>50</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
-                                formControlName="notes50"
-                                (keydown.enter)="focusNext(notes20); $event.preventDefault()">
-                        </td>
-                        <td>
-                        {{ (group.get('notes50')?.value || 0) * 50 }}
-                        </td>
-                    </tr>
+                                formControlName="notes50">
 
-                    <tr>
-                        <td>20</td>
-                        <td>
-                        <input type="number"
-                                #notes20
+                            </td>
+
+                            <td>
+                            {{
+                                (payment1.get('notes50')?.value || 0) * 50
+                                | number:'1.0-2'
+                            }}
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 20 -->
+                        <tr>
+
+                            <td>20</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
-                                formControlName="notes20"
-                                (keydown.enter)="focusNext(notes10); $event.preventDefault()">
-                        </td>
-                        <td>
-                        {{ (group.get('notes20')?.value || 0) * 20 }}
-                        </td>
-                    </tr>
+                                formControlName="notes20">
 
-                    <tr>
-                        <td>10</td>
-                        <td>
-                        <input type="number"
-                                #notes10
+                            </td>
+
+                            <td>
+                            {{
+                                (payment1.get('notes20')?.value || 0) * 20
+                                | number:'1.0-2'
+                            }}
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 10 -->
+                        <tr>
+
+                            <td>10</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
-                                formControlName="notes10"
-                                (keydown.enter)="focusNext(notes5); $event.preventDefault()">
-                        </td>
-                        <td>
-                        {{ (group.get('notes10')?.value || 0) * 10 }}
-                        </td>
-                    </tr>
+                                formControlName="notes10">
 
-                    <tr>
-                        <td>5</td>
-                        <td>
-                        <input type="number"
-                                #notes5
+                            </td>
+
+                            <td>
+                            {{
+                                (payment1.get('notes10')?.value || 0) * 10
+                                | number:'1.0-2'
+                            }}
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 5 -->
+                        <tr>
+
+                            <td>5</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
-                                formControlName="notes5"
-                                (keydown.enter)="focusNext(coins); $event.preventDefault()">
-                        </td>
-                        <td>
-                        {{ (group.get('notes5')?.value || 0) * 5 }}
-                        </td>
-                    </tr>
+                                formControlName="notes5">
 
-                    <tr>
-                        <td>Coins</td>
-                        <td>
-                        <input type="number"
-                                #coins
+                            </td>
+
+                            <td>
+                            {{
+                                (payment1.get('notes5')?.value || 0) * 5
+                                | number:'1.0-2'
+                            }}
+                            </td>
+
+                        </tr>
+
+
+                        <!-- Coins -->
+                        <tr>
+
+                            <td>Coins</td>
+
+                            <td>
+
+                            <input
+                                type="number"
                                 min="0"
                                 class="form-control form-control-sm text-center"
                                 formControlName="coins">
-                        </td>
-                        <td>
-                        {{ group.get('coins')?.value || 0 }}
-                        </td>
-                    </tr>
 
-                    <!-- Total -->
-                    <tr class="table-success fw-bold">
+                            </td>
 
-                        <td>Total</td>
+                            <td>
+                            {{
+                                payment1.get('coins')?.value || 0
+                                | number:'1.0-2'
+                            }}
+                            </td>
 
-                        <td>
-                        {{ getNotesCountTotal() }}
-                        </td>
+                        </tr>
 
-                        <td>
-                        {{ getNotesTotal() }}
-                        </td>
 
-                    </tr>
+                        <!-- Total -->
+                        <tr
+                            class="fw-bold"
+                            [ngClass]="{
+                            'table-success': !isPayment1CashMismatch(),
+                            'table-danger': isPayment1CashMismatch()
+                            }">
 
-                    </tbody>
+                            <td>Total</td>
 
-                </table>
+                            <td>
+                            {{ getPayment1NotesCount() }}
+                            </td>
 
-                <!-- Difference -->
-                <div class="mt-2">
+                            <td>
+                            ₹ {{ getPayment1NotesTotal() | number:'1.0-2' }}
+                            </td>
 
-                    <div class="d-flex justify-content-between
-                                fw-bold px-2 py-1
-                                border rounded"
-                        [ngClass]="{
-                        'text-success bg-light': !isCashMismatch(),
-                        'text-danger bg-danger-subtle': isCashMismatch()
-                        }">
+                        </tr>
 
-                    <span>Balance Due</span>
+                        </tbody>
 
-                    <span>
-                        {{ group.get('balanceAmount')?.value || 0 }}
-                    </span>
+                    </table>
+
+
+                    <!-- Cash disabled message -->
+                    <div
+                        class="text-center text-muted small mt-2"
+                        *ngIf="!isPayment1Cash()">
+
+                        Cash notes are disabled for Bank payment.
+
+                    </div>
 
                     </div>
 
@@ -281,185 +510,410 @@
             </div>
 
             </div>
-
         </div>
 
-        <div class="card border-success mt-3">
-
-    <div class="card-header bg-success text-white fw-bold">
-        <i class="bi bi-cash-coin"></i>
-        Payment 1 - Advance
     </div>
+    
+    <!-- PAYMENT 2 -->
+    <div class="card border-primary mt-3">
 
-    <div class="card-body">
+        <div class="card-header bg-primary text-white fw-bold">
+            <i class="bi bi-wallet2"></i>
+                Payment 2 - Remaining Payment
+            <span class="float-end">
+                Remaining:
+                ₹ {{ getRemainingAfterPayment1() | number:'1.2-2' }}
+            </span>
+        </div>
 
-        <div formGroupName="payment1">
-
+        <div class="card-body">
+            <div formGroupName="payment2">
             <div class="row g-3">
+                
+                <!-- ================= LEFT ================= -->
+                <div class="col-lg-8">
 
-                <div class="col-lg-4">
+                <div class="row g-3">
+
+                    <!-- Amount -->
+                    <div class="col-md-4">
 
                     <label class="form-label fw-bold">
                         Amount
                     </label>
 
-                    <input type="number"
-                           class="form-control form-control-sm"
-                           formControlName="amount"
-                           placeholder="Enter Advance">
-                </div>
+                    <input
+                        type="number"
+                        min="0"
+                        class="form-control form-control-sm"
+                        formControlName="amount"
+                        placeholder="Enter Remaining Payment"
+                        (input)="onPayment2AmountChange()"
+                        [ngClass]="{
+                        'is-invalid': isPayment2AmountExceeded()
+                        }">
+
+                    <div
+                        class="text-danger small mt-1"
+                        *ngIf="isPayment2AmountExceeded()">
+
+                        Payment 2 cannot exceed remaining amount
+                        ₹ {{ getRemainingAfterPayment1() | number:'1.2-2' }}
+
+                    </div>
+
+                    </div>
 
 
-                <div class="col-lg-4">
+                    <!-- Payment Mode -->
+                    <div class="col-md-4">
 
                     <label class="form-label fw-bold">
                         Payment Mode
                     </label>
 
-                    <select class="form-select form-select-sm"
-                            formControlName="paymentType">
-
-                        <option [ngValue]="PaymentType.Cash">
-                            Cash
-                        </option>
-
-                        <option [ngValue]="PaymentType.Bank">
-                            Bank
-                        </option>
-
+                    <select
+                        class="form-select form-select-sm"
+                        formControlName="paymentType"
+                        (change)="onPayment2TypeChange()">
+                        <option [ngValue]="PaymentType.Cash"> Cash </option>
+                        <option [ngValue]="PaymentType.Bank"> Bank </option>
                     </select>
+                    </div>
 
+                    <!-- Payment Date -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold"> Payment Date </label>
+                        <input type="date"
+                            class="form-control form-control-sm"
+                            formControlName="paymentDate">
+                    </div>
                 </div>
 
+                <!-- Payment 2 cash mismatch -->
+                <div class="alert alert-danger py-2 mt-3 mb-0" *ngIf="isPayment2CashMismatch()">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Cash notes total
+                    ₹ {{ getPayment2NotesTotal() | number:'1.2-2' }}
+                    does not match payment amount
+                    ₹ {{ getPayment2Amount() | number:'1.2-2' }}.
+                </div>
+                </div>
 
+                <!-- ================= RIGHT CASH NOTES ================= -->
                 <div class="col-lg-4">
+                    <div class="card border-primary"[class.opacity-50]="!isPayment2Cash()">
+                        <div class="card-header bg-light text-primary fw-bold">
+                        <i class="bi bi-cash-stack"></i>
+                            Payment 2 Cash Collection
+                        <span class="float-end" *ngIf="!isPayment2Cash()">
+                            Bank
+                        </span>
+                        </div>
 
-                    <label class="form-label fw-bold">
-                        Payment Date
-                    </label>
+                        <div class="card-body p-2">
+                            <table
+                                class="table table-bordered table-sm text-center mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Rs</th>
+                                    <th>No. of Notes</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
 
-                    <input type="date"
-                           class="form-control form-control-sm"
-                           formControlName="paymentDate">
+                                <!-- 2000 -->
+                                <tr>
+                                    <td>2000</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="notes2000">
+                                    </td>
+                                    <td> {{(payment2.get('notes2000')?.value || 0) * 2000 | number:'1.0-2'}} </td>
+                                </tr>                 
+                                
+                                <!-- 500 -->
+                                <tr>
+                                    <td>500</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="notes500">
+                                    </td>
+                                    <td> {{ (payment2.get('notes500')?.value || 0) * 500 | number:'1.0-2' }} </td>
+                                </tr>
 
+                                <!-- 200 -->
+                                <tr>
+                                    <td>200</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="notes200">
+                                    </td>
+                                    <td> {{ (payment2.get('notes200')?.value || 0) * 200 | number:'1.0-2' }} </td>
+
+                                </tr>
+
+                                <!-- 100 -->
+                                <tr>
+                                    <td>100</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="notes100">
+                                    </td>
+                                    <td> {{(payment2.get('notes100')?.value || 0) * 100 | number:'1.0-2'}}</td>
+                                </tr>
+
+                                <!-- 50 -->
+                                <tr>
+                                    <td>50</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="notes50">
+                                    </td>
+                                    <td> {{(payment2.get('notes50')?.value || 0) * 50 | number:'1.0-2'}}</td>
+                                </tr>
+
+                                <!-- 20 -->
+                                <tr>
+                                    <td>20</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="notes20">
+                                    </td>
+                                    <td> {{(payment2.get('notes20')?.value || 0) * 20 | number:'1.0-2'}}</td>
+                                </tr>
+
+                                <!-- 10 -->
+                                <tr>
+                                    <td>10</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="notes10">
+                                    </td>
+                                    <td> {{(payment2.get('notes10')?.value || 0) * 10 | number:'1.0-2'}} </td>
+                                </tr>
+
+                                <!-- 5 -->
+                                <tr>
+                                    <td>5</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="notes5">
+                                    </td>
+                                    <td> {{(payment2.get('notes5')?.value || 0) * 5 | number:'1.0-2'}} </td>
+                                </tr>
+
+                                <!-- Coins -->
+                                <tr>
+                                    <td>Coins</td>
+                                    <td>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control form-control-sm text-center"
+                                        formControlName="coins">
+                                    </td>
+                                    <td> {{ payment2.get('coins')?.value || 0 | number:'1.0-2' }} </td>
+                                </tr>
+
+                                <!-- Total -->
+                                <tr
+                                    class="fw-bold" [ngClass]="{
+                                    'table-success': !isPayment2CashMismatch(),
+                                    'table-danger': isPayment2CashMismatch()
+                                    }">
+                                    <td>Total</td>
+                                    <td>{{ getPayment2NotesCount() }}</td>
+                                    <td> ₹ {{ getPayment2NotesTotal() | number:'1.0-2' }} </td>
+                                </tr>
+                                </tbody>
+
+                            </table>
+
+                            <div class="text-center text-muted small mt-2"
+                                *ngIf="!isPayment2Cash()">
+                                Cash notes are disabled for Bank payment.
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
             </div>
-
-
-            <!-- CASH NOTES -->
-            <div class="mt-3"
-                 *ngIf="isPayment1Cash()">
-
-                <!-- Your cash-note table here -->
-
             </div>
-
         </div>
 
     </div>
+    
+    <!-- PAYMENT SUMMARY -->    
+    <div class="card mt-3">
+        <div class="card-header bg-dark text-white fw-bold">
+
+            <i class="bi bi-calculator"></i>
+
+            Payment Summary
 
         </div>
 
-        <div class="card border-primary mt-3">
-
-    <div class="card-header bg-primary text-white fw-bold">
-
-        <i class="bi bi-wallet2"></i>
-
-        Payment 2 - Remaining Payment
-
-        <span class="float-end">
-
-            Remaining:
-            ₹ {{ group.get('balanceAmount')?.value || 0 }}
-
-        </span>
-
-    </div>
-
-
-    <div class="card-body">
-
-        <div formGroupName="payment2">
+        <div class="card-body">
 
             <div class="row g-3">
 
-                <div class="col-lg-4">
+                <!-- Net -->
+                <div class="col-md-4">
 
-                    <label class="form-label fw-bold">
-                        Amount
-                    </label>
+                    <div class="border rounded p-2">
 
-                    <input type="number"
-                           class="form-control form-control-sm"
-                           formControlName="amount"
-                           placeholder="Enter Remaining Payment">
+                        <div class="text-muted">
+                            Net Amount
+                        </div>
 
-                </div>
+                        <div class="fs-5 fw-bold">
+                            ₹ {{ getNetAmount() }}
+                        </div>
 
-
-                <div class="col-lg-4">
-
-                    <label class="form-label fw-bold">
-                        Payment Mode
-                    </label>
-
-                    <select class="form-select form-select-sm"
-                            formControlName="paymentType">
-
-                        <option [ngValue]="PaymentType.Cash">
-                            Cash
-                        </option>
-
-                        <option [ngValue]="PaymentType.Bank">
-                            Bank
-                        </option>
-
-                    </select>
+                    </div>
 
                 </div>
 
 
-                <div class="col-lg-4">
+                <!-- Paid -->
+                <div class="col-md-4">
 
-                    <label class="form-label fw-bold">
-                        Payment Date
-                    </label>
+                    <div class="border border-success rounded p-2">
 
-                    <input type="date"
-                           class="form-control form-control-sm"
-                           formControlName="paymentDate">
+                        <div class="text-muted">
+                            Total Paid
+                        </div>
+
+                        <div class="fs-5 fw-bold text-success">
+                            ₹ {{ getTotalPaymentAmount() }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Remaining -->
+                <div class="col-md-4">
+
+                    <div
+                        class="border rounded p-2"
+                        [ngClass]="{
+                            'border-danger':
+                                getFinalBalanceAmount() > 0,
+
+                            'border-success':
+                                getFinalBalanceAmount() === 0
+                        }">
+
+                        <div class="text-muted">
+                            Remaining
+                        </div>
+
+                        <div
+                            class="fs-5 fw-bold"
+                            [ngClass]="{
+                                'text-danger':
+                                    getFinalBalanceAmount() > 0,
+
+                                'text-success':
+                                    getFinalBalanceAmount() === 0
+                            }">
+
+                            ₹ {{ getFinalBalanceAmount() }}
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            <!-- CASH NOTES -->
-            <div class="mt-3"
-                 *ngIf="isPayment2Cash()">
+            <!-- Payment exceeded -->
+            <div
+                *ngIf="isPaymentTotalExceeded()"
+                class="alert alert-danger mt-3 mb-0">
 
-                <!-- Your cash-note table -->
+                <i class="bi bi-exclamation-triangle"></i>
+
+                Total Payment cannot exceed Net Amount.
+
+            </div>
+
+
+            <!-- Payment 1 mismatch -->
+            <div
+                *ngIf="isPayment1CashMismatch()"
+                class="alert alert-danger mt-3 mb-0">
+
+                Payment 1 cash notes total must match
+                Payment 1 amount.
+
+            </div>
+
+
+            <!-- Payment 2 mismatch -->
+            <div
+                *ngIf="isPayment2CashMismatch()"
+                class="alert alert-danger mt-3 mb-0">
+
+                Payment 2 cash notes total must match
+                Payment 2 amount.
 
             </div>
 
         </div>
-
     </div>
+    
+    <!-- SUBMIT -->
+    <div class="row mt-3">
+        <div class="col-lg-8">
 
-        </div>
+            <button
+                type="button"
+                class="btn btn-success btn-sm w-100"
+                [disabled]="
+                    group.invalid ||
+                    isPaymentTotalExceeded() ||
+                    isPayment1CashMismatch() ||
+                    isPayment2CashMismatch()
+                "
+                (click)="onSubmit()">
 
-        <!-- ================= SUBMIT ================= -->
-        <div class="row mt-3">
-            <div class="col-lg-8">
-            <button type="button"
-                    class="btn btn-success btn-sm w-100">
                 <i class="bi bi-save"></i>
+
                 Submit
+
             </button>
-            </div>
 
         </div>
     </div>
+
 </div>
