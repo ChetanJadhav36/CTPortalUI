@@ -33,7 +33,9 @@ cols = [
     { field: 'paymentType', header: 'Payment Type' },
     { field: 'sourceAccount', header: 'Source Account' },
     { field: 'destinationAccount', header: 'Destination' },
+    { field: 'systemAmount', header: 'System Amount' },
     { field: 'amount', header: 'Amount' },
+    { field: 'amountDifference', header: 'Amount Difference' },
 
     { field: 'notes2000', header: '₹2000' },
     { field: 'notes500', header: '₹500' },
@@ -120,7 +122,9 @@ cols = [
       'Source Account': row.sourceAccount ?? '',
       'Destination': row.destinationAccount ?? '',
 
-      'Amount': row.amount ?? 0,
+      'System Amount': row.systemAmount ?? 0,
+      'Amount': row.amount ?? 0,      
+      'Amount Difference': row.amountDifference ?? 0,
       // Cash Notes
       '₹2000': row.cashNotes?.notes2000 ?? 0,
       '₹500': row.cashNotes?.notes500 ?? 0,

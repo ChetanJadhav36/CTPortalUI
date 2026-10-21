@@ -100,7 +100,9 @@
                     <th>Payment Type</th>
                     <th>Source Account</th>
                     <th>Destination</th>
+                    <th>System Amount</th>                    
                     <th>Amount</th>                    
+                    <th>Amount Difference</th>                    
                     <!-- Cash Notes -->
                     <th>₹2000</th>                    
                     <th>₹500</th>
@@ -134,7 +136,9 @@
                     <td>{{row.paymentType}}</td>
                     <td>{{row.sourceAccount}}</td>
                     <td>{{row.destinationAccount}}</td>
+                    <td>{{row.systemAmount}}</td>
                     <td>{{row.amount}}</td>
+                    <td>{{row.amountDifference}}</td>
                     <!-- Cash Notes -->
                     <td>{{row.cashNotes?.notes2000 || 0}}</td>                    
                     <td>{{row.cashNotes?.notes500 || 0}}</td>
