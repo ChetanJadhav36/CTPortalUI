@@ -43,7 +43,7 @@
               "src/scss/styles.scss"
             ],
             "scripts": [],
-            "allowedCommonJsDependencies": [],
+            "allowedCommonJsDependencies": ["file-saver"],
             "stylePreprocessorOptions": {
               "sass": {
                 "silenceDeprecations": []
